@@ -25,3 +25,9 @@ npm start
 Estudiantes:
 Jaime Cuartas
 Emily Carvajal
+
+Nota: 
+pedira hasta ahora paquetes de npm como:
+```
+npm install react react-dom leaflet react-leaflet
+```
