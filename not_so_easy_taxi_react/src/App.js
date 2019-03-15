@@ -6,8 +6,12 @@ const stamenAttr = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, 
 const mapCenter = [39.9528, -75.1638];
 const zoomLevel = 12;
 
+
+
 class App extends Component {
-  State = false;
+    doSomething = (e) =>{
+        console.log(e.latlng)
+      }
     render() {
         return (
             <div>
@@ -15,7 +19,10 @@ class App extends Component {
                 <p>Nuestro hermoso proyecto :) </p>
                 <Map
                     center={mapCenter}
-                    zoom={zoomLevel}>
+                    zoom={zoomLevel}
+                    animate={true}
+                    onClick={this.doSomething}
+                    >
                     <TileLayer
                         attribution={stamenAttr}
                         url={stamenTiles}
