@@ -32,11 +32,11 @@ class CenterLogin extends React.Component {
                 <Form.Label>Contraseña</Form.Label>
                 <Form.Control type="password" placeholder="contraseña" />
             </Form.Group>
-              <Button variant="primary" type="submit">
+              <Button href="/menuser" variant="primary" type="submit">
                   Ingreso Usuario
               </Button>
             <br></br>
-            <Button variant="secondary" type="submit">
+            <Button href='/menudriver' variant="secondary" type="submit">
                 Ingreso Conductor
             </Button>
             </Form>

@@ -4,7 +4,7 @@ import car from './car-insurance.png'
 import { Button } from 'react-bootstrap';
 
 
-class Menuser extends Component {
+class Menudriver extends Component {
     doSomething = (e) =>{
         console.log(e.latlng)
       }
@@ -12,7 +12,7 @@ class Menuser extends Component {
         return (
             <div>
                 <Button href="/" variant="danger">  Login </Button>
-                <center> <h2> <img alt='' src={car}/> Menu Usuario</h2> </center>
+                <center> <h2> <img alt='' src={car}/> Menu Conductor</h2> </center>
                 <LMap/>
             </div>
         );
@@ -20,4 +20,4 @@ class Menuser extends Component {
 }
 
 
-export default Menuser;
+export default Menudriver;
