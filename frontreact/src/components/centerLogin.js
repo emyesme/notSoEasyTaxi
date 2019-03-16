@@ -1,18 +1,21 @@
 import React from 'react';
 import car from './car-insurance.png'
 import {Modal,Button,Form } from 'react-bootstrap'
-import { Link} from 'react-router-dom'
+
+const backdropStyle = {
+  backgroundColor: '#808080',
+};
+
 
 class CenterLogin extends React.Component {
     render() {
       return (
-        <div>
-        <Modal
-          {...this.props}
+        <div style={backdropStyle}>
+        <Modal.Dialog
+          //{...this.props}
           size="xs"
           aria-labelledby="contained-modal-title-vcenter"
-          centered
-        >
+          centered>
           <Modal.Header>
             <Modal.Title id="contained-modal-title-vcenter">
               <center><img alt='' src={car}/>   Ingresa tus Datos</center>
@@ -29,17 +32,16 @@ class CenterLogin extends React.Component {
                 <Form.Label>Contraseña</Form.Label>
                 <Form.Control type="password" placeholder="contraseña" />
             </Form.Group>
-                <Link to={"/Menuser"}>Ingreso Usuario</Link>
+              <Button variant="primary" type="submit">
+                  Ingreso Usuario
+              </Button>
             <br></br>
             <Button variant="secondary" type="submit">
                 Ingreso Conductor
             </Button>
             </Form>
-            <Modal.Footer>
-            <Button variant="danger" onClick={this.props.onHide}>Cerrar</Button>
-            </Modal.Footer>
           </Modal.Body>
-        </Modal>
+        </Modal.Dialog>
         </div>
       );
     }

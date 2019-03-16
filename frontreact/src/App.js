@@ -6,16 +6,15 @@ import {Switch, Route, BrowserRouter} from 'react-router-dom'
 
 
 class App extends Component {
-  state = { modalShow: true };
+  //state = { modalShow: true };
   render() {
-    let modalClose = () => this.setState({ modalShow: false });
+    //let modalClose = () => this.setState({ modalShow: false });
     return (
       <BrowserRouter>
       <Switch>
       <Route path='/'
-              component={() =>  <CenterLogin show={this.state.modalShow}
-                                              onHide={modalClose}/>}/>
-      <Route path='/Menuser' component={() => <Menuser/>} />
+              component={() =>  <CenterLogin/>}/>
+      <Route path='/menu' component={() => <Menuser/>} />
       <Route path='*' component={Menuser} />
       </Switch>
     </BrowserRouter>
