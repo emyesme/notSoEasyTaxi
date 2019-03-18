@@ -1,21 +1,23 @@
 const myExpress = require('express')
 const myPgPromise = require('pg-promise')()
-
+const cors = require('cors')
 const app = myExpress()
-const port = 3000
-const base = myPgPromise('postgres://postgres:root@localhost:5432/postgres')
+//cors
+app.use(cors())
+
+const port = 4000
+const base = myPgPromise('postgres://postgres:root@localhost:5432/bases')
 
 app.get('/client', function(request, response){
+    //database part
     const {cellphone} = request.query;
-    base.one('SELECT * FROM client WHERE cellphoneclient = $1 and status = true', [cellphone])
+    base.one('SELECT * FROM client WHERE cellphoneclient = $1 AND status = true', [cellphone])
     .then(function (dato){
-        console.log('Encontrado con exito \n')
-        console.log(dato)
-        response.send(dato)
+        //send info part
+        response.send({cellphone: dato.cellphoneclient, name: dato.nameclient})
     })
     .catch(function (error) {
-        console.log(error)
-        response.send({"error": {}})
+        response.send({ error: "No encontrado"})
     })
 })
 
@@ -23,8 +25,8 @@ app.get('/client', function(request, response){
 app.get('/' , function(request, response){
     base.any('SELECT * FROM client')
     .then( function (dato) {
-        console.log(dato)
-        response.send(dato)
+        console.log("send get /")
+        response.json(dato)
     })
     .catch( function (error) {
         console.log(error)
@@ -32,9 +34,11 @@ app.get('/' , function(request, response){
     })
 })
 
+app
+
 
 app.listen(port, () => {
-    console.log('Conección a la base de datos')
+    console.log('Conexión a la base de datos')
 })
 
 
