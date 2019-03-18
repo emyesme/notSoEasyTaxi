@@ -17,10 +17,15 @@ despues de descargado el repo
 npm install
 ```
 
-probar
+ejecutar front
 ```
 npm start
 ```
+ejecutar back (para hacer cambios)
+```
+npm run dev
+```
+
 
 Estudiantes:
 Jaime Cuartas
@@ -29,5 +34,5 @@ Emily Carvajal
 Nota: 
 pedira hasta ahora paquetes de npm como:
 ```
-npm install react react-dom leaflet react-leaflet
+npm install react react-dom leaflet react-leaflet react-router-dom
 ```
