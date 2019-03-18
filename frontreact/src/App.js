@@ -7,18 +7,17 @@ import {Switch, Route, BrowserRouter} from 'react-router-dom'
 import Service from './components/service'
 
 class App extends Component {
-  state = { modalShow: true };
+  state = { modalShow: true, name: "default", cellphone: "555" };
   render() {
     let modalClose = () => this.setState({ modalShow: false });
     return (
       <BrowserRouter>
       <Switch>
-      <Route exact path='/'
-              component={() =>  <CenterLogin/>}/>
-      <Route path='/menuser' component={() => <Menuser/>} />
+      <Route exact path='/' component={() =>  <CenterLogin/>}/>
+      <Route path='/menuser' component={() => <Menuser/>}/>
       <Route path='/menudriver' component={() => <Menudriver/>} />
       <Route path='/service' component={() => <Service show={this.state.modalShow} onHide={modalClose}/>}/>
-      <Route path='*' component={Menuser} />
+      <Route path='*' component={() => <Menuser />}/>
       </Switch>
     </BrowserRouter>
     );
