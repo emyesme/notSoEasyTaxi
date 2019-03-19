@@ -1,9 +1,13 @@
 const myExpress = require('express')
 const myPgPromise = require('pg-promise')()
+const bodyParser = require('body-parser')
 const cors = require('cors')
 const app = myExpress()
 //cors
 app.use(cors())
+//body parser for post method
+app.use(bodyParser.urlencoded({ extended : false}));
+app.use(bodyParser.json());
 
 const port = 4000
 const base = myPgPromise('postgres://postgres:root@localhost:5432/bases')
@@ -36,6 +40,22 @@ app.get('/Conductor', function(request, response){
 
 app.post('/RegistrarUsuario', function(request, response){
     //database part
+    var cellphone = request.body.cellphone;
+    var pass = request.body.pass;
+    var name = request.body.name;
+    var address = request.body.address;
+    var creditCard = request.body.creditCard;
+    console.log( "llego al post")
+    base.one("INSERT INTO Client"+
+            "(cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES"+
+            "($1, md5($2), $3, $4, $5, true) RETURNING cellphoneClient", [cellphone, pass, name, address, creditCard])
+    .then( function (dato){
+        console.log(dato)
+        response.send({ mensaje: "Usuario ingresado apropiadamente" })
+    })
+    .catch( function (error){
+        response.send( { error:error})
+    })
     
 })
 
@@ -54,7 +74,7 @@ app.get('/' , function(request, response){
 
 
 app.listen(port, () => {
-    console.log('Conexión a la base de datos')
+    console.log('Conexión a la base de datos puerto: ', port)
 })
 
 
