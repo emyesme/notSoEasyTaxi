@@ -1,5 +1,5 @@
 import React from 'react';
-import car from './car-insurance.png'
+import car from './images/logo.png'
 import {Modal,Button,Form } from 'react-bootstrap'
 import axios from 'axios'
 import {withRouter} from 'react-router-dom'
@@ -8,38 +8,42 @@ const backdropStyle = {
   backgroundColor: '#808080',
 };
 
+const pad = {
+  margin: 5,
+  align: 'center'
+}
+
 const api = "http://localhost:4000";
 
 class CenterLogin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      type: this.props.location.state.type,
       cellphone: '',
-      name: 'a',
+      name: '',
       pass: ''};
       this.signIn = this.signIn.bind(this);
       this.handleChange = this.handleChange.bind(this);
   }
   signIn(e){
-    axios.get(api + "/client?cellphone="+this.state.cellphone)
+    //encriptar el pass
+    e.preventDefault()
+    if((this.state.type !== "Usuario") && (this.state.type !== "Conductor")){
+      alert("Tipo de usuario invalido")
+    }
+    axios.get(api + "/"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
     .then(response => {
       if( response.data.error != null){
-        alert("Usuario no encontrado");
+        alert(this.state.type+" no encontrado o datos invalidos");
       }
       else{
-        //quizas innecesario set state
-        this.setState({
-          cellphone: response.data.cellphone,
-          name: response.data.name
-        })
         this.props.history.push(
-          {pathname: '/menuser/',
-          state: { name: this.state.name, cellphone: this.state.cellphone} })
+          {pathname: "/"+this.state.type,
+          state: { name: response.data.name, cellphone: response.data.cellphone} })
       }
     })
     .catch( err => console.log(err))
-    e.preventDefault();
-    
   }
   handleChange(e){
     const { name, value} = e.target;
@@ -63,23 +67,26 @@ class CenterLogin extends React.Component {
         <Modal.Body>
           <Form onSubmit={this.signIn}>
           <Form.Group controlId="IngresoUsuario">
-              <Form.Label>Nombre de usuario</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese su usuario" name="cellphone" onChange={this.handleChange}/*value={this.state.cellphone}*//>
+              <Form.Label>Celular del {this.state.type}</Form.Label>
+              <Form.Control type="text" placeholder="Ingrese su celular" name="cellphone" onChange={this.handleChange}/>
           </Form.Group>
 
           <Form.Group controlId="IngresoContrasenia">
               <Form.Label>Contraseña</Form.Label>
-              <Form.Control type="password" placeholder="contraseña" name="pass" onChange={this.handleChange}/*value={this.state.password}*//>
+              <Form.Control type="password" placeholder="Ingrese su contraseña" name="pass" onChange={this.handleChange}/>
           </Form.Group>
-            <Button /*href="/menuser"*/ variant="primary" type="submit">
-                Ingreso Usuario
+            <Button style={pad} variant="primary" type="submit">
+                Ingreso {this.state.type}
             </Button>
-          <br></br>
-          <Button /*href='/menudriver'*/ variant="secondary" type="submit">
-              Ingreso Conductor
-          </Button>
           </Form>
         </Modal.Body>
+        <Modal.Footer>
+          <p style={{color: 'gray'}}>No tienes cuenta? Registrate como:</p>
+          <Button href="/RegistrarUsuario" variant="outline-secondary" type="submit">
+            {this.state.type}
+          </Button>
+          <Button href='/' variant='danger'> Atras </Button>
+        </Modal.Footer>
       </Modal.Dialog>
       </div>
     );

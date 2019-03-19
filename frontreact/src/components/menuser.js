@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import LMap from './map'
-import car from './car-insurance.png'
+import car from './images/logo.png'
 import { Button } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 
@@ -16,6 +16,7 @@ class Menuser extends Component {
         console.log(e.latlng)
       }
     render() {
+        console.log('nombre '+this.props.emily);
         return (
             <div>
                 <Button href="/" variant="danger">  Login </Button>

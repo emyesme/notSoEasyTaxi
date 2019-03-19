@@ -1,7 +1,7 @@
 import React from 'react';
-import Service1 from './1service.png'
-import Service2 from './2service.png'
-import Service3 from './3service.png'
+import Service1 from './images/1service.png'
+import Service2 from './images/2service.png'
+import Service3 from './images/3service.png'
 import {Modal,Button,Col, Row, Image} from 'react-bootstrap'
 
 

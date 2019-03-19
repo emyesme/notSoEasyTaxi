@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 import CenterLogin from './components/centerLogin'
 import Menuser from './components/menuser';
+import FirstQuestion from './components/firstquestion';
 import Menudriver from './components/menudriver';
+import RegisterUser from './components/registerUser';
 import {Switch, Route, BrowserRouter} from 'react-router-dom'
 import Service from './components/service'
 
@@ -13,9 +15,11 @@ class App extends Component {
     return (
       <BrowserRouter>
       <Switch>
-      <Route exact path='/' component={() =>  <CenterLogin/>}/>
-      <Route path='/menuser' component={() => <Menuser/>}/>
-      <Route path='/menudriver' component={() => <Menudriver/>} />
+      <Route exact path='/' component={ () => <FirstQuestion/>}/>
+      <Route  path='/login' component={() =>  <CenterLogin/>}/>
+      <Route  path='/RegistrarUsuario' component={() =>  <RegisterUser/>}/>
+      <Route path='/Usuario' component={() => <Menuser emily={'emily'}/>}/>
+      <Route path='/Conductor' component={() => <Menudriver/>} />
       <Route path='/service' component={() => <Service show={this.state.modalShow} onHide={modalClose}/>}/>
       <Route path='*' component={() => <Menuser />}/>
       </Switch>
