@@ -24,11 +24,13 @@ class CenterLogin extends React.Component {
       name: '',
       pass: ''};
       this.signIn = this.signIn.bind(this);
+      this.register = this.register.bind(this);
       this.handleChange = this.handleChange.bind(this);
   }
   signIn(e){
-    //encriptar el pass
+    //encriptar el pass falta
     e.preventDefault()
+    console.log("signIn")
     if((this.state.type !== "Usuario") && (this.state.type !== "Conductor")){
       alert("Tipo de usuario invalido")
     }
@@ -44,6 +46,13 @@ class CenterLogin extends React.Component {
       }
     })
     .catch( err => console.log(err))
+  }
+  register(){
+    console.log("register")
+    this.props.history.push(
+      { pathname: "/Registrar"+this.state.type,
+    state: { type: this.state.type}}
+    )
   }
   handleChange(e){
     const { name, value} = e.target;
@@ -70,7 +79,6 @@ class CenterLogin extends React.Component {
               <Form.Label>Celular del {this.state.type}</Form.Label>
               <Form.Control type="text" placeholder="Ingrese su celular" name="cellphone" onChange={this.handleChange}/>
           </Form.Group>
-
           <Form.Group controlId="IngresoContrasenia">
               <Form.Label>Contraseña</Form.Label>
               <Form.Control type="password" placeholder="Ingrese su contraseña" name="pass" onChange={this.handleChange}/>
@@ -82,7 +90,7 @@ class CenterLogin extends React.Component {
         </Modal.Body>
         <Modal.Footer>
           <p style={{color: 'gray'}}>No tienes cuenta? Registrate como:</p>
-          <Button href="/RegistrarUsuario" variant="outline-secondary" type="submit">
+          <Button onClick={this.register} variant="outline-secondary">{/*por aqui.... */}
             {this.state.type}
           </Button>
           <Button href='/' variant='danger'> Atras </Button>

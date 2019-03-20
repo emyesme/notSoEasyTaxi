@@ -16,7 +16,7 @@ class Menuser extends Component {
         console.log(e.latlng)
       }
     render() {
-        console.log('nombre '+this.props.emily);
+        //console.log('nombre '+this.props.emily);
         return (
             <div>
                 <Button href="/" variant="danger">  Login </Button>
