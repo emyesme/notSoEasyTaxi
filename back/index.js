@@ -50,8 +50,7 @@ app.post('/RegistrarUsuario', function(request, response){
             "(cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES"+
             "($1, md5($2), $3, $4, $5, true) RETURNING cellphoneClient", [cellphone, pass, name, address, creditCard])
     .then( function (dato){
-        console.log(dato)
-        response.send({ mensaje: "Usuario ingresado apropiadamente" })
+        response.send({ mensaje: "Usuario creado correctamente" })
     })
     .catch( function (error){
         response.send( { error:error})
