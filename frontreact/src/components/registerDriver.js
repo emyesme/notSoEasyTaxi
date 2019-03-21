@@ -3,7 +3,6 @@ import user from './images/user.png'
 import {Modal,Button,Form } from 'react-bootstrap'
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
-import CcDriver from './ccDriver';
 
 const backdropStyle = {
     backgroundColor: '#808080',
@@ -17,7 +16,6 @@ class RegisterUser extends Component {
         this.state = { 
             type: this.props.location.state.type,
             name: '',
-            cedula: '',
             cellphone: '0000000000',
             pass: '',
             address: '',
@@ -25,13 +23,12 @@ class RegisterUser extends Component {
         }
         this.createUser = this.createUser.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.callback = this.callback.bind(this);
     }
     createUser(e){
         e.preventDefault()
         console.log("entro a createUser")
         //una muy linda verificacion que no estoy haciendo sobre tipos de datdos y emas
-        if ( this.state.name === "" || this.state.cellphone === "" || this.state.pass === "" || this.state.address === "" || this.state.creditCard === ""){
+        if ( this.state.name === "" || this.state.cellphone === ""|| this.state.pass === "" || this.state.address === "" || this.state.creditCard === ""){
             alert("Alguno de los campos esta vacio")
         }
         else{
@@ -56,22 +53,12 @@ class RegisterUser extends Component {
         }   
     }
     handleChange(e){
-        console.log(e.target.name + e.target.value)
         const { name, value} = e.target;
         this.setState({
             [name]: value
         })
     }
-
-    callback(inputCC){
-        console.log(inputCC)
-        this.setState({
-            cedula: inputCC
-        })
-    }
-
     render() { 
-        
         return (
         <div style={backdropStyle}>
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
@@ -82,13 +69,10 @@ class RegisterUser extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={this.createUser}>
-                        <Form.Group controlId="IngresoNombre" >
-                            <Form.Label>Nombre</Form.Label >
+                        <Form.Group controlId="IngresoNombre">
+                            <Form.Label>Nombre</Form.Label>
                             <Form.Control type="text" placeholder="Ingrese su nombre" name="name" onChange={this.handleChange}/>
                         </Form.Group>
-                        
-                            <CcDriver type = {this.state.type} function1 = {value => this.callback(value)} />
-                        
                         <Form.Group controlId="IngresoCelular">
                             <Form.Label>Celular</Form.Label>
                             <Form.Control type="text" placeholder="Ingrese su celular" name="cellphone" onChange={this.handleChange}/>
