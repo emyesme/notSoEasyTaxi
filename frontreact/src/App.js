@@ -18,6 +18,7 @@ class App extends Component {
       <Route exact path='/' component={ () => <FirstQuestion/>}/>
       <Route  path='/login' component={() =>  <CenterLogin/>}/>
       <Route  path='/RegistrarUsuario' component={() =>  <RegisterUser/>}/>
+      <Route  path='/RegistrarConductor' component={() =>  <RegisterUser/>}/>
       <Route path='/Usuario' component={() => <Menuser emily={'emily'}/>}/>
       <Route path='/Conductor' component={() => <Menudriver/>} />
       <Route path='/service' component={() => <Service show={this.state.modalShow} onHide={modalClose}/>}/>

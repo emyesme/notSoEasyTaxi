@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form } from 'react-bootstrap'
+import { Button, Form } from 'react-bootstrap'
 
 
 class CcDriver extends Component {
@@ -24,11 +24,11 @@ class CcDriver extends Component {
             <Form.Group controlId="IngresoCedula"
                 {...this.props}>
 
-                {this.props.type === 'Usuario' ? <div>
+                {this.props.type === 'Conductor' ? <div>
                     <Form.Label>Cedula</Form.Label >
-                    <Form.Control type="text" placeholder={this.props.type} cedula="cedula" onChange={this.handleChange} />
+                    <Form.Control type="text" placeholder= "Ingrese su cedula" cedula="cedula" onChange={this.handleChange} />
 
-                </div> : <div>holiiiii</div>}
+                </div> : <div><Button variant='danger'> Direccion </Button></div>}
             </Form.Group>
         )
     }

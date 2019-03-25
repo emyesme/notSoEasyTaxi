@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended : false}));
 app.use(bodyParser.json());
 
 const port = 4000
-const base = myPgPromise('postgres://postgres:root@localhost:5432/bases')
+const base = myPgPromise('postgres://postgres:root@localhost:5432/postgres')
 
 app.get('/Usuario', function(request, response){
     //database part
@@ -18,6 +18,8 @@ app.get('/Usuario', function(request, response){
     base.one('SELECT * FROM client WHERE cellphoneclient = $1 AND passwordClient = md5($2) AND status = true', [cellphone, pass])
     .then(function (dato){
         //send info part
+        console.log(cellphone);
+        console.log(pass)
         response.send({cellphone: dato.cellphoneclient, name: dato.nameclient})
     })
     .catch(function (error) {
@@ -45,10 +47,35 @@ app.post('/RegistrarUsuario', function(request, response){
     var name = request.body.name;
     var address = request.body.address;
     var creditCard = request.body.creditCard;
-    console.log( "llego al post")
+    
+    console.log( "cellphone: " + cellphone + "\npass: " + pass + "\nname: "+name+"\naddress: " + address + "\ncreditCard: " + creditCard )
+
     base.one("INSERT INTO Client"+
             "(cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES"+
             "($1, md5($2), $3, $4, $5, true) RETURNING cellphoneClient", [cellphone, pass, name, address, creditCard])
+    .then( function (dato){
+        response.send({ mensaje: "Usuario creado correctamente" })
+    })
+    .catch( function (error){
+        response.send( { error:error})
+    })
+    
+})
+
+
+app.post('/RegistrarConductor', function(request, response){
+    //database part
+    var cellphone = request.body.cellphone;
+    var pass = request.body.pass;
+    var name = request.body.name;
+    var cedula = request.body.cedula;
+    var numAccount = request.body.creditCard;
+    
+    console.log( "cellphone: " + cellphone + "\npass: " + pass + "\nname: "+name+"\ncedula: " + cedula + "\nnumAccount: " + numAccount )
+
+    base.one("INSERT INTO Driver"+
+            "(cellphoneDriver, nameDriver, cc, available, numAccount, status) VALUES"+
+	        "($1, $2, $3, true, $4, true) RETURNING cellphoneDriver", [cellphone, name, cedula, numAccount])
     .then( function (dato){
         response.send({ mensaje: "Usuario creado correctamente" })
     })

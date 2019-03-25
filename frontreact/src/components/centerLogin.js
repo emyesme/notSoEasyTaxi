@@ -89,7 +89,7 @@ class CenterLogin extends React.Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <p style={{color: 'gray'}}>No tienes cuenta? Registrate como:</p>
+          <p style={{color: 'gray'}}>¿No tienes cuenta? Registrate como:</p>
           <Button onClick={this.register} variant="outline-secondary">{/*por aqui.... */}
             {this.state.type}
           </Button>
