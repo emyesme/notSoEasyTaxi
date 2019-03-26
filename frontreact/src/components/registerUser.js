@@ -18,7 +18,7 @@ class RegisterUser extends Component {
             type: this.props.location.state.type,
             name: '',
             cedula: '',
-            cellphone: '0000000000',
+            cellphone: '',
             pass: '',
             address: '',
             creditCard: ''
@@ -26,11 +26,63 @@ class RegisterUser extends Component {
         this.createUser = this.createUser.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.callback = this.callback.bind(this);
+        this.checkEverything = this.checkEverything.bind(this);
     }
+
+    checkEverything(){
+
+        var checkName = function (){
+            if (this.state.name !== ''){
+                return '';
+            }
+            return 'El campo nombre esta vacio\n'
+        }
+
+        var checkCedula = function (){
+            if (this.state.type === 'Usuario'){
+                return '';
+            }
+            if (this.state.type === 'Conductor' && this.state.cedula !== ''){
+                return '';
+            }
+            return 'El campo cedula esta vacio\n'
+        }
+        var checkCellphone = function (){
+            if (this.state.cellphone.length === 10){
+                return '';
+            }
+            return 'El celular debe tener 10 digitos\n'
+        }
+        var checkPass = function (){
+            if (this.state.pass !== ''){
+                return '';
+            }
+            return 'El campo contraseña esta vacio\n'
+        }
+        var checkAddress = function (){
+            if (this.state.type === 'Conductor'){
+                return '';
+            }
+            if (this.state.type === 'Usuario' && this.state.address !== ''){
+                return '';
+            }
+            return 'El campo direccion esta vacio\n'
+        }
+        var checkNumberBank = function (number){
+            if (this.state.creditCard.length === 16){
+                return '';
+            }
+            return 'El numero de la tarjeta debe tener 16 digitos\n'
+        }
+        var checkMessage = checkName()+checkCedula()+checkCellphone+checkPass+checkAddress+checkNumberBank;
+        return checkMessage
+    }
+
     createUser(e){
         e.preventDefault()
         console.log("entro a createUser")
         //una muy linda verificacion que no estoy haciendo sobre tipos de datdos y emas
+        
         if ( this.state.name === "" || this.state.cellphone === "" || this.state.pass === "" || this.state.address === "" || this.state.creditCard === ""){
             alert("Alguno de los campos esta vacio")
         }
@@ -83,12 +135,57 @@ class RegisterUser extends Component {
             }
         }   
     }
+
+    createAxiosAs(typeUser){
+        axios.post(api + '/Registrar' + typeUser,{
+            cellphone: this.state.cellphone,
+            pass: this.state.pass,
+            name: this.state.name,
+            address: this.state.address,
+            cedula: this.state.cedula,
+            creditCard: this.state.creditCard
+            
+        }).then( response => {
+            console.log(this.state);    
+            console.log("info enviada")
+            if(response.data.error != null){
+                alert(response.data.error)
+            }
+            else{
+                alert(response.data.mensaje)
+                this.props.history.push(
+                    {pathname: "/login",
+                    state: { type: this.state.type}})
+            }
+        }).catch( error => console.log(error))
+    }
+
     handleChange(e){
-        console.log(e.target.name + e.target.value)
+
         const { name, value} = e.target;
+        const numbers = /^[0-9\b]+$/;
+        
+        if(e.target.name === "cellphone"){
+            if(e.target.value.length <= 10 && (numbers.test(e.target.value) || e.target.value === '')){
+                this.setState({
+                    [name]: value
+                })
+            }
+            return;
+        }
+        if(e.target.name === "creditCard"){
+            if(e.target.value.length <= 10 && (numbers.test(e.target.value) || e.target.value === '')){
+                this.setState({
+                    [name]: value
+                })
+            }
+            return;
+        }
+
         this.setState({
             [name]: value
         })
+        console.log(this.state)
     }
 
     callback(inputCC){
@@ -119,7 +216,7 @@ class RegisterUser extends Component {
                         
                         <Form.Group controlId="IngresoCelular">
                             <Form.Label>Celular</Form.Label>
-                            <Form.Control type="text" placeholder="Ingrese su celular" name="cellphone" onChange={this.handleChange}/>
+                            <Form.Control value = {this.state.cellphone} type="text" placeholder="Ingrese su celular" name="cellphone" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoContrasenia">
                             <Form.Label>Contraseña</Form.Label>
@@ -131,7 +228,7 @@ class RegisterUser extends Component {
                         </Form.Group>
                         <Form.Group controlId="IngresoTarjetaCredito">
                             <Form.Label>Tarjeta de Credito</Form.Label>
-                            <Form.Control type="text" placeholder="Numero de tarjeta" name="creditCard" onChange={this.handleChange}/>
+                            <Form.Control value = {this.state.creditCard} type="text" placeholder="Numero de tarjeta" name="creditCard" onChange={this.handleChange}/>
                         </Form.Group>
                         <Button variant="primary" type="submit">
                             Ingresar
