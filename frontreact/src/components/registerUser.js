@@ -5,7 +5,7 @@ import {withRouter} from 'react-router-dom'
 import axios from 'axios';
 
 const backdropStyle = {
-    backgroundColor: '#808080',
+    backgroundColor: 'rgb(93, 110, 128)',
   };
 
 const api = "http://localhost:4000";

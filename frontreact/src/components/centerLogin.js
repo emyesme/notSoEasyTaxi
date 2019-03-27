@@ -5,7 +5,7 @@ import axios from 'axios'
 import {withRouter} from 'react-router-dom'
 
 const backdropStyle = {
-  backgroundColor: '#808080',
+  backgroundColor: 'rgb(148, 150, 172)',
 };
 
 const pad = {
