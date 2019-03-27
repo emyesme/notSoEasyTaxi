@@ -1,0 +1,16 @@
+version: '2'
+
+#mis dockerfile
+services:
+  #frontreact
+  client:
+    container_name: docker-front
+    build: ./frontreact
+    ports:
+      - 8080:3000
+  #back
+  server:
+    container_name: docker-back
+    build: ./back
+    ports:
+      - 8081:4000

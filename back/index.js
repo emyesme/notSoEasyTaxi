@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended : false}));
 app.use(bodyParser.json());
 
 const port = 4000
-const base = myPgPromise('postgres://postgres:root@localhost:5432/postgres')
+const base = myPgPromise('postgresx://postgres:root@localhost:5432/bases')
 
 app.get('/Usuario', function(request, response){
     //database part
@@ -45,7 +45,7 @@ app.post('/RegistrarUsuario', function(request, response){
     var cellphone = request.body.cellphone;
     var pass = request.body.pass;
     var name = request.body.name;
-    var address = request.body.address;
+    var address = request.body.cedulaOrAddress;
     var creditCard = request.body.creditCard;
     
     console.log( "cellphone: " + cellphone + "\npass: " + pass + "\nname: "+name+"\naddress: " + address + "\ncreditCard: " + creditCard )
@@ -68,18 +68,19 @@ app.post('/RegistrarConductor', function(request, response){
     var cellphone = request.body.cellphone;
     var pass = request.body.pass;
     var name = request.body.name;
-    var cedula = request.body.cedula;
+    var cedula = request.body.cedulaOrAddress;
     var numAccount = request.body.creditCard;
     
     console.log( "cellphone: " + cellphone + "\npass: " + pass + "\nname: "+name+"\ncedula: " + cedula + "\nnumAccount: " + numAccount )
 
     base.one("INSERT INTO Driver"+
-            "(cellphoneDriver, nameDriver, cc, available, numAccount, status) VALUES"+
-	        "($1, $2, $3, true, $4, true) RETURNING cellphoneDriver", [cellphone, name, cedula, numAccount])
+            "(cellphoneDriver,passwordDriver, nameDriver, cc, available, numAccount, status) VALUES"+
+	        "($1, md5($2), $3, $4, true, $5, true) RETURNING cellphoneDriver", [cellphone,pass, name, cedula, numAccount])
     .then( function (dato){
         response.send({ mensaje: "Usuario creado correctamente" })
     })
     .catch( function (error){
+        console.log(error)
         response.send( { error:error})
     })
     

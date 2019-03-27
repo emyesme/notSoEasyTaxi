@@ -109,7 +109,8 @@ class RegisterUser extends Component {
                     }
                 }).catch( error => console.log(error))
             }
-            else{
+
+                        else{
                 if(this.state.type === "Conductor"){
                     axios.post(api + '/RegistrarConductor',{
                         cellphone: this.state.cellphone,
@@ -137,16 +138,18 @@ class RegisterUser extends Component {
     }
 
     createAxiosAs(typeUser){
+        var cedulaOrAddress = this.state.address
+        if (this.state.cedula !== ''){
+            console.log(typeUser)
+            cedulaOrAddress = this.state.cedula
+        }
         axios.post(api + '/Registrar' + typeUser,{
             cellphone: this.state.cellphone,
             pass: this.state.pass,
             name: this.state.name,
-            address: this.state.address,
-            cedula: this.state.cedula,
+            cedulaOrAddress: cedulaOrAddress,
             creditCard: this.state.creditCard
-            
-        }).then( response => {
-            console.log(this.state);    
+        }).then( response => {   
             console.log("info enviada")
             if(response.data.error != null){
                 alert(response.data.error)
@@ -163,7 +166,7 @@ class RegisterUser extends Component {
     handleChange(e){
 
         const { name, value} = e.target;
-        const numbers = /^[0-9\b]+$/;
+        const numbers = /^[0-9\b]+$|/;
         
         if(e.target.name === "cellphone"){
             if(e.target.value.length <= 10 && (numbers.test(e.target.value) || e.target.value === '')){
@@ -220,7 +223,7 @@ class RegisterUser extends Component {
                         </Form.Group>
                         <Form.Group controlId="IngresoContrasenia">
                             <Form.Label>Contraseña</Form.Label>
-                            <Form.Control type="password" placeholder="contraseña" name="pass" onChange={this.handleChange}/>
+                            <Form.Control value = {this.state.pass} type="password" placeholder="contraseña" name="pass" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoDireccion">
                             <Form.Label>Dirección (En coordenadas)</Form.Label>
