@@ -10,6 +10,10 @@ class LMap extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            size :{
+                height : this.props.height,
+                width : this.props.width,
+            },
             punto : {
                 lat: 1.0,
                 lng: 1.0,
@@ -27,6 +31,7 @@ class LMap extends Component {
                 <center>
                     <h6> Punto: {punto.lat}, {punto.lng} </h6>
                 <Map
+                    style = {{height: this.state.size.height, width: this.state.size.width}}
                     center={mapCenter}
                     zoom={zoomLevel}
                     animate={true}

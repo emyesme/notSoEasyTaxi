@@ -22,15 +22,15 @@ class CenterLogin extends React.Component {
       type: this.props.location.state.type,
       cellphone: '',
       name: '',
-      pass: ''};
-      this.signIn = this.signIn.bind(this);
-      this.register = this.register.bind(this);
-      this.handleChange = this.handleChange.bind(this);
+      pass: ''
+    };
+    this.signIn = this.signIn.bind(this);
+    this.register = this.register.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   signIn(e){
     //encriptar el pass falta
     e.preventDefault()
-    console.log("signIn")
     if((this.state.type !== "Usuario") && (this.state.type !== "Conductor")){
       alert("Tipo de usuario invalido")
     }
@@ -50,7 +50,7 @@ class CenterLogin extends React.Component {
   register(){
     console.log("register")
     this.props.history.push(
-      { pathname: "/Registrar"+this.state.type,
+      { pathname: "/Registrar",
     state: { type: this.state.type}}
     )
   }
@@ -90,7 +90,7 @@ class CenterLogin extends React.Component {
         </Modal.Body>
         <Modal.Footer>
           <p style={{color: 'gray'}}>No tienes cuenta? Registrate como:</p>
-          <Button onClick={this.register} variant="outline-secondary">{/*por aqui.... */}
+          <Button onClick={this.register} variant="outline-secondary">
             {this.state.type}
           </Button>
           <Button href='/' variant='danger'> Atras </Button>

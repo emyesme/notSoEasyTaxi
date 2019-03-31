@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const backdropStyle = {
     backgroundColor: 'rgb(93, 110, 128)',
-  };
+};
 
 const api = "http://localhost:4000";
 

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import LMap from './map'
-import car from './images/logo.png'
-import { Button, Modal, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
+import LMap from './map';
+import car from './images/logo.png';
+import { Button, Modal, Dropdown, ButtonGroup, DropdownButton, CardDeck, Card} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 
 
 const backColor = {
     backgroundColor: '#731E6F',
-  };
+};
 
 const pad = {
     margin: 5,
@@ -18,55 +18,71 @@ const pad = {
     focused:{
         backgroundColor: '#808080'
     }
-  }
+}
+
+const grayRgb = {
+    backgroundColor: 'rgb(148, 150, 172)',
+}
+
+//const api = "http://localhost:4000";  
 
 class Menudriver extends Component {
     constructor(props) {
         super(props);
         this.state = {
             name: this.props.location.state.name,
-            cellphone: this.props.location.state.cellphone
+            cellphone: this.props.location.state.cellphone,
+            showMap: false,
         }
+        this.showMap = this.showMap.bind(this)
     }
-    doSomething = (e) =>{
-        console.log(e.latlng)
-      }
+    showMap(){
+        this.setState({
+            showMap: !this.state.showMap
+        })
+        console.log(this.state.showMap)
+    }
     render() {
         return (
-            <div style={backColor}>
-                <Modal.Dialog  size='xs' centered>
-                <Modal.Body style={{ backgroundColor: 'rgb(148, 150, 172)'}}>
-                    <center>
+        <div style={backColor}>
+            <Modal.Dialog  size='lg'>
+            <Modal.Body style={grayRgb}>
+                <CardDeck>
+                    <Card style={grayRgb} >
+                        <center>
                         <h2> <img alt='' src={car}/> Menu Conductor</h2> 
-                    <h6> Datos: { this.state.name}, {this.state.cellphone} Placa:  </h6>
-                    <div>
-                    <ButtonGroup vertical>
-                    <Button style={pad} >Modificar Información Personal</Button>
-                    <Button style={pad}>Modificar Información del Taxi</Button>
-                    <Button style={pad}>Cambiar de Taxi</Button>
-                    <Button style={pad}>Eliminar Taxi</Button>
-                    <Button style={pad}>Eliminar Cuenta</Button>
-                    <Button style={pad}>Kilometros Recorridos</Button>
-                    <Button style={pad}>Historial</Button>
-                    <Button style={pad}>Estado: Libre</Button>
-                    <Button style={pad}>¡Hay un Servicio!</Button>
-                    <DropdownButton  style={pad} as={ButtonGroup} title="Dropdown" id="bg-vertical-dropdown-3">
-                        <Dropdown.Item eventKey="1">Dropdown link</Dropdown.Item>
-                        <Dropdown.Item eventKey="2">Dropdown link</Dropdown.Item>
-                    </DropdownButton>
-                    <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
-                    </ButtonGroup>
-                    </div>
-                    </center>
-                    {/*<LMap/>*/}
-                    <Button style = {{ margin: 5}} href='/' variant="success" className="float-right">Ver Mapa</Button>
-                </Modal.Body>
-                </Modal.Dialog>
-                {/*La intencion es colocar algo como otro callback o comunicarse entre componentes para usar el botoncito de ver mapa  */}
-            </div>
+                        <h6> Datos: { this.state.name}, {this.state.cellphone} Placa:  </h6>
+                        <div>
+                        <ButtonGroup vertical>
+                        <Button style={pad} >Modificar Información Personal</Button>
+                        <Button style={pad}>Modificar Información del Taxi</Button>
+                        <Button style={pad} href="/Taxi" >Cambiar de Taxi</Button>
+                        <Button style={pad}>Eliminar Taxi</Button>
+                        <Button style={pad}>Eliminar Cuenta</Button>
+                        <Button style={pad}>Kilometros Recorridos</Button>
+                        <Button style={pad}>Historial</Button>
+                        <Button style={pad}>Estado: Libre</Button>
+                        <Button style={pad}>¡Hay un Servicio!</Button>
+                        <DropdownButton  style={pad} as={ButtonGroup} title="Dropdown" id="bg-vertical-dropdown-3">
+                            <Dropdown.Item eventKey="1">Dropdown link</Dropdown.Item>
+                            <Dropdown.Item eventKey="2">Dropdown link</Dropdown.Item>
+                        </DropdownButton>
+                        <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
+                        </ButtonGroup>
+                        </div>
+                        <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>
+                        </center>
+                    </Card>
+                    { this.state.showMap === true ? <Card style={grayRgb}> 
+                    <LMap  height={'673px'} width={'100%'}/> </Card> : <div></div>}
+                </CardDeck>
+            </Modal.Body>
+            </Modal.Dialog>
+        </div>
         );
     }
 }
+
 
 
 
