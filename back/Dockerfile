@@ -17,9 +17,9 @@ COPY package-lock.json ./package-lock.json
 
 #a ejecutar
 RUN npm install
-RUN npm install -D
+#RUN npm install -D
 
 
 COPY . .
 #al iniciar el contenedor
-CMD ["npm","run","dev"]
+CMD ["npm","start"]

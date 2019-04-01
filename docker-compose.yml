@@ -22,15 +22,16 @@ version: '2'
 
 services:
   db:
-    image: postgres:9.6
+    container_name: postgres-image
+    build: ./back/database
     ports:
       - "5432"
     volumes:
-      - ./back/db/scriptProyecto.sql:/docker-entrypoint.initdb.d/init.sql
+      - ./back/db/scriptProyecto.sql:/docker-entrypoint.initdb.d/db.sql
     environment:
+      POSTGRES_DB: easyTaxiDB
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: bases
   server:
      container_name: docker-back
      build: ./back
