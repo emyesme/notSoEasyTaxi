@@ -29,7 +29,11 @@ class Menuser extends Component {
         super(props);
         this.state = {
             name: this.props.location.state.name,
-            cellphone: this.props.location.state.cellphone
+            cellphone: this.props.location.state.cellphone,
+            point : {
+                lat: 1.0,
+                lng: 1.0,
+            }
         }
         this.showMap = this.showMap.bind(this)
     }
@@ -37,6 +41,11 @@ class Menuser extends Component {
         console.log("entro")
         this.setState({
             showMap: !this.state.showMap
+        })
+    }
+    callback (inputPoint){
+        this.setState({
+            point:{ lat: inputPoint.lat, lng: inputPoint.lng}
         })
     }
     render() {
@@ -62,12 +71,13 @@ class Menuser extends Component {
                         </DropdownButton>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
+                        <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>
                         </div>
                         <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap height={'500px'} width={'100%'}/> </Card> : <div></div>}
+                    <LMap height={'500px'} width={'100%'} point = { value => this.callback(value)}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

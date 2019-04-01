@@ -37,12 +37,12 @@ class CenterLogin extends React.Component {
     axios.get(api + "/"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
     .then(response => {
       if( response.data.error != null){
-        alert(this.state.type+" no encontrado o datos invalidos");
+        alert(response.data.error);
       }
       else{
         this.props.history.push(
           {pathname: "/"+this.state.type,
-          state: { name: response.data.name, cellphone: response.data.cellphone} })
+          state: { name: response.data.name, cellphone: response.data.cellphone, plaque: response.data.plaque} })
       }
     })
     .catch( err => console.log(err))

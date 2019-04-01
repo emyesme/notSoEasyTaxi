@@ -18,7 +18,7 @@ class App extends Component {
       <Switch>
       <Route exact path='/' component={ () => <FirstQuestion/>}/>
       <Route path='/login' component={() =>  <CenterLogin/>}/>
-      <Route path='/RegistrarUsuario' component={() =>  <RegisterUser/>}/>
+      <Route path='/Registrar' component={() =>  <RegisterUser/>}/>
       <Route path='/Usuario' component={() => <Menuser emily={'emily'}/>}/>
       <Route path='/Conductor' component={() => <Menudriver/>}/>
       <Route path='/Taxi' component={ () => < ChangeTaxi/>}/>

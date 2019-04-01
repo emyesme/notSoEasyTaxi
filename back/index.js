@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended : false}));
 app.use(bodyParser.json());
 
 const port = 4000
-const base = myPgPromise('postgres://postgres:root@localhost:5432/bases')
+const base = myPgPromise('postgres://postgres:postgres@localhost:5432/bases')
 
 app.get('/Usuario', function(request, response){
     //database part
@@ -28,13 +28,14 @@ app.get('/Usuario', function(request, response){
 app.get('/Conductor', function(request, response){
     //database part
     const {cellphone, pass} = request.query;
-    base.one('SELECT * FROM driver WHERE cellphoneDriver = $1 AND passwordDriver = md5($2) AND status = true', [cellphone, pass])
+    base.one('SELECT driver.cellphonedriver, plaque, date FROM driver INNER JOIN drive ON driver.cellphoneDriver = drive.cellphoneDriver WHERE driver.cellphoneDriver = $1 AND passwordDriver = md5($2) AND status=true ORDER BY date DESC LIMIT 1;', [cellphone, pass])
     .then(function (dato){
         //send info part
-        response.send({cellphone: dato.cellphonedriver, name: dato.namedriver})
+        response.send({cellphone: dato.cellphonedriver, name: dato.namedriver, plaque: dato.plaque})
     })
     .catch(function (error) {
-        response.send({ error: "Conductor encontrado"})
+        console.log(error)
+        response.send({ error: error })
     })
 })
 

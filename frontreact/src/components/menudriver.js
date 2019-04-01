@@ -32,7 +32,12 @@ class Menudriver extends Component {
         this.state = {
             name: this.props.location.state.name,
             cellphone: this.props.location.state.cellphone,
+            plaque: this.props.location.state.plaque,
             showMap: false,
+            point : {
+                lat: 1.0,
+                lng: 1.0,
+            }
         }
         this.showMap = this.showMap.bind(this)
     }
@@ -41,6 +46,11 @@ class Menudriver extends Component {
             showMap: !this.state.showMap
         })
         console.log(this.state.showMap)
+    }
+    callback (inputPoint){
+        this.setState({
+            point:{ lat: inputPoint.lat, lng: inputPoint.lng}
+        })
     }
     render() {
         return (
@@ -51,7 +61,7 @@ class Menudriver extends Component {
                     <Card style={grayRgb} >
                         <center>
                         <h2> <img alt='' src={car}/> Menu Conductor</h2> 
-                        <h6> Datos: { this.state.name}, {this.state.cellphone} Placa:  </h6>
+                        <h6> Datos: { this.state.name}, {this.state.cellphone} Placa: {this.state.plaque} </h6>
                         <div>
                         <ButtonGroup vertical>
                         <Button style={pad} >Modificar Información Personal</Button>
@@ -69,12 +79,13 @@ class Menudriver extends Component {
                         </DropdownButton>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
+                        <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>
                         </div>
                         <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap  height={'673px'} width={'100%'}/> </Card> : <div></div>}
+                    <LMap  height={'695px'} width={'100%'} point = { value => this.callback(value)}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

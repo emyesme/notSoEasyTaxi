@@ -22,14 +22,14 @@ class LMap extends Component {
     }
     doSomething = (e) => {
         this.setState({ punto: {lat:e.latlng.lat, lng:e.latlng.lng}});
-        console.log(this.punto)
-      }
+        this.props.point(this.state.punto)
+    }
+
     render() {
         const {punto} = this.state
         return (
             <div>
                 <center>
-                    <h6> Punto: {punto.lat}, {punto.lng} </h6>
                 <Map
                     style = {{height: this.state.size.height, width: this.state.size.width}}
                     center={mapCenter}
