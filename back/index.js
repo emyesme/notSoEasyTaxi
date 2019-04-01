@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended : false}));
 app.use(bodyParser.json());
 
 const port = 4000
-const base = myPgPromise('postgres://postgres:root@localhost:5432/bases')
+const base = myPgPromise('postgres://postgres:root@db:5432/bases') // cambio para docker
 
 app.get('/Usuario', function(request, response){
     //database part

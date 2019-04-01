@@ -1,0 +1,38 @@
+
+# version: '2'
+
+# #mis dockerfile
+# services:
+#   #frontreact
+#   client:
+#     container_name: docker-front
+#     build: ./frontreact
+#     ports:
+#       - 8080:3000
+#   #back
+#   server:
+#     container_name: docker-back
+#     build: ./back
+#     ports:
+#       - 8081:4000
+
+#docker-compose yml
+
+version: '2'
+
+services:
+  db:
+    image: postgres:9.6
+    ports:
+      - "5432"
+    volumes:
+      - ./back/db/scriptProyecto.sql:/docker-entrypoint.initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bases
+  server:
+     container_name: docker-back
+     build: ./back
+     ports:
+       - 8081:4000
