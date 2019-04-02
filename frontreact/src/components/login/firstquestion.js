@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Modal, Row, Col, Image, Button} from 'react-bootstrap'
-import car from './images/car.png'
-import user from './images/user.png'
+import car from '../images/car.png'
+import user from '../images/user.png'
 import {withRouter} from 'react-router-dom'
 
 const backdropStyle = {

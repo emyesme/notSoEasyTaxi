@@ -26,7 +26,6 @@ class LMap extends Component {
     }
 
     render() {
-        const {punto} = this.state
         return (
             <div>
                 <center>

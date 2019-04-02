@@ -28,7 +28,8 @@ app.get('/Usuario', function(request, response){
 app.get('/Conductor', function(request, response){
     //database part
     const {cellphone, pass} = request.query;
-    base.one('SELECT driver.cellphonedriver, plaque, date FROM driver INNER JOIN drive ON driver.cellphoneDriver = drive.cellphoneDriver WHERE driver.cellphoneDriver = $1 AND passwordDriver = md5($2) AND status=true ORDER BY date DESC LIMIT 1;', [cellphone, pass])
+    //pasarlo a un procedimiento en el script
+    base.one('SELECT driver.cellphonedriver, driver.nameDriver, plaque, date FROM driver INNER JOIN drive ON driver.cellphoneDriver = drive.cellphoneDriver WHERE driver.cellphoneDriver = $1 AND passwordDriver = md5($2) AND status=true ORDER BY date DESC LIMIT 1;', [cellphone, pass])
     .then(function (dato){
         //send info part
         response.send({cellphone: dato.cellphonedriver, name: dato.namedriver, plaque: dato.plaque})
@@ -59,6 +60,31 @@ app.post('/RegistrarUsuario', function(request, response){
     
 })
 
+app.get('/Placa', function(request, response){
+    const plaque = request.query.plaque;
+    base.one("SELECT * FROM Taxi WHERE plaque=$1;",[plaque])
+    .then( function(dato){
+        response.send({ plaque: dato.plaque,model: dato.model, soat: dato.soat, year: dato.year, trademark: dato.trademark, trunk: dato.trunk})
+    }).catch( function (error){
+        console.log(error)
+        response.send({error: "No se encontro el taxi con esa placa"})
+    })
+})
+
+app.post('/CambiarTaxi', function(request, response){
+    console.log("cambiar taxi")
+    var plaque = request.body.plaque
+    var cellphone = request.body.cellphone
+    var date = request.body.date
+    base.one("INSERT INTO Drive (cellPhoneDriver, plaque, date) VALUES ($1, $2, $3) RETURNING cellPhoneDriver", [cellphone, plaque, date])
+    .then( function(dato){
+        response.send({ mensaje: dato.cellphonedriver})
+    }).catch( function (error){
+        response.send({error: "Sucedio un error en la DB"})
+    })
+})
+
+
 app.get('/' , function(request, response){
     base.any('SELECT * FROM client')
     .then( function (dato) {
@@ -70,8 +96,6 @@ app.get('/' , function(request, response){
         response.send('error')
     })
 })
-
-
 
 app.listen(port, () => {
     console.log('Conexión a la base de datos puerto: ', port)

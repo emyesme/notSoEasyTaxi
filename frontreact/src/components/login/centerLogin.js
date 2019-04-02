@@ -1,8 +1,8 @@
 import React from 'react';
-import car from './images/logo.png'
-import {Modal,Button,Form } from 'react-bootstrap'
-import axios from 'axios'
-import {withRouter} from 'react-router-dom'
+import car from '../images/logo.png';
+import {Modal,Button,Form } from 'react-bootstrap';
+import axios from 'axios';
+import {withRouter} from 'react-router-dom';
 
 const backdropStyle = {
   backgroundColor: 'rgb(148, 150, 172)',

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import LMap from './map'
-import car from './images/logo.png'
+import LMap from '../map'
+import car from '../images/logo.png'
 import { Modal, Button, ButtonGroup, Dropdown, DropdownButton, Card, CardDeck } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 
@@ -38,7 +38,6 @@ class Menuser extends Component {
         this.showMap = this.showMap.bind(this)
     }
     showMap(){
-        console.log("entro")
         this.setState({
             showMap: !this.state.showMap
         })
@@ -57,7 +56,7 @@ class Menuser extends Component {
                     <Card style={grayRgb} >
                         <center>
                         <h2> <img alt='' src={car}/> Menu Usuario</h2> 
-                        <h6> Datos: { this.state.name}, {this.state.cellphone} Placa:  </h6>
+                        <h6> Datos: { this.state.name}, {this.state.cellphone}</h6>
                         <div>
                         <ButtonGroup vertical>
                         <Button style={pad}>Kilometros Recorridos</Button>

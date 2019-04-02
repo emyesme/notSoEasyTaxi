@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import LMap from './map';
-import car from './images/logo.png';
+import LMap from '../map';
+import car from '../images/logo.png';
 import { Button, Modal, Dropdown, ButtonGroup, DropdownButton, CardDeck, Card} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 
@@ -40,16 +40,22 @@ class Menudriver extends Component {
             }
         }
         this.showMap = this.showMap.bind(this)
+        this.goChangeTaxi = this.goChangeTaxi.bind(this)
     }
     showMap(){
         this.setState({
             showMap: !this.state.showMap
         })
-        console.log(this.state.showMap)
     }
     callback (inputPoint){
         this.setState({
             point:{ lat: inputPoint.lat, lng: inputPoint.lng}
+        })
+    }
+    goChangeTaxi (){
+        this.props.history.push({
+            pathname: "/Taxi",
+            state: { user: this.state.cellphone}
         })
     }
     render() {
@@ -66,7 +72,7 @@ class Menudriver extends Component {
                         <ButtonGroup vertical>
                         <Button style={pad} >Modificar Información Personal</Button>
                         <Button style={pad}>Modificar Información del Taxi</Button>
-                        <Button style={pad} href="/Taxi" >Cambiar de Taxi</Button>
+                        <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
                         <Button style={pad}>Eliminar Taxi</Button>
                         <Button style={pad}>Eliminar Cuenta</Button>
                         <Button style={pad}>Kilometros Recorridos</Button>
