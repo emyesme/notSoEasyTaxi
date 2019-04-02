@@ -20,7 +20,7 @@ class Menudriver extends Component {
             <div>
                 <Button href="/" variant="danger">  Login </Button>
                 <center>
-                    <h2> <img alt='' src={car}/> Menu Conductor</h2> 
+                    <h2> <img alt='' src={car}/> Menu Conductor Modificable</h2> 
                 <h6> Datos: { this.state.name}, {this.state.cellphone} </h6>
                 </center>
                 <LMap/>
