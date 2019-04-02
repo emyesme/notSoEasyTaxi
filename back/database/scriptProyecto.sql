@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 DROP TABLE IF EXISTS Client CASCADE;
 CREATE TABLE Client (
 cellphoneClient VARCHAR(10),
@@ -9,7 +11,7 @@ status BOOLEAN,
 PRIMARY KEY (cellphoneClient)
 );
 
-/*
+
 DROP TABLE IF EXISTS FavCoordinates CASCADE;
 CREATE TABLE FavCoordinates (
 cellphoneClient VARCHAR(10),
@@ -18,7 +20,7 @@ nameCoordinate VARCHAR(40),
 
 PRIMARY KEY (cellphoneClient, coordinate),
 FOREIGN KEY (cellphoneClient) REFERENCES Client(cellphoneClient)
-);*/
+);
 
 DROP TABLE IF EXISTS Driver CASCADE;
 CREATE TABLE Driver (
@@ -56,7 +58,7 @@ PRIMARY KEY (idReport),
 FOREIGN KEY (cellphoneDriver) REFERENCES Driver(cellphoneDriver),
 FOREIGN KEY (plaque) REFERENCES Taxi(plaque)
 );
-/*
+
 DROP TABLE IF EXISTS Ask CASCADE;
 CREATE TABLE Ask (
 idAsk SERIAL,
@@ -71,13 +73,13 @@ stars INTEGER,
 PRIMARY KEY (idAsk),
 FOREIGN KEY (cellphoneClient) REFERENCES Client(cellphoneClient),
 FOREIGN KEY (cellphoneDriver) REFERENCES Driver(cellphoneDriver)
-);*/
+);
 
 INSERT INTO Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES
 	('3107307371', md5('hola'), 'Jaime Cuartas', 'Calle Pro', '0000000000000000', true),
 	('3101111111', md5('Como os va en vacaciones'), 'Emily Carvajal', 'Calle Noob', '0000000000000001', true);
 
-/*
+
 INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES
 	('3107307371', GEOMETRY(POINT(1,2)), 'Mi casa'),
 	('3107307371', GEOMETRY(POINT(1,3)), 'Univalle'),
@@ -86,7 +88,7 @@ INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES
 	('3101111111', GEOMETRY(POINT(2,2)), 'Mi casa'),
 	('3101111111', GEOMETRY(POINT(1,3)), 'Univalle'),
 	('3101111111', GEOMETRY(POINT(1,2)), 'Casa de Jaime');
-*/
+
 
 INSERT INTO Driver (cellphoneDriver, passwordDriver, nameDriver, cc, available, numAccount, status) VALUES
 	('3102222222', md5('123'), 'Mateito', '123', true, '00000000', true),
@@ -119,10 +121,10 @@ INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCooridnates, finalCoor
 */
 
 /*Coordendas en X favoritas de todos*/
-/*
+
 SELECT ST_X(ST_AsText(coordinate))
 FROM FavCoordinates;
-*/
+
 
 /*Celular de cliente y contraseña*/
 SELECT * FROM client WHERE cellphoneClient = '3107307371' AND passwordClient = md5('hola') AND status=true;

@@ -24,7 +24,7 @@ Build de compose.yml
 docker-compose build
 docker-compose up
 ```
-ver el localhost:8081/
+ver el localhost:8080/
 
 Estudiantes:
 Jaime Cuartas
