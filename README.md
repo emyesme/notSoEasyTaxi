@@ -1,6 +1,6 @@
 # notSoEasyTaxi
 
-#Cosas de DockerFile y DockerCompose (Ubuntu 16.04)
+# Cosas de DockerFile y DockerCompose (Ubuntu 16.04)
 
 Para tener docker
 
@@ -30,5 +30,5 @@ Estudiantes:
 Jaime Cuartas
 Emily Carvajal
 
-#Nota: 
+# Nota: 
 Falta la extension de postgis
