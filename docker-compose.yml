@@ -26,12 +26,13 @@ services:
     container_name: docker-front
     build: ./frontreact
     ports:
-      - 8080:3000
+      #compu:container
+      - 3000:3000
   server:
      container_name: docker-back
      build: ./back
      ports:
-       - 8081:4000
+       - 4000:4000
   db:
     container_name: postgres-image
     build: ./back/database
