@@ -127,5 +127,5 @@ FROM FavCoordinates;
 /*Celular de cliente y contraseña*/
 SELECT * FROM client WHERE cellphoneClient = '3107307371' AND passwordClient = md5('hola') AND status=true;
 
-select * from client;
+select * from driver;
 

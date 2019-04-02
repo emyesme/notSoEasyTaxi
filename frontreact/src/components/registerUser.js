@@ -8,7 +8,7 @@ const backdropStyle = {
     backgroundColor: '#808080',
   };
 
-const api = "http://localhost:4000";
+const api = "http://localhost:8081";
 
 class RegisterUser extends Component {
     constructor(props) {

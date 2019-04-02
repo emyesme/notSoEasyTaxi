@@ -21,6 +21,17 @@
 version: '2'
 
 services:
+  #frontreact
+  client:
+    container_name: docker-front
+    build: ./frontreact
+    ports:
+      - 8080:3000
+  server:
+     container_name: docker-back
+     build: ./back
+     ports:
+       - 8081:4000
   db:
     container_name: postgres-image
     build: ./back/database
@@ -32,8 +43,3 @@ services:
       POSTGRES_DB: easyTaxiDB
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-  server:
-     container_name: docker-back
-     build: ./back
-     ports:
-       - 8081:4000
