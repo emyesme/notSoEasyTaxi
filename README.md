@@ -22,7 +22,7 @@ sudo apt install docker-compose
 Build de compose.yml
 ```
 docker-compose build
-docker-compose run
+docker-compose up
 ```
 ver el localhost:8081/
 
