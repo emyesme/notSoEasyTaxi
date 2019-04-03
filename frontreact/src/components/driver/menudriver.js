@@ -3,7 +3,7 @@ import LMap from '../map';
 import car from '../images/logo.png';
 import { Button, Modal, Dropdown, ButtonGroup, DropdownButton, CardDeck, Card} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
-
+import axios from 'axios';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -24,15 +24,15 @@ const grayRgb = {
     backgroundColor: 'rgb(148, 150, 172)',
 }
 
-//const api = "http://localhost:4000";  
+const api = "http://localhost:4000";  
 
 class Menudriver extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: this.props.location.state.name,
+            name: '',
             cellphone: this.props.location.state.cellphone,
-            plaque: this.props.location.state.plaque,
+            plaque: '',
             showMap: false,
             point : {
                 lat: 1.0,
@@ -41,6 +41,17 @@ class Menudriver extends Component {
         }
         this.showMap = this.showMap.bind(this)
         this.goChangeTaxi = this.goChangeTaxi.bind(this)
+    }
+    componentWillMount(){
+        axios.get(api+"/Conductor?cellphone="+this.props.location.state.cellphone)
+        .then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+              }
+              else{
+                this.setState({ name: response.data.name, plaque: response.data.plaque})
+              }
+        }).catch(error => alert(error))
     }
     showMap(){
         this.setState({

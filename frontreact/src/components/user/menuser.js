@@ -3,6 +3,7 @@ import LMap from '../map'
 import car from '../images/logo.png'
 import { Modal, Button, ButtonGroup, Dropdown, DropdownButton, Card, CardDeck } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
+import Axios from 'axios';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -23,12 +24,12 @@ const grayRgb = {
     backgroundColor: 'rgb(148, 150, 172)',
 }
 
-
+const api = "http://localhost:4000";
 class Menuser extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: this.props.location.state.name,
+            name: '',
             cellphone: this.props.location.state.cellphone,
             point : {
                 lat: 1.0,
@@ -36,6 +37,17 @@ class Menuser extends Component {
             }
         }
         this.showMap = this.showMap.bind(this)
+    }
+    componentWillMount(){
+        Axios.get(api+"/Usuario?cellphone="+this.state.cellphone)
+        .then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+              }
+              else{
+                this.setState({ name: response.data.name})
+              }
+        }).catch(error => alert(error))
     }
     showMap(){
         this.setState({

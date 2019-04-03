@@ -27,7 +27,8 @@ class changeTaxi extends Component {
             year: '',
             trademark: '',
             trunk: '',
-            show: false
+            show: false,
+            info: true
             //nombre, celular y placa para cuando vuelva a la ventana
         };
         this.handleChange = this.handleChange.bind(this)
@@ -42,14 +43,14 @@ class changeTaxi extends Component {
             date: new Date()
         }).then( response => {
             if(response.data.error != null){
-                alert(response.data.error)
+                alert("Se presento un error al cambiar el taxi.")
             }
             else{
                 alert(response.data.mensaje)
                 this.props.history.push({pathname: "/Conductor",
-                 state: { cellphone: this.state.cellphone, name: this.state.name, plaque: this.state.plaque }})
+                 state: { cellphone: this.state.cellphone}})
             }
-        }).catch( error => console.log(error))
+        }).catch( error => alert("Se presento un error al comunicarse con el api."))
     }
     addTaxi(e){
         console.log(this.state)
@@ -67,11 +68,11 @@ class changeTaxi extends Component {
                 trunk: this.state.trunk
             }).then( response => {
                 if( response.data.error != null){
-                    alert(response.data.error)
+                    alert("Se presento un error al ingresar el taxi.")
                     return
                 }
                 this.changeTaxi()
-            }).catch( error=> alert(error))
+            }).catch( error=> alert("Se presento un error al comunicarse con el api."))
         }
     }
     handleChange(e){
@@ -89,6 +90,7 @@ class changeTaxi extends Component {
         .then( response => {
             if( response.data.error != null){
                 alert("No se encontro un vehiculo con la placa ingresada, adicione el taxi");
+                this.setState({ info: false})
             }
             else{
                 this.setState({show: true, soat: response.data.soat, year: response.data.year, model: response.data.model, trademark: response.data.trademark, trunk: response.data.trunk});
@@ -129,43 +131,39 @@ class changeTaxi extends Component {
                 </div>
                 <Modal.Dialog size='xs' centered>
                     <Modal.Body>
-                        <Form onSubmit={this.addTaxi}>
+                        <Form onSubmit={this.addTaxi} enable={'false'}>
                         <h2> <img alt='' src={car}/> Cambiar Taxi</h2>
                         <p>Ingresa los datos del vehiculo: </p>
                         <Form.Group controlId="formPlaque">
                             <Form.Label>Placa</Form.Label>
                         <Row>
                             <Col>
-                            <Form.Control style={pad} type="Placa" placeholder="Placa" name="plaque" onChange={this.handleChange}/>
+                            <Form.Control disabled={!this.state.info} style={pad} type="Placa" placeholder="Placa" name="plaque" onChange={this.handleChange}/>
                             </Col>
                             <Col>
                             <Button onClick={this.verifyPlaque} variant='secondary'> Verificar </Button>
                             </Col>
                         </Row>
                         </Form.Group>
-                        <Form.Group controlId="formModel">
-                        <Row>
-                            <Col>
-                            <Form.Label>Modelo</Form.Label>
-                            <Form.Control type="text" placeholder="Modelo" name="model" onChange={this.handleChange}/>
-                            </Col>
-                        </Row>
+                        <Form.Group  controlId="formModel" >
+                            <Form.Label>Modelo</Form.Label >
+                            <Form.Control disabled={this.state.info} type="text" placeholder="Modelo" name="model" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="formSoat">
                             <Form.Label>Soat</Form.Label>
-                            <Form.Control type="text" placeholder="Soat" name="soat" onChange={this.handleChange}/>
+                            <Form.Control disabled={this.state.info} type="text" placeholder="Soat" name="soat" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="formYear">
                             <Form.Label>Año</Form.Label>
-                            <Form.Control type="integer" placeholder="Año" name="year" onChange={this.handleChange}/>
+                            <Form.Control disabled={this.state.info} type="integer" placeholder="Año" name="year" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="formCompany">
                             <Form.Label>Marca</Form.Label>
-                            <Form.Control type="text" placeholder="Marca" name="trademark" onChange={this.handleChange}/>
+                            <Form.Control disabled={this.state.info} type="text" placeholder="Marca" name="trademark" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="formTrunk">
                             <Form.Label>Baul</Form.Label>
-                            <Form.Control type="text" placeholder="Baul" name="trunk" onChange={this.handleChange}/>
+                            <Form.Control disabled={this.state.info} type="text" placeholder="Baul" name="trunk" onChange={this.handleChange}/>
                         </Form.Group>
                         <Button variant='primary' style= {pad} type="submit">
                             Cambiar

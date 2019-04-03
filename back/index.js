@@ -12,25 +12,53 @@ app.use(bodyParser.json());
 const port = 4000
 const base = myPgPromise('postgres://postgres:postgres@localhost:5432/bases')
 
+app.get('/IngresarUsuario', function(request, response){
+    const {cellphone, pass} = request.query;
+    base.one('SELECT cellphoneclient FROM client WHERE cellphoneclient = $1 AND passwordClient = md5($2) AND status = true', [cellphone, pass])
+    .then( function (dato){
+        response.send({cellphone: dato.cellphoneclient})
+    }).catch( function (error){
+        console.log("ingresar",error)
+        response.send({ error: "Usuario no encontrado"})
+    })
+})
+
+app.get('/IngresarConductor', function(request, response){
+    const {cellphone, pass} = request.query;
+    base.one('SELECT cellphonedriver FROM driver WHERE cellphonedriver=$1 AND passworddriver=md5($2) and status=true;', [cellphone, pass])
+    .then( function (dato){
+        response.send({cellphone: dato.cellphonedriver})
+    }).catch( function (error){
+        response.send({ error: "Conductor no encontrado"})
+    })
+})
+
+
 app.get('/Usuario', function(request, response){
     //database part
-    const {cellphone, pass} = request.query;
-    base.one('SELECT * FROM client WHERE cellphoneclient = $1 AND passwordClient = md5($2) AND status = true', [cellphone, pass])
+    const cellphone = request.query.cellphone;
+    base.one('SELECT * FROM client WHERE cellphoneclient = $1 AND status = true', [cellphone])
     .then(function (dato){
         //send info part
         response.send({cellphone: dato.cellphoneclient, name: dato.nameclient})
     })
     .catch(function (error) {
-        response.send({ error: "Usuario encontrado"})
+        response.send({ error: "Usuario no encontrado"})
     })
 })
 
 app.get('/Conductor', function(request, response){
     //database part
-    const {cellphone, pass} = request.query;
-    //pasarlo a un procedimiento en el script
-    base.one('SELECT driver.cellphonedriver, driver.nameDriver, plaque, date FROM driver INNER JOIN drive ON driver.cellphoneDriver = drive.cellphoneDriver WHERE driver.cellphoneDriver = $1 AND passwordDriver = md5($2) AND status=true ORDER BY date DESC LIMIT 1;', [cellphone, pass])
+    console.log(request.body)
+    const cellphone = request.query.cellphone;
+    console.log(request.body.cellphone)
+    //pasarlo a un procedimiento en el script TENER EN CUENTA CUANDO TAXISTA NO TIENE PLACA
+    base.one('SELECT driver.cellphonedriver, driver.nameDriver, plaque, date FROM driver INNER JOIN drive ON driver.cellphoneDriver = drive.cellphoneDriver WHERE driver.cellphoneDriver = $1  AND status=true ORDER BY date DESC LIMIT 1;', [cellphone])
     .then(function (dato){
+        console.log("/conductor ", dato.plaque)
+        if( dato.plaque === null){
+            dato.plaque = "No Asignado"
+        }
         //send info part
         response.send({cellphone: dato.cellphonedriver, name: dato.namedriver, plaque: dato.plaque})
     })

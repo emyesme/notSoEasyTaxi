@@ -34,7 +34,7 @@ class CenterLogin extends React.Component {
     if((this.state.type !== "Usuario") && (this.state.type !== "Conductor")){
       alert("Tipo de usuario invalido")
     }
-    axios.get(api + "/"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
+    axios.get(api + "/Ingresar"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
     .then(response => {
       if( response.data.error != null){
         alert(response.data.error);
@@ -42,13 +42,12 @@ class CenterLogin extends React.Component {
       else{
         this.props.history.push(
           {pathname: "/"+this.state.type,
-          state: { name: response.data.name, cellphone: response.data.cellphone, plaque: response.data.plaque} })
+          state: { cellphone: response.data.cellphone} })
       }
     })
     .catch( err => console.log(err))
   }
   register(){
-    console.log("register")
     this.props.history.push(
       { pathname: "/Registrar",
     state: { type: this.state.type}}
@@ -64,7 +63,6 @@ class CenterLogin extends React.Component {
     return (
       <div style={backdropStyle}>
       <Modal.Dialog
-        //{...this.props}
         size="xs"
         aria-labelledby="contained-modal-title-vcenter"
         centered>
