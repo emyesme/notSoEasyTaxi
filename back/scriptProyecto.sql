@@ -104,7 +104,7 @@ INSERT INTO Drive (cellPhoneDriver, plaque, date) VALUES
 
 	/*Valeria manejaba el Mustang luego maneja el Audi*/
 	('3102222222', 'VCE317', (TIMESTAMP '2018-05-16T15:36:38.772Z')),
-	('3102222222', 'VCF222', (TIMESTAMP '2018-12-28T10:10:10.772Z')),
+	('3102222222', 'VCF222', (TIMESTAMP '2018-12-28T10:10:10.772Z'));
 
 INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCooridnates, finalCooridnates, initialTime, finalTime, stars) VALUES
 	/*Jaime fue llevado por Mateo dos veces de la casa a la universidad*/
@@ -118,10 +118,5 @@ INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCooridnates, finalCoor
 /*Coordendas en X favoritas de todos*/
 SELECT ST_X(ST_AsText(coordinate))
 FROM FavCoordinates;
-
-
-/*Celular de cliente y contraseña*/
-SELECT * FROM client WHERE cellphoneClient = '3107307371' AND passwordClient = md5('hola') AND status=true;
-
-select * from Drive;
-
+INSERT INTO Drive (cellPhoneDriver, plaque, date) VALUES ('3102222222', 'VCE317','2019-08-01T10:10:10.772Z' );
+SELECT * FROM Drive;

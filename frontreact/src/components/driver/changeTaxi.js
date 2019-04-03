@@ -19,8 +19,9 @@ class changeTaxi extends Component {
     constructor(props) {
         super(props);
         this.state={
-            user: this.props.location.state.user,
-            plaque: '',
+            cellphone: this.props.location.state.cellphone,
+            name: this.props.location.state.name,
+            plaque: this.props.location.state.plaque,
             model: '',
             soat: '',
             year: '',
@@ -35,10 +36,9 @@ class changeTaxi extends Component {
         this.verifyPlaque = this.verifyPlaque.bind(this)
     }
     changeTaxi(){
-        console.log(api + '/CambiarTaxi')
         axios.post(api + '/CambiarTaxi',{
             plaque: this.state.plaque,
-            cellphone: this.state.user,
+            cellphone: this.state.cellphone,
             date: new Date()
         }).then( response => {
             if(response.data.error != null){
@@ -46,16 +46,32 @@ class changeTaxi extends Component {
             }
             else{
                 alert(response.data.mensaje)
-                this.props.history.push("/")
+                this.props.history.push({pathname: "/Conductor",
+                 state: { cellphone: this.state.cellphone, name: this.state.name, plaque: this.state.plaque }})
             }
         }).catch( error => console.log(error))
     }
-    addTaxi(){
+    addTaxi(e){
+        console.log(this.state)
         if ( (this.state.plaque === "") && (this.state.soat === "") && (this.state.trademark === "") && (this.state.trunk === "") && (this.state.year === "")){
             alert ("Alguno de los campos esta vacio.")
         }
         else{
-
+            e.preventDefault()
+            axios.post(api+'/AdicionarTaxi',{
+                plaque: this.state.plaque,
+                model: this.state.model,
+                soat: this.state.soat,
+                year: this.state.year,
+                trademark: this.state.trademark,
+                trunk: this.state.trunk
+            }).then( response => {
+                if( response.data.error != null){
+                    alert(response.data.error)
+                    return
+                }
+                this.changeTaxi()
+            }).catch( error=> alert(error))
         }
     }
     handleChange(e){
@@ -141,7 +157,7 @@ class changeTaxi extends Component {
                         </Form.Group>
                         <Form.Group controlId="formYear">
                             <Form.Label>Año</Form.Label>
-                            <Form.Control type="text" placeholder="Año" name="year" onChange={this.handleChange}/>
+                            <Form.Control type="integer" placeholder="Año" name="year" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="formCompany">
                             <Form.Label>Marca</Form.Label>

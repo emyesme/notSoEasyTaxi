@@ -55,7 +55,7 @@ class Menudriver extends Component {
     goChangeTaxi (){
         this.props.history.push({
             pathname: "/Taxi",
-            state: { user: this.state.cellphone}
+            state: { cellphone: this.state.cellphone, name: this.state.name, plaque: this.state.plaque}
         })
     }
     render() {

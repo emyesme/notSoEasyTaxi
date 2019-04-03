@@ -66,24 +66,36 @@ app.get('/Placa', function(request, response){
     .then( function(dato){
         response.send({ plaque: dato.plaque,model: dato.model, soat: dato.soat, year: dato.year, trademark: dato.trademark, trunk: dato.trunk})
     }).catch( function (error){
-        console.log(error)
         response.send({error: "No se encontro el taxi con esa placa"})
     })
 })
 
 app.post('/CambiarTaxi', function(request, response){
-    console.log("cambiar taxi")
     var plaque = request.body.plaque
     var cellphone = request.body.cellphone
     var date = request.body.date
     base.one("INSERT INTO Drive (cellPhoneDriver, plaque, date) VALUES ($1, $2, $3) RETURNING cellPhoneDriver", [cellphone, plaque, date])
     .then( function(dato){
-        response.send({ mensaje: dato.cellphonedriver})
+        response.send({ mensaje: "Taxi Cambiado correctamente"})
     }).catch( function (error){
-        response.send({error: "Sucedio un error en la DB"})
+        response.send({error: "Sucedio un error en la DB Cambiar Taxi"})
     })
 })
 
+app.post('/AdicionarTaxi', function(request, response){
+    var plaque = request.body.plaque
+    var soat = request.body.soat
+    var year = parseInt(request.body.year)
+    var model = request.body.model
+    var trademark = request.body.trademark
+    var trunk = request.body.trunk
+    base.one("INSERT INTO Taxi (plaque, soat, year, model, trademark, trunk) VALUES ($1, $2, $3, $4, $5, $6) RETURNING plaque",[plaque, soat, year, model, trademark, trunk])
+    .then( function(dato){
+        response.send({mensaje: "Taxi creado correctamente"})
+    }).catch( function (error){
+        response.send({error: error})
+    })
+})
 
 app.get('/' , function(request, response){
     base.any('SELECT * FROM client')
@@ -92,7 +104,6 @@ app.get('/' , function(request, response){
         response.json(dato)
     })
     .catch( function (error) {
-        console.log(error)
         response.send('error')
     })
 })
