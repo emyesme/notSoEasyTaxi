@@ -102,7 +102,7 @@ class changeTaxi extends Component {
                 <div>
                     <Modal show={this.state.show} aria-labelledby="contained-modal-title-vcenter" centered>
                     <Modal.Body>
-                    Información Encontrada: 
+                    <h6>Información Encontrada: </h6>
                         <ListGroup>
                             <ListGroup.Item>
                                 Placa: {this.state.plaque}
@@ -122,8 +122,8 @@ class changeTaxi extends Component {
                         </ListGroup>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={this.changeTaxi}>Si, Cambiar</Button>
-                        <Button href="/">Cancelar</Button>
+                        <Button variant='success' onClick={this.changeTaxi}>Si, Cambiar</Button>
+                        <Button variant='danger' href="/">Cancelar</Button>
                     </Modal.Footer>
                     </Modal>
                 </div>
