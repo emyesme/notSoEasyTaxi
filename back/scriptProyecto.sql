@@ -81,9 +81,9 @@ INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES
 	('3107307371', GEOMETRY(POINT(3.375973296733919,283.4671810269356)), 'Univalle'),
 	('3107307371', GEOMETRY(POINT(3.3992864819024993,283.4863239526749)), 'Casa de Emily'),
 
-	('3101111111', GEOMETRY(POINT(3.3992864819024993,283.4863239526749)), 'Mi casa'),
-	('3101111111', GEOMETRY(POINT(3.375973296733919,283.4671810269356)), 'Univalle'),
-	('3101111111', GEOMETRY(POINT(3.413803722450137,283.4533059597016)), 'Casa de Jaime');
+	('3101111111', GEOMETRY(POINT(3.474354999536053,283.4922409057618)), 'Mi Casa'),
+	('3101111111', GEOMETRY(POINT(3.4287759029877747,283.52313995361334)), 'Parties Point'),
+	('3101111111', GEOMETRY(POINT(3.4387143884393305,283.46443176269537)), 'Casa de Jaime');
 
 
 INSERT INTO Driver (cellphoneDriver, passwordDriver, nameDriver, cc, available, numAccount, status) VALUES
@@ -118,4 +118,21 @@ INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCooridnates, finalCoor
 SELECT ST_X(ST_AsText(coordinate))
 FROM FavCoordinates;
 INSERT INTO Drive (cellPhoneDriver, plaque, date) VALUES ('3102222222', 'VCE317','2019-08-01T10:10:10.772Z' );
-SELECT * FROM Drive;
+
+CREATE OR REPLACE FUNCTION adicionarTaxi(text,text,text,integer,text,text) RETURNS text AS $$
+DECLARE
+	plaque ALIAS FOR $1;
+	model ALIAS FOR $2;
+	soat ALIAS FOR $3;
+	year ALIAS FOR $4;
+
+BEGIN
+SELECT driver.cellphonedriver, driver.nameDriver, plaque, date 
+FROM driver INNER JOIN drive 
+ON driver.cellphoneDriver = drive.cellphoneDriver 
+WHERE driver.cellphoneDriver = cellphone  AND status=true ORDER BY date DESC LIMIT 1;
+END;
+$$
+LANGUAGE plpgsql;
+
+

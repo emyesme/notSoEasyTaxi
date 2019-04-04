@@ -20,7 +20,6 @@ class changeTaxi extends Component {
         super(props);
         this.state={
             cellphone: this.props.location.state.cellphone,
-            name: this.props.location.state.name,
             plaque: this.props.location.state.plaque,
             model: '',
             soat: '',
@@ -28,7 +27,7 @@ class changeTaxi extends Component {
             trademark: '',
             trunk: '',
             show: false,
-            info: true
+            info: this.props.location.state.enable
             //nombre, celular y placa para cuando vuelva a la ventana
         };
         this.handleChange = this.handleChange.bind(this)
@@ -68,6 +67,7 @@ class changeTaxi extends Component {
                 trunk: this.state.trunk
             }).then( response => {
                 if( response.data.error != null){
+                    console.log(response.data.error)
                     alert("Se presento un error al ingresar el taxi.")
                     return
                 }
@@ -138,10 +138,10 @@ class changeTaxi extends Component {
                             <Form.Label>Placa</Form.Label>
                         <Row>
                             <Col>
-                            <Form.Control disabled={!this.state.info} style={pad} type="Placa" placeholder="Placa" name="plaque" onChange={this.handleChange}/>
+                            <Form.Control disabled={!this.state.info} value={this.state.plaque} style={pad} type="Placa" placeholder="Placa" name="plaque" onChange={this.handleChange}/>
                             </Col>
                             <Col>
-                            <Button onClick={this.verifyPlaque} variant='secondary'> Verificar </Button>
+                            <Button disabled={!this.state.info} onClick={this.verifyPlaque} variant='secondary'> Verificar </Button>
                             </Col>
                         </Row>
                         </Form.Group>

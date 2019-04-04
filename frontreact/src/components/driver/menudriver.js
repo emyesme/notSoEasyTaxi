@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import LMap from '../map';
 import car from '../images/logo.png';
-import { Button, Modal, Dropdown, ButtonGroup, DropdownButton, CardDeck, Card} from 'react-bootstrap';
+import { Button, Modal,ButtonGroup, DropdownButton,Dropdown, CardDeck, Card} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
 
@@ -40,6 +40,7 @@ class Menudriver extends Component {
             }
         }
         this.showMap = this.showMap.bind(this)
+        this.goUpdateTaxi = this.goUpdateTaxi.bind(this)
         this.goChangeTaxi = this.goChangeTaxi.bind(this)
     }
     componentWillMount(){
@@ -66,7 +67,14 @@ class Menudriver extends Component {
     goChangeTaxi (){
         this.props.history.push({
             pathname: "/Taxi",
-            state: { cellphone: this.state.cellphone, name: this.state.name, plaque: this.state.plaque}
+            state: { cellphone: this.state.cellphone,plaque: '', enable: true}
+        })
+    }
+    goUpdateTaxi(){
+        this.props.history.push({
+            pathname: "/Taxi",
+            state: { cellphone: this.state.cellphone,plaque:this.state.plaque, enable: false}
+
         })
     }
     render() {
@@ -82,7 +90,7 @@ class Menudriver extends Component {
                         <div>
                         <ButtonGroup vertical>
                         <Button style={pad} >Modificar Información Personal</Button>
-                        <Button style={pad}>Modificar Información del Taxi</Button>
+                        <Button style={pad} onClick={this.goUpdateTaxi}>Modificar Información del Taxi</Button>
                         <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
                         <Button style={pad}>Eliminar Taxi</Button>
                         <Button style={pad}>Eliminar Cuenta</Button>
@@ -102,7 +110,7 @@ class Menudriver extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap  height={'695px'} width={'100%'} point = { value => this.callback(value)}/> </Card> : <div></div>}
+                    <LMap  height={'695px'} width={'100%'} markers={[]}point = { value => this.callback(value)}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

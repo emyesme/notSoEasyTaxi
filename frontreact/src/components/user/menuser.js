@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import LMap from '../map'
 import car from '../images/logo.png'
-import { Modal, Button, ButtonGroup, Dropdown, DropdownButton, Card, CardDeck } from 'react-bootstrap';
+import { Modal, Button, ButtonGroup, Card, CardDeck } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
+import './menuser.css'
 import Axios from 'axios';
 
 const backColor = {
@@ -14,10 +15,7 @@ const pad = {
     align: 'center',
     backgroundColor: '#21387C',
     border:'#21387C',
-    font: 'black',
-    focused:{
-        backgroundColor: '#808080'
-    }
+    font: 'white'
 }
 
 const grayRgb = {
@@ -34,8 +32,10 @@ class Menuser extends Component {
             point : {
                 lat: 1.0,
                 lng: 1.0,
-            }
+            },
+            markers: []
         }
+        this.favCoordinates = this.favCoordinates.bind(this)
         this.showMap = this.showMap.bind(this)
     }
     componentWillMount(){
@@ -43,11 +43,24 @@ class Menuser extends Component {
         .then( response => {
             if( response.data.error != null){
                 alert(response.data.error);
-              }
-              else{
+            }
+            else{
                 this.setState({ name: response.data.name})
-              }
+            }
         }).catch(error => alert(error))
+        //lugares favoritos
+        Axios.get(api+"/LugaresFavoritos?cellphone="+this.state.cellphone)
+        .then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+            }
+            else{
+                this.setState({markers: response.data});
+            }
+        }).catch(error => alert(error))
+    }
+    favCoordinates(){
+
     }
     showMap(){
         this.setState({
@@ -61,7 +74,7 @@ class Menuser extends Component {
     }
     render() {
         return (
-            <div style={backColor}>
+            <div style={backColor} className="menuser">
             <Modal.Dialog  size='lg'>
             <Modal.Body style={grayRgb}>
                 <CardDeck>
@@ -76,10 +89,7 @@ class Menuser extends Component {
                         <Button style={pad}>Modificar Información</Button>
                         <Button href="/Servicio" style={pad}>Solicitar Servicio!</Button>
                         <Button style={pad}>Eliminar Cuenta</Button>
-                        <DropdownButton  style={pad} as={ButtonGroup} title="Lugares Favoritos" id="bg-vertical-dropdown-3">
-                            <Dropdown.Item eventKey="1">Lugar Favorito 1</Dropdown.Item>
-                            <Dropdown.Item eventKey="2">Lugar Favorito 2</Dropdown.Item>
-                        </DropdownButton>
+                        <Button style={pad}>Agregar Lugar Favorito</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
                         <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>
@@ -88,7 +98,7 @@ class Menuser extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap height={'500px'} width={'100%'} point = { value => this.callback(value)}/> </Card> : <div></div>}
+                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} point = { value => this.callback(value)}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
