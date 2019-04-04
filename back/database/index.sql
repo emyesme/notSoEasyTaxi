@@ -1,5 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
+
+
 DROP TABLE IF EXISTS Client CASCADE;
 CREATE TABLE Client (
 cellphoneClient VARCHAR(10),
@@ -98,8 +100,11 @@ PRIMARY KEY (plaque, timestamp),
 FOREIGN KEY (plaque) REFERENCES Taxi(plaque)
 );
 
+DROP ROLE IF EXISTS clientRole;
+CREATE ROLE clientRole;
+GRANT SELECT ON TABLE FavCoordinates TO clientRole;
 
-
+SET ROLE clientRole;
 
 
 insert into Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) values ('4305385', md5('123'), 'Nixie', GEOMETRY(POINT (1, 1)), '5210342561751905', true);
@@ -1103,5 +1108,5 @@ insert into Client (cellphoneClient, passwordClient, nameClient, address, credit
 insert into Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) values ('6702223', md5('123'), 'Vina', GEOMETRY(POINT (1, 1)), '0516388281423573', false);
 insert into Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) values ('1645323', md5('123'), 'Morgen', GEOMETRY(POINT (1, 1)), '3667121207294898', true);
 
- explain select * from client where cellphoneClient = '6176166' and status = true
+ select * from client where cellphoneClient = '6176166' and status = true
 
