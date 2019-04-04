@@ -10,7 +10,11 @@ app.use(bodyParser.urlencoded({ extended : false}));
 app.use(bodyParser.json());
 
 const port = 4000
+<<<<<<< HEAD
 const base = myPgPromise('postgres://postgres:postgres@localhost:5432/bases')
+=======
+const base = myPgPromise('postgres://postgres:root@db:5432/easyTaxiDB') // cambio para docker
+>>>>>>> master
 
 
 
