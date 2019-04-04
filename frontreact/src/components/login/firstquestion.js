@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {Modal, Row, Col, Image, Button} from 'react-bootstrap'
-import car from './images/car.png'
-import user from './images/user.png'
+import car from '../images/car.png'
+import user from '../images/user.png'
 import {withRouter} from 'react-router-dom'
 
 const backdropStyle = {
-    backgroundColor: '#808080',
+    backgroundColor: 'rgb(148, 150, 172)',
   };
 
 class FirstQuestion extends Component {
@@ -20,9 +20,9 @@ class FirstQuestion extends Component {
     }
     render() { 
         return (
-        <div style={backdropStyle}>
-            <Modal.Dialog size="xs" aria-labelledby="contained-modal-title-vcenter" centered>
-            <Modal.Header>
+        <div style={backdropStyle} >
+            <Modal.Dialog  size="xs" aria-labelledby="contained-modal-title-vcenter" centered>
+            <Modal.Header >
                 <Modal.Title>Como quieres ingresar</Modal.Title>
             </Modal.Header>
                 <Row>

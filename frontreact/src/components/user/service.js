@@ -1,7 +1,7 @@
 import React from 'react';
-import Service1 from './images/1service.png'
-import Service2 from './images/2service.png'
-import Service3 from './images/3service.png'
+import Service1 from '../images/1service.png'
+import Service2 from '../images/2service.png'
+import Service3 from '../images/3service.png'
 import {Modal,Button,Col, Row, Image} from 'react-bootstrap'
 
 
@@ -19,7 +19,7 @@ class Service extends React.Component {
           aria-labelledby="contained-modal-title-vcenter"
           centered
         >
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title id="contained-modal-title-vcenter">
               Solicitar un Servicio
             </Modal.Title>
@@ -56,7 +56,7 @@ class Service extends React.Component {
             </Row>
             </Modal.Body>
           <Modal.Footer>
-            <Button variant="danger" onClick={this.props.onHide}>Close</Button>
+            <Button href="/" variant="danger" onClick={this.props.onHide}>Close</Button>
           </Modal.Footer>
         </Modal>
       );

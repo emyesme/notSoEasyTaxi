@@ -5,8 +5,8 @@ import {withRouter} from 'react-router-dom'
 import axios from 'axios';
 
 const backdropStyle = {
-    backgroundColor: '#808080',
-  };
+    backgroundColor: 'rgb(93, 110, 128)',
+};
 
 const api = "http://localhost:4000";
 
@@ -26,7 +26,6 @@ class RegisterUser extends Component {
     }
     createUser(e){
         e.preventDefault()
-        console.log("entro a createUser")
         //una muy linda verificacion que no estoy haciendo sobre tipos de datos y demas
         if ( this.state.name === "" || this.state.cellphone === ""|| this.state.pass === "" || this.state.address === "" || this.state.creditCard === ""){
             alert("Alguno de los campos esta vacio")

@@ -1,11 +1,11 @@
 import React from 'react';
-import car from './images/logo.png'
-import {Modal,Button,Form } from 'react-bootstrap'
-import axios from 'axios'
-import {withRouter} from 'react-router-dom'
+import car from '../images/logo.png';
+import {Modal,Button,Form } from 'react-bootstrap';
+import axios from 'axios';
+import {withRouter} from 'react-router-dom';
 
 const backdropStyle = {
-  backgroundColor: '#808080',
+  backgroundColor: 'rgb(148, 150, 172)',
 };
 
 const pad = {
@@ -22,35 +22,34 @@ class CenterLogin extends React.Component {
       type: this.props.location.state.type,
       cellphone: '',
       name: '',
-      pass: ''};
-      this.signIn = this.signIn.bind(this);
-      this.register = this.register.bind(this);
-      this.handleChange = this.handleChange.bind(this);
+      pass: ''
+    };
+    this.signIn = this.signIn.bind(this);
+    this.register = this.register.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   signIn(e){
     //encriptar el pass falta
     e.preventDefault()
-    console.log("signIn")
     if((this.state.type !== "Usuario") && (this.state.type !== "Conductor")){
       alert("Tipo de usuario invalido")
     }
-    axios.get(api + "/"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
+    axios.get(api + "/Ingresar"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
     .then(response => {
       if( response.data.error != null){
-        alert(this.state.type+" no encontrado o datos invalidos");
+        alert(response.data.error);
       }
       else{
         this.props.history.push(
           {pathname: "/"+this.state.type,
-          state: { name: response.data.name, cellphone: response.data.cellphone} })
+          state: { cellphone: response.data.cellphone} })
       }
     })
     .catch( err => console.log(err))
   }
   register(){
-    console.log("register")
     this.props.history.push(
-      { pathname: "/Registrar"+this.state.type,
+      { pathname: "/Registrar",
     state: { type: this.state.type}}
     )
   }
@@ -64,7 +63,6 @@ class CenterLogin extends React.Component {
     return (
       <div style={backdropStyle}>
       <Modal.Dialog
-        //{...this.props}
         size="xs"
         aria-labelledby="contained-modal-title-vcenter"
         centered>
@@ -90,7 +88,7 @@ class CenterLogin extends React.Component {
         </Modal.Body>
         <Modal.Footer>
           <p style={{color: 'gray'}}>No tienes cuenta? Registrate como:</p>
-          <Button onClick={this.register} variant="outline-secondary">{/*por aqui.... */}
+          <Button onClick={this.register} variant="outline-secondary">
             {this.state.type}
           </Button>
           <Button href='/' variant='danger'> Atras </Button>
