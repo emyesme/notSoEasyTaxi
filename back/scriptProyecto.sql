@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 DROP TABLE IF EXISTS Client CASCADE;
 CREATE TABLE Client (
 cellphoneClient VARCHAR(10),
@@ -74,7 +76,7 @@ FOREIGN KEY (cellphoneDriver) REFERENCES Driver(cellphoneDriver)
 
 INSERT INTO Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES
 	('3107307371', md5('hola'), 'Jaime Cuartas', 'Calle Pro', '0000000000000000', true),
-	('3101111111', md5('Como os va en vacaciones'), 'Emily Carvajal', 'Calle Noob', '0000000000000001', true);
+	('3101111111', md5('hola'), 'Emily Carvajal', 'Calle Noob', '0000000000000001', true);
 
 INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES
 	('3107307371', GEOMETRY(POINT(3.413803722450137,283.4533059597016)), 'Mi casa'),
@@ -117,22 +119,5 @@ INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCooridnates, finalCoor
 /*Coordendas en X favoritas de todos*/
 SELECT ST_X(ST_AsText(coordinate))
 FROM FavCoordinates;
-INSERT INTO Drive (cellPhoneDriver, plaque, date) VALUES ('3102222222', 'VCE317','2019-08-01T10:10:10.772Z' );
-
-CREATE OR REPLACE FUNCTION adicionarTaxi(text,text,text,integer,text,text) RETURNS text AS $$
-DECLARE
-	plaque ALIAS FOR $1;
-	model ALIAS FOR $2;
-	soat ALIAS FOR $3;
-	year ALIAS FOR $4;
-
-BEGIN
-SELECT driver.cellphonedriver, driver.nameDriver, plaque, date 
-FROM driver INNER JOIN drive 
-ON driver.cellphoneDriver = drive.cellphoneDriver 
-WHERE driver.cellphoneDriver = cellphone  AND status=true ORDER BY date DESC LIMIT 1;
-END;
-$$
-LANGUAGE plpgsql;
 
 

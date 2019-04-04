@@ -9,10 +9,8 @@ const zoomLevel = 12;
 
 const iconImage = new L.Icon({
     iconUrl: require('./images/marker.svg'),
-    shadowUrl: require('./images/marker.svg'),
-    shadowSize: new L.point(25,25),
     iconSize: new L.point(25,25),
-    className: 'leaflet-div-ico,n'
+    className: 'leaflet-div-icon'
 }) 
 class LMap extends Component {
     constructor(props) {

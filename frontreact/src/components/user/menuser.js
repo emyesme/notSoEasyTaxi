@@ -35,7 +35,6 @@ class Menuser extends Component {
             },
             markers: []
         }
-        this.favCoordinates = this.favCoordinates.bind(this)
         this.showMap = this.showMap.bind(this)
     }
     componentWillMount(){
@@ -59,9 +58,6 @@ class Menuser extends Component {
             }
         }).catch(error => alert(error))
     }
-    favCoordinates(){
-
-    }
     showMap(){
         this.setState({
             showMap: !this.state.showMap
@@ -75,7 +71,7 @@ class Menuser extends Component {
     render() {
         return (
             <div style={backColor} className="menuser">
-            <Modal.Dialog  size='lg'>
+            <Modal.Dialog  size='lg' centered>
             <Modal.Body style={grayRgb}>
                 <CardDeck>
                     <Card style={grayRgb} >

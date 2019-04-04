@@ -80,7 +80,7 @@ class Menudriver extends Component {
     render() {
         return (
         <div style={backColor}>
-            <Modal.Dialog  size='lg'>
+            <Modal.Dialog  size='lg' centered>
             <Modal.Body style={grayRgb}>
                 <CardDeck>
                     <Card style={grayRgb} >
