@@ -16,6 +16,7 @@ PRIMARY KEY (cellphoneClient)
 
 create index searchCellphoneClient on Client using hash (cellphoneClient);
 
+
 DROP TABLE IF EXISTS FavCoordinates CASCADE;
 CREATE TABLE FavCoordinates (
 cellphoneClient VARCHAR(10),
@@ -41,6 +42,8 @@ status BOOLEAN,
 PRIMARY KEY (cellphoneDriver)
 );
 
+create index searchCellphoneDriver on Driver using hash (cellphoneDriver);
+
 DROP TABLE IF EXISTS modelTaxi CASCADE;
 CREATE TABLE modelTaxi (
 model VARCHAR(15),
@@ -49,6 +52,8 @@ trunk VARCHAR(15),
 
 PRIMARY KEY (model)
 );
+
+create index searchModel on modelTaxi using hash (model);
 
 DROP TABLE IF EXISTS Taxi CASCADE;
 CREATE TABLE Taxi (
@@ -61,6 +66,8 @@ PRIMARY KEY (plaque),
 FOREIGN KEY (model) REFERENCES modelTaxi(model)
 );
 
+create index searchTaxi on Taxi using hash (plaque);
+
 DROP TABLE IF EXISTS Drive CASCADE;
 CREATE TABLE Drive (
 idReport SERIAL,
@@ -72,6 +79,8 @@ PRIMARY KEY (idReport),
 FOREIGN KEY (cellphoneDriver) REFERENCES Driver(cellphoneDriver) ON DELETE CASCADE,
 FOREIGN KEY (plaque) REFERENCES Taxi(plaque)
 );
+
+create index searchTaxiDrive on Drive using hash (cellPhoneDriver);
 
 DROP TABLE IF EXISTS Ask CASCADE;
 CREATE TABLE Ask (
@@ -89,6 +98,8 @@ FOREIGN KEY (cellphoneClient) REFERENCES Client(cellphoneClient) ON DELETE CASCA
 FOREIGN KEY (cellphoneDriver) REFERENCES Driver(cellphoneDriver) ON DELETE CASCADE
 );
 
+create index searcAskClient on Ask using hash (cellphoneClient);
+create index searcAskDriver on Ask using hash (cellphoneDriver);
 
 DROP TABLE IF EXISTS Gps CASCADE;
 CREATE TABLE Gps (
@@ -100,12 +111,21 @@ PRIMARY KEY (plaque, timestamp),
 FOREIGN KEY (plaque) REFERENCES Taxi(plaque)
 );
 
+create index intervalGps on Gps using btree (plaque, timestamp);
+
+DROP USER IF EXISTS clientRole;
+CREATE USER clientRole WITH PASSWORD '123';
+GRANT SELECT ON TABLE FavCoordinates TO clientRole;
+
+SET ROLE clientRole;
+SET ROLE postgres;
+/*
 DROP ROLE IF EXISTS clientRole;
 CREATE ROLE clientRole;
 GRANT SELECT ON TABLE FavCoordinates TO clientRole;
 
 SET ROLE clientRole;
-
+*/
 
 insert into Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) values ('4305385', md5('123'), 'Nixie', GEOMETRY(POINT (1, 1)), '5210342561751905', true);
 insert into Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) values ('3723168', md5('123'), 'Petronille', GEOMETRY(POINT (1, 1)), '7746830548001325', true);
@@ -1108,5 +1128,5 @@ insert into Client (cellphoneClient, passwordClient, nameClient, address, credit
 insert into Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) values ('6702223', md5('123'), 'Vina', GEOMETRY(POINT (1, 1)), '0516388281423573', false);
 insert into Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) values ('1645323', md5('123'), 'Morgen', GEOMETRY(POINT (1, 1)), '3667121207294898', true);
 
- select * from client where cellphoneClient = '6176166' and status = true
+ explain select * from client where cellphoneClient = '6176166' and status = true
 
