@@ -1,8 +1,8 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
 SET ROLE postgres;
-CREATE USER userAdmin WITH PASSWORD '123' superuser;
-SET ROLE userAdmin;
+--CREATE USER userAdmin WITH PASSWORD '123' superuser;
+--SET ROLE userAdmin;
 
 DROP TABLE IF EXISTS Client CASCADE;
 CREATE TABLE Client (
@@ -128,7 +128,7 @@ CREATE ROLE clientRole;
 GRANT SELECT ON TABLE FavCoordinates TO clientRole;
 
 SET ROLE clientRole;
-*/
+
 
 /*Client*/
 /******************************************/
@@ -275,6 +275,7 @@ GRANT UPDATE ON TABLE Gps TO userGpsUpdate;
 drop user if exists userGpsDelete;
 CREATE USER userGpsDelete WITH PASSWORD '123';
 GRANT DELETE ON TABLE Gps TO userGpsDelete;
+*/
 
 INSERT INTO Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES
 	('3107307371', md5('hola'), 'Jaime Cuartas', GEOMETRY(POINT(3.413803722450137,283.4533059597016)),'0000000000000000', true),
@@ -323,6 +324,53 @@ INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCoordinates, finalCoor
 	(3101111111, 3102222222, GEOMETRY(POINT(2,2)), GEOMETRY(POINT(1,2)), (TIMESTAMP '2019-03-01T09:00:00.772Z'), (TIMESTAMP '2019-03-01T10:30:12.772Z'), 3),
 	(3101111111, 3103333333, GEOMETRY(POINT(3,4)), GEOMETRY(POINT(4,4)), (TIMESTAMP '2019-03-01T15:20:33.772Z'), (TIMESTAMP '2019-03-01T16:01:35.772Z'), 4);
 
- explain select * from client where cellphoneClient = '6176166' and status = true
+
+INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
+	
+	('VCC200', (TIMESTAMP '2019-03-09T09:45:28.772Z'), GEOMETRY(POINT(1,2))),
+	('VCC200', (TIMESTAMP '2019-03-10T09:45:28.772Z'), GEOMETRY(POINT(1,3))),
+	('VCF222', (TIMESTAMP '2019-02-08T09:45:28.772Z'), GEOMETRY(POINT(1,1)));
+	
+explain select * from client where cellphoneClient = '6176166' and status = true;
+
+/*Se retorna de tipo integer porque los cobros se haran teniendo en cuenta metros y no unidades más pequeñas*/
+CREATE OR REPLACE FUNCTION distance(GEOMETRY, GEOMETRY) RETURNS INTEGER AS $$
+BEGIN 
+	RETURN ST_DistanceSphere($1, $2);
+END
+$$ LANGUAGE plpgsql;
+
+SELECT distance(GEOMETRY(POINT (3.3993721615737833, 283.48647683858877)), GEOMETRY(POINT (3.3994524862586832, 283.48640173673635)));
+
+WITH
+driverLastRecord AS 
+(select Driver.cellphoneDriver,  max(date) AS date
+from driver inner join drive on driver.cellphonedriver=drive.cellphonedriver
+where available = true
+group by (driver.cellphoneDriver)),
+
+driverLastPlaque AS
+(SELECT Drive.cellphoneDriver, Drive.plaque
+FROM driverLastRecord INNER JOIN drive 
+ON driverLastRecord.cellphonedriver = drive.cellphoneDriver
+AND driverLastRecord.date = drive.date ),
+
+plaqueLastRecord AS
+(SELECT driverLastPlaque.cellphoneDriver, driverLastPlaque.plaque, max(timestamp) AS timestamp
+FROM driverLastPlaque INNER JOIN Gps
+ON driverLastPlaque.plaque = Gps.plaque
+GROUP BY (driverLastPlaque.cellphoneDriver, driverLastPlaque.plaque)),
+
+plaqueLastCoordinate AS
+(SELECT plaqueLastRecord.cellphoneDriver, plaqueLastRecord.plaque, Gps.coordinate
+FROM plaqueLastRecord INNER JOIN Gps
+ON plaqueLastRecord.plaque = Gps.plaque
+AND plaqueLastRecord.timestamp = Gps.timestamp),
+
+cte as (
+	select row_number() over (order by (distance(coordinate, GEOMETRY(POINT(1,1))))) rn, * from plaqueLastCoordinate
+)
+Select * from cte where rn = 1
+
 
 
