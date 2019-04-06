@@ -1,17 +1,20 @@
 const Pool  = require('pg-pool')
 const {validationResult} = require('express-validator/check')
+const config = require('./configs')
 
 const configDeveloper = {
     user: 'postgres',//aqui tengo dudas
     password: 'postgres',//aqui tengo dudas
     host: 'localhost', //cambia con el docker
     port: '5432',
-    database: 'bases', //cambia con el docker
+    database: 'easyTaxiDB', //cambia con el docker
     ssl: true,
     max: 10,
     min: 2,
     idleTimeputMillis: 1000//close idle clients after 1 second
 };
+
+
 
 const configDocker = {
     user: 'postgres',//aqui tengo dudas
@@ -26,6 +29,41 @@ const configDocker = {
 }
 
 const pool = new Pool(configDeveloper);
+
+
+const poolUserClientInsert = new Pool(config.configUserClientInsert);
+const poolUserClientSelect = new Pool(config.configUserClientSelect);
+const poolUserClientUpdate = new Pool(config.configUserClientUpdate);
+const poolUserClientDelete = new Pool(config.configUserClientDelete);
+const poolUserFavCoordinatesInsert = new Pool(config.configUserFavCoordinatesInsert);
+const poolUserFavCoordinatesSelect = new Pool(config.configUserFavCoordinatesSelect);
+const poolUserFavCoordinatesUpdate = new Pool(config.configUserFavCoordinatesUpdate);
+const poolUserFavCoordinatesDelete = new Pool(config.configUserFavCoordinatesDelete);
+const poolUserDriverInsert = new Pool(config.configUserDriverInsert);
+const poolUserDriverSelect = new Pool(config.configUserDriverSelect);
+const poolUserDriverUpdate = new Pool(config.configUserDriverUpdate);
+const poolUserDriverDelete = new Pool(config.configUserDriverDelete);
+const poolUserModelTaxiInsert = new Pool(config.configUserModelTaxiInsert);
+const poolUserModelTaxiSelect = new Pool(config.configUserModelTaxiSelect);
+const poolUserModelTaxiUpdate = new Pool(config.configUserModelTaxiUpdate);
+const poolUserModelTaxiDelete = new Pool(config.configUserModelTaxiDelete);
+const poolUserTaxiInsert = new Pool(config.configUserTaxiInsert);
+const poolUserTaxiSelect = new Pool(config.configUserTaxiSelect);
+const poolUserTaxiUpdate = new Pool(config.configUserTaxiUpdate);
+const poolUserTaxiDelete = new Pool(config.configUserTaxiDelete);
+const poolUserDriveInsert = new Pool(config.configUserDriveInsert);
+const poolUserDriveSelect = new Pool(config.configUserDriveSelect);
+const poolUserDriveUpdate = new Pool(config.configUserDriveUpdate);
+const poolUserDriveDelete = new Pool(config.configUserDriveDelete);
+const poolUserAskInsert = new Pool(config.configUserAskInsert);
+const poolUserAskSelect = new Pool(config.configUserAskSelect);
+const poolUserAskUpdate = new Pool(config.configUserAskUpdate);
+const poolUserAskDelete = new Pool(config.configUserAskDelete);
+const poolUserGpsInsert = new Pool(config.configUserGpsInsert);
+const poolUserGpsSelect = new Pool(config.configUserGpsSelect);
+const poolUserGpsUpdate = new Pool(config.configUserGpsUpdate);
+const poolUserGpsDelete = new Pool(config.configUserGpsDelete);
+
 
 const validateCheck = (request,response) => {
     //validacion de errores de sanitize 
@@ -55,7 +93,7 @@ const todo = (request,response) => {
 const ingresarUsuario = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await pool.connect()
+        var client = await poolUserClientSelect.connect()
         try{
             validateCheck(request,response)
             //obtiene la informacion 
