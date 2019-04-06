@@ -102,7 +102,7 @@ const ingresarUsuario = (request, response) => {
             //ejecuta el query correspondiente
             var result = await client.query('SELECT cellphoneclient FROM client WHERE cellphoneclient = $1 AND passwordClient = md5($2) AND status = true;', [cellphone, pass]);
             if (result.rowCount === 0){
-                response.status(404).json({error: "Usuario no encontrado"})
+                response.status(200).json({error: "Usuario no encontrado"})
             }
             else{
                 //devuelve la informacion esperada
@@ -124,7 +124,7 @@ const usuario = (request, response) => {
             const cellphone = request.query.cellphone;
             var result = await client.query('SELECT * FROM client WHERE cellphoneclient = $1 AND status = true;', [cellphone]);
             if (result.rowCount === 0){
-                response.status(404).json({error: "Usuario no encontrado"})
+                response.status(200).json({error: "Usuario no encontrado"})
             }
             else{
                 //devuelve la informacion esperada
@@ -140,20 +140,22 @@ const usuario = (request, response) => {
 
 const registrarUsuario = (request, response) => {
     (async () => {
-        var client = await poolUserClientInsert.connect()
+        var client = await pool.connect() //#######################################
         try{
             //validacion de errores de sanitize 
             validateCheck(request,response)
             var cellphone = request.body.cellphone;
             var pass = request.body.pass;
             var name = request.body.name;
-            var address = request.body.address;
+            var pointx = request.body.address.lat;
+            var pointy = request.body.address.lng;
             var creditCard = request.body.creditCard;
             var result = await client.query("INSERT INTO Client"+
                                             "(cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES"+
-                                            "($1, md5($2), $3, $4, $5, true) RETURNING cellphoneClient;", [cellphone, pass, name, address, creditCard])
+                                            "($1, md5($2), $3, GEOMETRY(POINT($4,$5)), $6, true) RETURNING cellphoneClient;", [cellphone, pass, name, pointx, pointy, creditCard])
             if (result.rows[0].cellphoneclient !== cellphone){
-                response.status(404).json({mensaje: "Error en registrar usuario."})
+                console.log(result.error)
+                response.status(200).json({mensaje: "Error en registrar usuario."})
             }
             else{
                 response.status(200).json({mensaje: "Usuario creado correctamente."})
@@ -177,6 +179,25 @@ const lugaresFavoritos = (request, response) => {
                 package[id] = result.rows[id]
             }
             response.status(200).json({coordinates: package})
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const origen = (request, response) => {
+    (async () => {
+        var client = await poolUserClientSelect.connect()
+        try{
+            validateCheck(request,response)
+            const cellphone = request.query.cellphone;
+            var result = await client.query('SELECT POINT(address) AS  point FROM Client WHERE cellphoneClient=$1;',[cellphone])
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Usuario no encontrado"})
+            }
+            console.log(result.rows[0].point)
+            response.status(200).json({origin: result.rows[0].point})
         }finally{
             //cierra la conexion con el cliente
             client.release()
@@ -243,7 +264,7 @@ const placa = (request, response) => {
             const plaque = request.query.plaque;
             var result = await client.query("SELECT * FROM Taxi WHERE plaque=$1;",[plaque])
             if (result.rowCount === 0){
-                response.status(404).json({error: "Taxi no encontrado"})
+                response.status(200).json({error: "Taxi no encontrado"})
             }
             else{
                 //devuelve la informacion esperada
@@ -310,6 +331,7 @@ module.exports = {
     usuario,
     registrarUsuario,
     lugaresFavoritos,
+    origen,
     ingresarConductor,
     conductor,
     placa,

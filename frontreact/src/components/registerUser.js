@@ -4,6 +4,8 @@ import {Modal,Button,Form } from 'react-bootstrap'
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
 import ModalMap from '../components/modalmap';
+import check from './images/checked.png';
+import error from './images/error.png';
 
 const backdropStyle = {
     backgroundColor: 'rgb(93, 110, 128)',
@@ -34,7 +36,7 @@ class RegisterUser extends Component {
     createUser(e){
         e.preventDefault()
         //una muy linda verificacion que no estoy haciendo sobre tipos de datos y demas
-        if ( this.state.name === "" || this.state.cellphone === ""|| this.state.pass === "" || this.state.address === "" || this.state.creditCard === ""){
+        if ( this.state.name === "" || this.state.cellphone === ""|| this.state.pass === ""|| this.state.point.lat === 1 || this.state.creditCard === ""){
             alert("Alguno de los campos esta vacio")
         }
         else{
@@ -42,7 +44,7 @@ class RegisterUser extends Component {
                 cellphone: this.state.cellphone,
                 pass: this.state.pass,
                 name: this.state.name,
-                address: this.state.address,
+                address: this.state.point,
                 creditCard: this.state.creditCard
             }).then( response => {
                 console.log("info enviada")
@@ -98,8 +100,9 @@ class RegisterUser extends Component {
                             <Form.Control type="password" placeholder="contraseña" name="pass" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoDireccion">
-                            <Form.Label style={{margin: 5}}>Dirección [{this.state.point.lat}, {this.state.point.lng}]</Form.Label>
+                            <Form.Label style={{margin: 5}}>Dirección </Form.Label>
                             <Button style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>
+                            { this.state.point.lat === 1 ? <img style={{margin:5}} alt='' src={error} height={'30'} width={'30'}/> : <img style={{margin:5}} alt='' src={check} height={'30'} width={'30'}/>}
                         </Form.Group>
                         <Form.Group controlId="IngresoTarjetaCredito">
                             <Form.Label>Tarjeta de Credito</Form.Label>

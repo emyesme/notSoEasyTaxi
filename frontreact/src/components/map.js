@@ -19,6 +19,12 @@ const setPoint = new L.icon({
     className: 'leaflet-div-icon'
 })
 
+const origin = new L.icon({
+    iconUrl: require('./images/origin.svg'),
+    iconSize: new L.point(25,25),
+    className: 'leaflet-div-icon'    
+})
+
 
 class LMap extends Component {
     constructor(props) {
@@ -31,6 +37,10 @@ class LMap extends Component {
             punto : {
                 lat: mapCenter[0],
                 lng: mapCenter[1],
+            },
+            origin: {
+                lat: this.props.origin.lat,
+                lng: this.props.origin.lng
             },
             markers: this.props.markers,
             modoObtener: this.props.modoObtener //pruebas
@@ -63,7 +73,7 @@ class LMap extends Component {
                     <Popup onClick={this.handleClick} position={this.state.punto}>¿Seguro? Punto: <pre>{JSON.stringify(this.state.punto, null, 2)}</pre></Popup>
                     </Marker>}
                     {/*Este es para posicion actual solo usuarios deberian tenerlo*/}
-                    {/*<Marker></Marker>*/}
+                    <Marker position={this.state.origin} icon={origin}></Marker>
                     {this.state.markers.map((data, id) =>  <Marker key={'marker-'+id} position={[data.point.x,data.point.y]} icon={favPlaces}><Popup>
                         <span> {data.namecoordinate} </span></Popup></Marker>)}
                 </Map>

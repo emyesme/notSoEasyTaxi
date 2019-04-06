@@ -33,6 +33,10 @@ class Menuser extends Component {
                 lat: 1.0,
                 lng: 1.0,
             },
+            origin: {
+                lat: 1,
+                lng: 1
+            },
             markers: []
         }
         this.showMap = this.showMap.bind(this)
@@ -46,6 +50,16 @@ class Menuser extends Component {
             else{
                 this.setState({ name: response.data.name})
             }
+        }).catch(error => alert(error))
+        //origen
+        Axios.get(api+"/Origen?cellphone="+this.state.cellphone)
+        .then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+            }
+            else{
+                this.setState({origin: { lat: response.data.coordinate[0], lng: response.data.coordinate[1]}});
+            }            
         }).catch(error => alert(error))
         //lugares favoritos
         Axios.get(api+"/LugaresFavoritos?cellphone="+this.state.cellphone)
@@ -94,7 +108,7 @@ class Menuser extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} point = { value => this.callback(value)} modoObtener={true}/> </Card> : <div></div>}
+                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} origin={this.state.origin} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

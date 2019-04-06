@@ -36,8 +36,8 @@ app.post('/RegistrarUsuario',
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
             check('pass').trim(),
             check('name').isAlpha().trim().escape(),
-            check('address').isAlphanumeric().trim().escape(),
-            check('creditCard').isCreditCard().trim().escape()
+            check('address').escape(),
+            check('creditCard').isNumeric().isLength({min:16}).trim().escape()
         ],
         db.registrarUsuario)
 
@@ -46,6 +46,12 @@ app.get('/LugaresFavoritos',
             check('cellphone').isNumeric().isLength({min:10}).trim().escape()
         ],
         db.lugaresFavoritos)
+
+app.get('/Origen',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.origen)
 
 //###########################CONDUCTOR########################################        
 app.get('/IngresarConductor',
