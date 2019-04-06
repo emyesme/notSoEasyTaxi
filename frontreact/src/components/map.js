@@ -7,11 +7,19 @@ const stamenAttr = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, 
 const mapCenter = [3.430283815687804, 283.48211288452154];
 const zoomLevel = 12;
 
-const iconImage = new L.Icon({
+const favPlaces = new L.Icon({
     iconUrl: require('./images/marker.svg'),
     iconSize: new L.point(25,25),
     className: 'leaflet-div-icon'
 }) 
+
+const setPoint = new L.icon({
+    iconUrl: require('./images/setPlace.svg'),
+    iconSize: new L.point(25,25),
+    className: 'leaflet-div-icon'
+})
+
+
 class LMap extends Component {
     constructor(props) {
         super(props);
@@ -21,13 +29,14 @@ class LMap extends Component {
                 width : this.props.width,
             },
             punto : {
-                lat: 1.0,
-                lng: 1.0,
+                lat: mapCenter[0],
+                lng: mapCenter[1],
             },
-            markers: this.props.markers
+            markers: this.props.markers,
+            modoObtener: this.props.modoObtener //pruebas
         }
     }
-    doSomething = (e) => {
+    handleClick = (e) => {
         this.setState({ punto: {lat:e.latlng.lat, lng:e.latlng.lng}});
         this.props.point(this.state.punto)
     }
@@ -39,12 +48,23 @@ class LMap extends Component {
                     style = {{height: this.state.size.height, width: this.state.size.width}}
                     center={mapCenter}
                     zoom={zoomLevel}
-                    onClick={this.doSomething}>
+                    onClick={this.handleClick}>
                     <TileLayer
                         attribution={stamenAttr}
                         url={stamenTiles}
                     />
-                    {this.state.markers.map((data, id) =>  <Marker key={'marker-'+id} position={[data.point.x,data.point.y]} icon={iconImage}><Popup>
+                    {/*Este es para poner puntos y guardarlos*/}
+                    { this.state.punto && this.state.modoObtener &&
+                    <Marker
+                        onClick={this.handleClick}
+                        position={this.state.punto}
+                        draggable={true}
+                        icon={setPoint}>
+                    <Popup onClick={this.handleClick} position={this.state.punto}>¿Seguro? Punto: <pre>{JSON.stringify(this.state.punto, null, 2)}</pre></Popup>
+                    </Marker>}
+                    {/*Este es para posicion actual solo usuarios deberian tenerlo*/}
+                    {/*<Marker></Marker>*/}
+                    {this.state.markers.map((data, id) =>  <Marker key={'marker-'+id} position={[data.point.x,data.point.y]} icon={favPlaces}><Popup>
                         <span> {data.namecoordinate} </span></Popup></Marker>)}
                 </Map>
                 </center>

@@ -10,7 +10,7 @@ import {Switch, Route, BrowserRouter} from 'react-router-dom';
 import Service from './components/user/service';
 
 class App extends Component {
-  state = { modalShow: true, name: "default", cellphone: "555" };
+  state = { modalShow: true};
   render() {
     let modalClose = () => this.setState({ modalShow: false });
     return (

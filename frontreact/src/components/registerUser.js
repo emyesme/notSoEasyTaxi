@@ -3,6 +3,7 @@ import user from './images/user.png'
 import {Modal,Button,Form } from 'react-bootstrap'
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
+import ModalMap from '../components/modalmap';
 
 const backdropStyle = {
     backgroundColor: 'rgb(93, 110, 128)',
@@ -19,10 +20,16 @@ class RegisterUser extends Component {
             cellphone: '0000000000',
             pass: '',
             address: '',
-            creditCard: ''
+            creditCard: '',
+            showModal: false,
+            point:{
+                lat: 1,
+                lng: 1
+            }
         }
         this.createUser = this.createUser.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.getMap = this.getMap.bind(this);
     }
     createUser(e){
         e.preventDefault()
@@ -51,13 +58,23 @@ class RegisterUser extends Component {
             }).catch( error => console.log(error))
         }   
     }
+    getMap(){
+        this.setState( { showModal: !this.state.showModal})
+    }
     handleChange(e){
         const { name, value} = e.target;
         this.setState({
             [name]: value
         })
     }
-    render() { 
+    callback (inputPoint){
+        this.setState({
+            point:{ lat: inputPoint.lat, lng: inputPoint.lng},
+            showModal: false
+        })
+    }
+    render() {
+        let modalClose = () => this.setState({ showModal: false });
         return (
         <div style={backdropStyle}>
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
@@ -81,8 +98,8 @@ class RegisterUser extends Component {
                             <Form.Control type="password" placeholder="contraseña" name="pass" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoDireccion">
-                            <Form.Label>Dirección (En coordenadas)</Form.Label>
-                            <Form.Control type="text" placeholder="coordenadas" name="address" onChange={this.handleChange}/>
+                            <Form.Label style={{margin: 5}}>Dirección [{this.state.point.lat}, {this.state.point.lng}]</Form.Label>
+                            <Button style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>
                         </Form.Group>
                         <Form.Group controlId="IngresoTarjetaCredito">
                             <Form.Label>Tarjeta de Credito</Form.Label>
@@ -97,6 +114,8 @@ class RegisterUser extends Component {
                 <Button href='/' variant='danger'> Cancelar </Button>
                 </Modal.Footer>
             </Modal.Dialog>
+            {/*Mostrar mapa para seleccionar punto*/}
+            <ModalMap show={this.state.showModal} onHide={modalClose} coordinates = { value => this.callback(value)}/>
         </div>
         );
     }

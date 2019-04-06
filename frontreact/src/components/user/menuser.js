@@ -94,7 +94,7 @@ class Menuser extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} point = { value => this.callback(value)}/> </Card> : <div></div>}
+                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} point = { value => this.callback(value)} modoObtener={true}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

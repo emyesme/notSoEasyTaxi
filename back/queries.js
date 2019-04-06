@@ -118,7 +118,7 @@ const ingresarUsuario = (request, response) => {
 
 const usuario = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserClientSelect.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -140,7 +140,7 @@ const usuario = (request, response) => {
 
 const registrarUsuario = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserClientInsert.connect()
         try{
             //validacion de errores de sanitize 
             validateCheck(request,response)
@@ -167,7 +167,7 @@ const registrarUsuario = (request, response) => {
 
 const lugaresFavoritos = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserFavCoordinatesSelect.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -190,7 +190,7 @@ const lugaresFavoritos = (request, response) => {
 const ingresarConductor = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await pool.connect()
+        var client = await poolUserDriverSelect.connect()
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -215,11 +215,11 @@ const ingresarConductor = (request, response) => {
 
 const conductor = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserDriveSelect.connect()//o cambiar el query o escoger diferente
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
-            var result = await client.query('SELECT driver.cellphonedriver, driver.nameDriver, plaque, date FROM driver INNER JOIN drive ON driver.cellphoneDriver = drive.cellphoneDriver WHERE driver.cellphoneDriver = $1  AND status=true ORDER BY date DESC LIMIT 1;', [cellphone]);
+            var result = await client.query('SELECT cellphonedriver, plaque, date FROM drive WHERE cellphonedriver = $1 ORDER BY date DESC LIMIT 1;', [cellphone]);
             if (result.rowCount === 0){
                 response.status(200).json({error: "Conductor no encontrado"})
             }
@@ -237,7 +237,7 @@ const conductor = (request, response) => {
 
 const placa = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserTaxiSelect.connect()
         try{
             validateCheck(request,response)
             const plaque = request.query.plaque;
@@ -258,7 +258,7 @@ const placa = (request, response) => {
 
 const cambiarTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserDriveInsert.connect()
         try{
             validateCheck(request, response)
             var plaque = request.body.plaque;
@@ -280,7 +280,7 @@ const cambiarTaxi = (request, response) => {
 
 const adicionarTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserTaxiInsert.connect()
         try{
             validateCheck(request,response)
             var plaque = request.body.plaque;
