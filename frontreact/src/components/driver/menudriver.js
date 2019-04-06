@@ -110,7 +110,7 @@ class Menudriver extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap  height={'695px'} width={'100%'} markers={[]}point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
+                    <LMap  height={'695px'} width={'100%'} markers={[]}  origin={{lat:0,lng:0}} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

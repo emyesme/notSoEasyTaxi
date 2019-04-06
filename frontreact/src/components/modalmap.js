@@ -40,12 +40,12 @@ class modalmap extends React.Component {
                 <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">
                     <Image src={marker} height={'50'} width={'50'}/>
-                    Seleccionar el Punto [{this.state.point.lat}, {this.state.point.lng}]
+                    Seleccionar el Punto    
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <center>
-                    <LMap  height={'300px'} width={'100%'} markers={[]} point = { value => this.callback(value)} modoObtener={true}/>
+                    <LMap  height={'300px'} width={'100%'} markers={[]} origin={this.props.firstpoint} point = { value => this.callback(value)} modoObtener={true}/>
                     </center>
                 </Modal.Body>
                 <Modal.Footer>
