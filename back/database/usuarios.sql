@@ -210,7 +210,7 @@ drop user if exists userTaxiInsert;
 CREATE USER userTaxiInsert WITH PASSWORD '123';
 GRANT INSERT ON TABLE Taxi TO userTaxiInsert;
 
-drop user if exists userModelTaxiSelect;
+drop user if exists userTaxiSelect;
 CREATE USER userTaxiSelect WITH PASSWORD '123';
 GRANT SELECT ON TABLE Taxi TO userTaxiSelect;
 
@@ -218,7 +218,7 @@ drop user if exists userTaxiUpdate;
 CREATE USER userTaxiUpdate WITH PASSWORD '123';
 GRANT UPDATE ON TABLE Taxi TO userTaxiUpdate;
 
-drop user if exists userModelTaxiDelete;
+drop user if exists userTaxiDelete;
 CREATE USER userTaxiDelete WITH PASSWORD '123';
 GRANT DELETE ON TABLE Taxi TO userTaxiDelete;
 
@@ -324,4 +324,5 @@ INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCoordinates, finalCoor
 	(3101111111, 3103333333, GEOMETRY(POINT(3,4)), GEOMETRY(POINT(4,4)), (TIMESTAMP '2019-03-01T15:20:33.772Z'), (TIMESTAMP '2019-03-01T16:01:35.772Z'), 4);
 
  explain select * from client where cellphoneClient = '6176166' and status = true
+
 
