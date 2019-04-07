@@ -303,6 +303,102 @@ const adicionarTaxi = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const buscarPrimerTaxi = (request, response) => {
+    (async () => {
+        var client = await pool.connect()
+        try{
+            validateCheck(request,response)
+            var cellphoneClient = request.body.cellphone;
+            var initialPoint = request.body.initialCoordinates;
+            var finalPoint = request.body.finalCoordinates;
+            
+            var result = await client.query("SELECT findDriver($1, $2, $3)",[cellphoneClient, initialPoint, finalPoint])
+            if (result.rows[0].findDriver === NULL){
+                response.status(404).json({error: "No encontramos ningun taxista disponible"})
+            }
+            else{
+                response.status(200).json({mensaje: "Taxista encontrado, por favor espere la respuesta del conductor asignado"})
+            }
+                
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
+const buscarCelularConAsk = (request, response) => {
+    (async () => {
+        var client = await pool.connect()
+        try{
+            validateCheck(request,response)
+            var idAskIn = request.body.idAsk;
+            
+            var result = await client.query("SELECT cellphoneDriver FROM Ask WHERE idAsk = $1", [idAskIn]);
+            
+            if (result.rows[0].cellphonedriver === NULL){
+                response.status(404).json({error: "El celular de conductor no fue encontrado"})
+            }
+            else{
+                response.status(200).json({mensaje: "El celular de conductor fue encontrado"})
+            }
+                
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
+const verDisponibilidadCellphone = (request, response) => {
+    (async () => {
+        var client = await pool.connect()
+        try{
+            validateCheck(request,response)
+            var cellphoneDriver = request.body.cellphone;
+            
+            var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphoneDriver]);
+            
+            if (result.rows[0].cellphonedriver === true){
+                response.status(200).json({error: "Esta disponible"})
+            }
+            else{
+                response.status(200).json({mensaje: "No esta disponible"})
+            }
+                
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const askAceptada = (request, response) => {
+    (async () => {
+        var client = await pool.connect()
+        try{
+            validateCheck(request,response)
+            var idAskIn = request.body.idAsk;
+            
+            var result = await client.query("SELECT initialTime FROM Ask WHERE idAsk = $1", [idAskIn]);
+            
+            if (result.rows[0].initialTime === NULL){
+                response.status(200).json({error: "Aun no ha sido aceptada"})
+            }
+            else{
+                response.status(200).json({mensaje: "Fue aceptada"})
+            }
+                
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
 //importante 
 module.exports = {
     todo,
