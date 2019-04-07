@@ -342,35 +342,64 @@ $$ LANGUAGE plpgsql;
 
 SELECT distance(GEOMETRY(POINT (3.3993721615737833, 283.48647683858877)), GEOMETRY(POINT (3.3994524862586832, 283.48640173673635)));
 
-WITH
-driverLastRecord AS 
-(select Driver.cellphoneDriver,  max(date) AS date
-from driver inner join drive on driver.cellphonedriver=drive.cellphonedriver
-where available = true
-group by (driver.cellphoneDriver)),
+CREATE OR REPLACE VIEW lastCoordinatesPlaques AS (
+	WITH
+	driverLastRecord AS 
+	(select Driver.cellphoneDriver,  max(date) AS date
+	from driver inner join drive on driver.cellphonedriver=drive.cellphonedriver
+	where available = true
+	group by (driver.cellphoneDriver)),
 
-driverLastPlaque AS
-(SELECT Drive.cellphoneDriver, Drive.plaque
-FROM driverLastRecord INNER JOIN drive 
-ON driverLastRecord.cellphonedriver = drive.cellphoneDriver
-AND driverLastRecord.date = drive.date ),
+	driverLastPlaque AS
+	(SELECT Drive.cellphoneDriver, Drive.plaque
+	FROM driverLastRecord INNER JOIN drive 
+	ON driverLastRecord.cellphonedriver = drive.cellphoneDriver
+	AND driverLastRecord.date = drive.date ),
 
-plaqueLastRecord AS
-(SELECT driverLastPlaque.cellphoneDriver, driverLastPlaque.plaque, max(timestamp) AS timestamp
-FROM driverLastPlaque INNER JOIN Gps
-ON driverLastPlaque.plaque = Gps.plaque
-GROUP BY (driverLastPlaque.cellphoneDriver, driverLastPlaque.plaque)),
+	plaqueLastRecord AS
+	(SELECT driverLastPlaque.cellphoneDriver, driverLastPlaque.plaque, max(timestamp) AS timestamp
+	FROM driverLastPlaque INNER JOIN Gps
+	ON driverLastPlaque.plaque = Gps.plaque
+	GROUP BY (driverLastPlaque.cellphoneDriver, driverLastPlaque.plaque)),
 
-plaqueLastCoordinate AS
-(SELECT plaqueLastRecord.cellphoneDriver, plaqueLastRecord.plaque, Gps.coordinate
-FROM plaqueLastRecord INNER JOIN Gps
-ON plaqueLastRecord.plaque = Gps.plaque
-AND plaqueLastRecord.timestamp = Gps.timestamp),
-
-cte as (
-	select row_number() over (order by (distance(coordinate, GEOMETRY(POINT(1,1))))) rn, * from plaqueLastCoordinate
-)
-Select * from cte where rn = 1
-
+	plaqueLastCoordinate AS
+	(SELECT plaqueLastRecord.cellphoneDriver, plaqueLastRecord.plaque, Gps.coordinate
+	FROM plaqueLastRecord INNER JOIN Gps
+	ON plaqueLastRecord.plaque = Gps.plaque
+	AND plaqueLastRecord.timestamp = Gps.timestamp)
+	
+SELECT * FROM plaqueLastCoordinate
+);
 
 
+CREATE OR REPLACE FUNCTION findDriver (cellphoneClientIn VARCHAR(10), initialCoordinatesIn GEOMETRY, finalCoordinatesIn GEOMETRY) 
+RETURNS INTEGER AS $$
+DECLARE
+	idAskOut INTEGER;
+	closerDriver VARCHAR(10) := (SELECT cellphoneDriver
+								FROM (select row_number() over (order by (distance(coordinate, initialCoordinatesIn))) rn, * from lastCoordinatesPlaques)
+								AS closer
+								where rn = 1 LIMIT 1);
+BEGIN
+	INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCoordinates, finalCoordinates, initialTime, finalTime, stars) VALUES
+						(cellphoneClientIn, closerDriver, initialCoordinatesIn, finalCoordinatesIn, NULL, NULL, NULL) 
+						RETURNING idAsk
+						INTO idAskOut;
+	RETURN idAskOut;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION meters (cellphoneIn VARCHAR(10))
+RETURNS INTEGER AS $$
+BEGIN
+	RETURN (SELECT SUM(distance(initialCoordinates, finalCoordinates)) 
+			FROM Ask
+			GROUP BY (cellphoneIn));
+END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT * FROM lastcoordinatesplaques WHERE cellphoneDriver = '3102222222';
+SELECT findDriver('3107307371', GEOMETRY(POINT (1,1)), GEOMETRY(POINT(10,10)) );
