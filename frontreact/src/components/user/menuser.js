@@ -5,6 +5,7 @@ import { Modal, Button, ButtonGroup, Card, CardDeck } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import './menuser.css'
 import Axios from 'axios';
+import Service from './service'
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -29,13 +30,19 @@ class Menuser extends Component {
         this.state = {
             name: '',
             cellphone: this.props.location.state.cellphone,
+            showModal: false,
             point : {
                 lat: 1.0,
                 lng: 1.0,
             },
+            origin: {
+                lat: 0,
+                lng: 0
+            },
             markers: []
         }
         this.showMap = this.showMap.bind(this)
+        this.getService = this.getService.bind(this)
     }
     componentWillMount(){
         Axios.get(api+"/Usuario?cellphone="+this.state.cellphone)
@@ -46,6 +53,16 @@ class Menuser extends Component {
             else{
                 this.setState({ name: response.data.name})
             }
+        }).catch(error => alert(error))
+        //origen
+        Axios.get(api+"/Origen?cellphone="+this.state.cellphone)
+        .then( response => {
+            if( response.data.error != null){
+               alert(response.data.error);
+            }
+            else{
+                this.setState({origin: { lat: response.data.origin.x, lng: response.data.origin.y}});
+            }            
         }).catch(error => alert(error))
         //lugares favoritos
         Axios.get(api+"/LugaresFavoritos?cellphone="+this.state.cellphone)
@@ -63,12 +80,16 @@ class Menuser extends Component {
             showMap: !this.state.showMap
         })
     }
-    callback (inputPoint){
+    callbackMap(inputPoint){
         this.setState({
             point:{ lat: inputPoint.lat, lng: inputPoint.lng}
         })
     }
+    getService(){
+        this.setState( { showModal: !this.state.showModal})
+    }
     render() {
+        let modalClose = () => this.setState({ showModal: false});
         return (
             <div style={backColor} className="menuser">
             <Modal.Dialog  size='lg' centered>
@@ -83,7 +104,7 @@ class Menuser extends Component {
                         <Button style={pad}>Kilometros Recorridos</Button>
                         <Button style={pad}>Historial</Button>
                         <Button style={pad}>Modificar Información</Button>
-                        <Button href="/Servicio" style={pad}>Solicitar Servicio!</Button>
+                        <Button onClick={this.getService} style={pad}>Solicitar Servicio!</Button>
                         <Button style={pad}>Eliminar Cuenta</Button>
                         <Button style={pad}>Agregar Lugar Favorito</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
@@ -94,10 +115,11 @@ class Menuser extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} point = { value => this.callback(value)}/> </Card> : <div></div>}
+                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} origin={this.state.origin} point = { value => this.callbackMap(value)} modoObtener={false}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
+            <Service show={this.state.showModal} firstpoint={this.state.origin} favcoordinates={this.state.markers.coordinates} onHide={modalClose}/>
         </div>
         );
     }

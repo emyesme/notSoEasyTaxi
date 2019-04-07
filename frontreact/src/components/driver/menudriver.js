@@ -86,7 +86,7 @@ class Menudriver extends Component {
                     <Card style={grayRgb} >
                         <center>
                         <h2> <img alt='' src={car}/> Menu Conductor</h2> 
-                        <h6> Datos: { this.state.name}, {this.state.cellphone} Placa: {this.state.plaque} </h6>
+                        <h6> Telefono: {this.state.cellphone} Placa: {this.state.plaque} </h6>
                         <div>
                         <ButtonGroup vertical>
                         <Button style={pad} >Modificar Información Personal</Button>
@@ -110,7 +110,7 @@ class Menudriver extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap  height={'695px'} width={'100%'} markers={[]}point = { value => this.callback(value)}/> </Card> : <div></div>}
+                    <LMap  height={'695px'} width={'100%'} markers={[]}  origin={{lat:0,lng:0}} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

@@ -102,7 +102,7 @@ const ingresarUsuario = (request, response) => {
             //ejecuta el query correspondiente
             var result = await client.query('SELECT cellphoneclient FROM client WHERE cellphoneclient = $1 AND passwordClient = md5($2) AND status = true;', [cellphone, pass]);
             if (result.rowCount === 0){
-                response.status(404).json({error: "Usuario no encontrado"})
+                response.status(200).json({error: "Usuario no encontrado"})
             }
             else{
                 //devuelve la informacion esperada
@@ -118,13 +118,13 @@ const ingresarUsuario = (request, response) => {
 
 const usuario = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserClientSelect.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
             var result = await client.query('SELECT * FROM client WHERE cellphoneclient = $1 AND status = true;', [cellphone]);
             if (result.rowCount === 0){
-                response.status(404).json({error: "Usuario no encontrado"})
+                response.status(200).json({error: "Usuario no encontrado"})
             }
             else{
                 //devuelve la informacion esperada
@@ -140,20 +140,22 @@ const usuario = (request, response) => {
 
 const registrarUsuario = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await pool.connect() //#######################################
         try{
             //validacion de errores de sanitize 
             validateCheck(request,response)
             var cellphone = request.body.cellphone;
             var pass = request.body.pass;
             var name = request.body.name;
-            var address = request.body.address;
+            var pointx = request.body.address.lat;
+            var pointy = request.body.address.lng;
             var creditCard = request.body.creditCard;
             var result = await client.query("INSERT INTO Client"+
                                             "(cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES"+
-                                            "($1, md5($2), $3, $4, $5, true) RETURNING cellphoneClient;", [cellphone, pass, name, address, creditCard])
+                                            "($1, md5($2), $3, GEOMETRY(POINT($4,$5)), $6, true) RETURNING cellphoneClient;", [cellphone, pass, name, pointx, pointy, creditCard])
             if (result.rows[0].cellphoneclient !== cellphone){
-                response.status(404).json({mensaje: "Error en registrar usuario."})
+                console.log(result.error)
+                response.status(200).json({mensaje: "Error en registrar usuario."})
             }
             else{
                 response.status(200).json({mensaje: "Usuario creado correctamente."})
@@ -167,7 +169,7 @@ const registrarUsuario = (request, response) => {
 
 const lugaresFavoritos = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserFavCoordinatesSelect.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -184,13 +186,32 @@ const lugaresFavoritos = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const origen = (request, response) => {
+    (async () => {
+        var client = await poolUserClientSelect.connect()
+        try{
+            validateCheck(request,response)
+            const cellphone = request.query.cellphone;
+            var result = await client.query('SELECT POINT(address) AS  point FROM Client WHERE cellphoneClient=$1;',[cellphone])
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Usuario no encontrado"})
+            }
+            console.log(result.rows[0].point)
+            response.status(200).json({origin: result.rows[0].point})
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
 //###########################CONDUCTOR########################################
 
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
 const ingresarConductor = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await pool.connect()
+        var client = await poolUserDriverSelect.connect()
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -215,11 +236,11 @@ const ingresarConductor = (request, response) => {
 
 const conductor = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserDriveSelect.connect()//o cambiar el query o escoger diferente
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
-            var result = await client.query('SELECT driver.cellphonedriver, driver.nameDriver, plaque, date FROM driver INNER JOIN drive ON driver.cellphoneDriver = drive.cellphoneDriver WHERE driver.cellphoneDriver = $1  AND status=true ORDER BY date DESC LIMIT 1;', [cellphone]);
+            var result = await client.query('SELECT cellphonedriver, plaque, date FROM drive WHERE cellphonedriver = $1 ORDER BY date DESC LIMIT 1;', [cellphone]);
             if (result.rowCount === 0){
                 response.status(200).json({error: "Conductor no encontrado"})
             }
@@ -237,17 +258,17 @@ const conductor = (request, response) => {
 
 const placa = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolUserTaxiSelect.connect()
         try{
             validateCheck(request,response)
             const plaque = request.query.plaque;
             var result = await client.query("SELECT * FROM Taxi WHERE plaque=$1;",[plaque])
             if (result.rowCount === 0){
-                response.status(404).json({error: "Taxi no encontrado"})
+                response.status(200).json({error: "Taxi no encontrado"})
             }
             else{
                 //devuelve la informacion esperada
-                response.status(200).json({plaque: result.rows[0].plaque,model: result.rows[0].model, soat: result.rows[0].soat, year: result.rows[0].year, trademark: result.rows[0].trademark, trunk: result.rows[0].trunk})
+                response.status(200).json({plaque: result.rows[0].plaque,model: result.rows[0].model, soat: result.rows[0].soat, year: result.rows[0].year})
             }
         }finally{
             //cierra la conexion con el cliente
@@ -289,7 +310,7 @@ const adicionarTaxi = (request, response) => {
             var model = request.body.model;
             var trademark = request.body.trademark;
             var trunk = request.body.trunk;
-            var result = await client.query("INSERT INTO Taxi (plaque, soat, year, model, trademark, trunk) VALUES ($1, $2, $3, $4, $5, $6) RETURNING plaque;",[plaque, soat, year, model, trademark, trunk])
+            var result = await client.query("INSERT INTO Taxi (plaque, soat, year, model) VALUES ($1, $2, $3, $4) RETURNING plaque;",[plaque, soat, year, model])
             if (result.rows[0].plaque !== plaque){
                 response.status(200).json({mensaje: "Error al adicionar taxi"})
             }
@@ -303,6 +324,29 @@ const adicionarTaxi = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const modelos = (request, response) => {
+    (async () => {
+        var client = await poolUserModelTaxiSelect.connect()
+        try{
+            var result = await client.query("SELECT * FROM modelTaxi")
+            if (result.rowCount === 0){
+                response.status(200).json({error: "No hay modelos"})
+            }
+            else{
+                var package = [];
+                for (id in result.rows){
+                    package[id] = result.rows[id]
+                }
+                response.status(200).json({models: package})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
+
+
 //importante 
 module.exports = {
     todo,
@@ -310,9 +354,11 @@ module.exports = {
     usuario,
     registrarUsuario,
     lugaresFavoritos,
+    origen,
     ingresarConductor,
     conductor,
     placa,
     cambiarTaxi,
     adicionarTaxi,
+    modelos,
 }

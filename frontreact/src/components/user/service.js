@@ -2,17 +2,74 @@ import React from 'react';
 import Service1 from '../images/1service.png'
 import Service2 from '../images/2service.png'
 import Service3 from '../images/3service.png'
-import {Modal,Button,Col, Row, Image} from 'react-bootstrap'
-
-
+import {Modal,Button,Col, Row, Image, Dropdown} from 'react-bootstrap'
+import ModalMap from '../modalmap';
+import check from '../images/checked.png';
+import error from '../images/error.png';
+import DropdownItem from 'react-bootstrap/DropdownItem';
+/*import Axios from 'axios';*/
 class Service extends React.Component {
-    constructor(...args) {
-        super(...args);
-    
-        this.state = { modalShow: false };
+    constructor(props) {
+        super(props);
+        this.state = {
+          modalShowOrigin: false,
+          modalShowDestiny: false,
+          point:{
+            lat: -1,
+            lng: -1
+          },
+          destiny: {
+            lat: -1,
+            lng: -1
+          },
+          favcoordinates: [],
+          searchAble : true
+        };
+        this.getModalMapOrigin = this.getModalMapOrigin.bind(this);
+        this.getModalMapDestiny = this.getModalMapDestiny.bind(this);
+        this.callbackOrigin = this.callbackOrigin.bind(this);
+        this.callbackDestiny = this.callbackDestiny.bind(this);
+        this.findDriver = this.findDriver.bind(this);
+    }
+    getPoint(coordinate){
+      
+      this.setState({ destiny: { lat: coordinate.x, lng: coordinate.y} })
+    }
+    getModalMapDestiny(){
+      this.setState({ modalShowDestiny: !this.state.modalShowDestiny})
+    }
+    getModalMapOrigin(){
+      this.setState( { modalShowOrigin: !this.state.modalShowOrigin})
+    }
+    callbackOrigin(inputPoint){
+      this.setState({
+          point:{ lat: inputPoint.lat, lng: inputPoint.lng},
+          modalShowOrigin: !this.state.modalShowOrigin
+      })
+    }
+    callbackDestiny(inputPoint){
+      this.setState({
+          destiny:{ lat: inputPoint.lat, lng: inputPoint.lng},
+          modalShowDestiny: !this.state.modalShowDestiny
+      })
+    }
+    findDriver(){
+      if ( this.state.point.lat === -1 || this.state.destiny.lat === -1){
+        alert("No a ingresado la ubicación de origen o destino.")
+        return;
       }
+      console.log("envia info")
+      /*Axios.post(api+'/TaxiCerca?='+this.state.point)
+      .then( response => {
+        
+      })*/
+
+    }
     render() {
+      let modalCloseOrigin = () => this.setState({ modalShowOrigin: false });
+      let modalCloseDestiny = () => this.setState({ modalShowDestiny: false });
       return (
+        <div>
         <Modal
           {...this.props}
           size="lg"
@@ -21,7 +78,7 @@ class Service extends React.Component {
         >
           <Modal.Header>
             <Modal.Title id="contained-modal-title-vcenter">
-              Solicitar un Servicio
+              Solicitar un Servicio 
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -31,16 +88,29 @@ class Service extends React.Component {
                     <Image src={Service1} />
                     <h6>Origen</h6>
                     <p>Tu posicion actual</p>
+                    <Button onClick={this.getModalMapOrigin} variant="outline-secondary">Tomar posición</Button>
+                    { this.state.point.lat === -1 ? <img style={{margin:5}} alt='' src={error} height={'30'} width={'30'}/> : <img style={{margin:5}} alt='' src={check} height={'30'} width={'30'}/>}
                     </center>
                 </Col>
                 <Col xs={6} md={4}>
                     <center>
                     <Image src={Service2} />
+                    
                     <h6>Destino</h6>
                     <p>
                     Se puede escoger del mapa o tu lista de favoritos
+                    
                     </p>
-                    <Button variant="outline-secondary">Escoger del mapa</Button>
+                    <Button onClick={this.getModalMapDestiny} variant="outline-secondary">Escoger del mapa</Button>
+                    <Dropdown style = {{ margin :5}}>
+                      <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                        Lugares Favoritos
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                       { typeof this.props.favcoordinates !== "undefined" ? this.props.favcoordinates.map((data, id) =>  <Dropdown.Item key={'fav'+id} onClick={() => this.getPoint(data.point)}>{data.namecoordinate}</Dropdown.Item>) : <DropdownItem>No hay lugares favoritos almacenados</DropdownItem>}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    { this.state.destiny.lat === -1 ? <img style={{margin:5}} alt='' src={error} height={'30'} width={'30'}/> : <img style={{margin:5}} alt='' src={check} height={'30'} width={'30'}/>}
                     </center>
                 </Col>
                 <Col xs={6} md={4}>
@@ -50,15 +120,18 @@ class Service extends React.Component {
                     <p>
                     El taxista será escogido dependiendo de su cercania a tu posición origen.
                     </p>
-                    <Button variant="primary">Buscar Taxi</Button>
+                    <Button onClick={this.findDriver} variant="primary">Buscar Taxi</Button>
                     </center>
                 </Col>
             </Row>
             </Modal.Body>
           <Modal.Footer>
-            <Button href="/" variant="danger" onClick={this.props.onHide}>Close</Button>
+            <Button variant="danger" onClick={this.props.onHide}>Close</Button>
           </Modal.Footer>
         </Modal>
+        <ModalMap show={this.state.modalShowOrigin} onHide={modalCloseOrigin} firstpoint={this.props.firstpoint} coordinates = { value => this.callbackOrigin(value)}/>
+        <ModalMap show={this.state.modalShowDestiny} onHide={modalCloseDestiny} firstpoint={this.props.firstpoint} coordinates = { value => this.callbackDestiny(value)}/>
+        </div>
       );
     }
   }
