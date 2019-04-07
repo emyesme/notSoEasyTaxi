@@ -268,7 +268,7 @@ const placa = (request, response) => {
             }
             else{
                 //devuelve la informacion esperada
-                response.status(200).json({plaque: result.rows[0].plaque,model: result.rows[0].model, soat: result.rows[0].soat, year: result.rows[0].year, trademark: result.rows[0].trademark, trunk: result.rows[0].trunk})
+                response.status(200).json({plaque: result.rows[0].plaque,model: result.rows[0].model, soat: result.rows[0].soat, year: result.rows[0].year})
             }
         }finally{
             //cierra la conexion con el cliente
@@ -279,7 +279,7 @@ const placa = (request, response) => {
 
 const cambiarTaxi = (request, response) => {
     (async () => {
-        var client = await poolUserDriveInsert.connect()
+        var client = await pool.connect()
         try{
             validateCheck(request, response)
             var plaque = request.body.plaque;
@@ -301,7 +301,7 @@ const cambiarTaxi = (request, response) => {
 
 const adicionarTaxi = (request, response) => {
     (async () => {
-        var client = await poolUserTaxiInsert.connect()
+        var client = await pool.connect()
         try{
             validateCheck(request,response)
             var plaque = request.body.plaque;
@@ -310,7 +310,7 @@ const adicionarTaxi = (request, response) => {
             var model = request.body.model;
             var trademark = request.body.trademark;
             var trunk = request.body.trunk;
-            var result = await client.query("INSERT INTO Taxi (plaque, soat, year, model, trademark, trunk) VALUES ($1, $2, $3, $4, $5, $6) RETURNING plaque;",[plaque, soat, year, model, trademark, trunk])
+            var result = await client.query("INSERT INTO Taxi (plaque, soat, year, model) VALUES ($1, $2, $3, $4) RETURNING plaque;",[plaque, soat, year, model])
             if (result.rows[0].plaque !== plaque){
                 response.status(200).json({mensaje: "Error al adicionar taxi"})
             }
@@ -323,6 +323,29 @@ const adicionarTaxi = (request, response) => {
         }
     })().catch(error => console.log({error: error.message}))
 }
+
+const modelos = (request, response) => {
+    (async () => {
+        var client = await poolUserModelTaxiSelect.connect()
+        try{
+            var result = await client.query("SELECT * FROM modelTaxi")
+            if (result.rowCount === 0){
+                response.status(200).json({error: "No hay modelos"})
+            }
+            else{
+                var package = [];
+                for (id in result.rows){
+                    package[id] = result.rows[id]
+                }
+                response.status(200).json({models: package})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
+
 
 //importante 
 module.exports = {
@@ -337,4 +360,5 @@ module.exports = {
     placa,
     cambiarTaxi,
     adicionarTaxi,
+    modelos,
 }

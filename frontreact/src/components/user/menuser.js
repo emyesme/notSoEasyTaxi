@@ -119,7 +119,7 @@ class Menuser extends Component {
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
-            <Service show={this.state.showModal} firstpoint={this.state.origin} onHide={modalClose}/>
+            <Service show={this.state.showModal} firstpoint={this.state.origin} favcoordinates={this.state.markers.coordinates} onHide={modalClose}/>
         </div>
         );
     }

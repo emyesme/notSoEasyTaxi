@@ -86,11 +86,11 @@ app.post('/AdicionarTaxi',
             check('plaque').isAlphanumeric().isLength({min:6}).trim().escape(),
             check('soat').isAlphanumeric().trim().escape(),
             check('year').isNumeric().escape(),
-            check('model').isAlphanumeric().trim().escape(),
-            check('trademark').isAlpha().trim().escape(),
-            check('trunk').isAlpha().trim().escape()
+            check('model').isAlphanumeric().trim().escape()
         ],
         db.adicionarTaxi)
+
+app.get('/Modelos', db.modelos)
 
 //start server
 app.listen(port, () => {

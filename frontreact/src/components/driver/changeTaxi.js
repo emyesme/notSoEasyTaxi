@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import car from '../images/logo.png'
-import { Button, Form, Modal, Col, Row, ListGroup} from 'react-bootstrap';
+import { Button, Form, Modal, Col, Row, ListGroup, Dropdown} from 'react-bootstrap';
 import axios from 'axios';
+import DropdownItem from 'react-bootstrap/DropdownItem';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -21,9 +22,10 @@ class changeTaxi extends Component {
         this.state={
             cellphone: this.props.location.state.cellphone,
             plaque: this.props.location.state.plaque,
-            model: '',
             soat: '',
             year: '',
+            models: [],
+            mode: '',
             trademark: '',
             trunk: '',
             show: false,
@@ -34,6 +36,22 @@ class changeTaxi extends Component {
         this.addTaxi = this.addTaxi.bind(this)
         this.changeTaxi = this.changeTaxi.bind(this)
         this.verifyPlaque = this.verifyPlaque.bind(this)
+    }
+    getDataModel(selectedModel){
+        this.setState({ model: selectedModel.model, trademark: selectedModel.trademark, trunk: selectedModel.trunk})
+        console.log(selectedModel)
+    }
+    componentWillMount(){
+        axios.get(api+'/Modelos')
+        .then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+              }
+              else{
+                this.setState({models: response.data.models})
+                console.log(this.state.models)
+            }            
+        })
     }
     changeTaxi(){
         axios.post(api + '/CambiarTaxi',{
@@ -62,9 +80,7 @@ class changeTaxi extends Component {
                 plaque: this.state.plaque,
                 model: this.state.model,
                 soat: this.state.soat,
-                year: this.state.year,
-                trademark: this.state.trademark,
-                trunk: this.state.trunk
+                year: this.state.year
             }).then( response => {
                 if( response.data.error != null){
                     console.log(response.data.error)
@@ -93,7 +109,12 @@ class changeTaxi extends Component {
                 this.setState({ info: false})
             }
             else{
-                this.setState({show: true, soat: response.data.soat, year: response.data.year, model: response.data.model, trademark: response.data.trademark, trunk: response.data.trunk});
+                this.setState({show: true, soat: response.data.soat, year: response.data.year, model: response.data.model});
+                for (const i in this.state.models){
+                    if ( this.state.models[i].model === this.state.model){
+                        this.setState({ trademark: this.state.models[i].trademark, trunk : this.state.models[i].trunk})
+                    }
+                }
             }
         }).catch( err => alert(err))
     }
@@ -145,10 +166,6 @@ class changeTaxi extends Component {
                             </Col>
                         </Row>
                         </Form.Group>
-                        <Form.Group  controlId="formModel" >
-                            <Form.Label>Modelo</Form.Label >
-                            <Form.Control disabled={this.state.info} type="text" placeholder="Modelo" name="model" onChange={this.handleChange}/>
-                        </Form.Group>
                         <Form.Group controlId="formSoat">
                             <Form.Label>Soat</Form.Label>
                             <Form.Control disabled={this.state.info} type="text" placeholder="Soat" name="soat" onChange={this.handleChange}/>
@@ -157,13 +174,16 @@ class changeTaxi extends Component {
                             <Form.Label>Año</Form.Label>
                             <Form.Control disabled={this.state.info} type="integer" placeholder="Año" name="year" onChange={this.handleChange}/>
                         </Form.Group>
-                        <Form.Group controlId="formCompany">
-                            <Form.Label>Marca</Form.Label>
-                            <Form.Control disabled={this.state.info} type="text" placeholder="Marca" name="trademark" onChange={this.handleChange}/>
-                        </Form.Group>
-                        <Form.Group controlId="formTrunk">
-                            <Form.Label>Baul</Form.Label>
-                            <Form.Control disabled={this.state.info} type="text" placeholder="Baul" name="trunk" onChange={this.handleChange}/>
+                        <Form.Group  controlId="formModel" >
+                            <Form.Label>Modelo</Form.Label >
+                        <Dropdown style = {{ margin :5}}>
+                        <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                            Modelos
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                        {typeof this.state.models !== "undefined" ? this.state.models.map((data, id) =>  <Dropdown.Item key={'model-'+id} onClick={() => this.getDataModel(data)}>{data.model}, {data.trademark}, {data.trunk}</Dropdown.Item>) : <DropdownItem>No modelos disponibles</DropdownItem>}
+                        </Dropdown.Menu>
+                        </Dropdown>                            
                         </Form.Group>
                         <Button variant='primary' style= {pad} type="submit">
                             Cambiar
