@@ -303,6 +303,10 @@ const adicionarTaxi = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+
+
+
+
 const buscarPrimerTaxi = (request, response) => {
     (async () => {
         var client = await pool.connect()
@@ -397,7 +401,6 @@ const askAceptada = (request, response) => {
         }
     })().catch(error => console.log({error: error.message}))
 }
-
 
 //importante 
 module.exports = {
