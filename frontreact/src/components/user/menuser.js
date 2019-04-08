@@ -126,7 +126,7 @@ class Menuser extends Component {
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
-            <KmUsed show={this.state.showModalKm} cellphone={this.state.cellphone} onHide={modalCloseKm}/>
+            <KmUsed show={this.state.showModalKm} cellphonetype={'cellphoneclient'} cellphone={this.state.cellphone} onHide={modalCloseKm}/>
             <Service show={this.state.showModal} cellphone={this.state.cellphone} firstpoint={this.state.origin} favcoordinates={this.state.markers.coordinates} onHide={modalClose}/>
         </div>
         );
