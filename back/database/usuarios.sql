@@ -344,6 +344,23 @@ $$ LANGUAGE plpgsql;
 
 SELECT distance(GEOMETRY(POINT (3.3993721615737833, 283.48647683858877)), GEOMETRY(POINT (3.3994524862586832, 283.48640173673635)));
 
+CREATE OR REPLACE VIEW lastPlaqueDriver AS (
+	WITH
+	driverLastRecord AS 
+	(select Driver.cellphoneDriver,  max(date) AS date
+	from driver inner join drive on driver.cellphonedriver=drive.cellphonedriver
+	group by (driver.cellphoneDriver)),
+	
+	driverLastPlaque AS
+	(SELECT Drive.cellphoneDriver, Drive.plaque
+	FROM driverLastRecord INNER JOIN drive 
+	ON driverLastRecord.cellphonedriver = drive.cellphoneDriver
+	AND driverLastRecord.date = drive.date )
+
+SELECT * FROM driverLastPlaque
+);
+
+
 CREATE OR REPLACE VIEW lastCoordinatesPlaques AS (
 	WITH
 	driverLastRecord AS 
@@ -402,6 +419,19 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION moveDriver (cellphoneDriverIn VARCHAR(10), destination GEOMETRY)
+RETURNS GEOMETRY AS $$
+DECLARE
+	actualPlaque VARCHAR(6) := (SELECT plaque FROM lastPlaqueDriver WHERE cellphoneDriver = cellphoneDriverIn);
+	currentDate TIMESTAMP := now();
+BEGIN
+	INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
+		(actualPlaque, currentDate, destination);
+	RETURN destination;
+END;
+$$ LANGUAGE plpgsql;
 
-SELECT * FROM lastcoordinatesplaques WHERE cellphoneDriver = '3102222222';
-SELECT findDriver('3107307371', GEOMETRY(POINT (1,1)), GEOMETRY(POINT(10,10)) );
+SELECT moveDriver('3102222222', GEOMETRY(POINT(7,10)));
+SELECT * FROM Gps
+
+
