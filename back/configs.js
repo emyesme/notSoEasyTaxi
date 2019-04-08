@@ -12,7 +12,7 @@ const configAdmin = {
 };
 
 const configUserClient = {
-	user: 'clientRole',
+	user: 'clientrole',
 	password: '123',
 	host: 'localhost',
 	port: '5432',
@@ -25,7 +25,7 @@ const configUserClient = {
 
 
 const configUserDriver = {
-	user: 'driverRole',
+	user: 'driverrole',
 	password: '123',
 	host: 'localhost',
 	port: '5432',

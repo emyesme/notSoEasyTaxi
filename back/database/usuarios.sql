@@ -117,8 +117,9 @@ FOREIGN KEY (plaque) REFERENCES Taxi(plaque)
 create index intervalGps on Gps using btree (plaque, timestamp);
 
 /*****************Client***************/
-DROP USER IF EXISTS clientRole;
-CREATE USER clientRole WITH PASSWORD '123';
+
+DROP ROLE IF EXISTS clientRole;
+CREATE ROLE clientRole WITH LOGIN PASSWORD '123';
 
 GRANT SELECT ON TABLE Client TO clientRole;
 GRANT INSERT ON TABLE Client TO clientRole;
@@ -128,23 +129,25 @@ GRANT SELECT ON TABLE FavCoordinates TO clientRole;
 GRANT SELECT ON TABLE Ask TO clientRole;
 GRANT INSERT ON TABLE Ask TO clientRole;
 
-
+SET ROLE postgres;
 /*****************Driver***************/
 
-DROP USER IF EXISTS driverRole;
-CREATE USER clientRole WITH PASSWORD '123';
+DROP ROLE IF EXISTS driverRole;
+CREATE ROLE driverRole WITH LOGIN PASSWORD '123';
 
-GRANT SELECT ON TABLE Driver TO clientRole;
-GRANT INSERT ON TABLE Drive TO clientRole;
+GRANT SELECT ON TABLE Driver TO driverRole;
+GRANT INSERT ON TABLE Drive TO driverRole;
 
-GRANT SELECT ON TABLE Taxi TO clientRole;
-GRANT INSERT ON TABLE Taxi TO clientRole;
+GRANT SELECT ON TABLE Taxi TO driverRole;
+GRANT INSERT ON TABLE Taxi TO driverRole;
 
-GRANT SELECT ON TABLE Ask TO clientRole;
-GRANT INSERT ON TABLE Ask TO clientRole;
+GRANT SELECT ON TABLE Ask TO driverRole;
+GRANT INSERT ON TABLE Ask TO driverRole;
 
-GRANT SELECT ON TABLE Gps TO clientRole;
-GRANT INSERT ON TABLE Gps TO clientRole;
+GRANT SELECT ON TABLE Gps TO driverRole;
+GRANT INSERT ON TABLE Gps TO driverRole;
+
+GRANT SELECT ON TABLE Drive TO driverRole;
 /*
 
 SET ROLE postgres;
