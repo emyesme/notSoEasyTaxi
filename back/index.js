@@ -133,5 +133,38 @@ app.listen(port, () => {
     console.log('Conexión a la base de datos puerto: ', port)
 })
 
+//###########################MODELO########################################
+
+app.post('/CrearModelo',
+        [
+            check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('trademark').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('baul').isAlphanumeric().isLength({max:15}).trim().escape(),
+        ],
+        db.crearModelo)
+
+app.get('/ConsultarModelo',
+        [
+            check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
+        ],
+        db.consultarModelo)
+
+app.post('/ModificarModelo',
+        [
+            check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('trademark').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('baul').isAlphanumeric().isLength({max:15}).trim().escape(),
+        ],
+        db.modificarModelo)
+
+app.post('/EliminarModelo',
+        [
+            check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
+        ],
+        db.eliminarModelo)
+
+
+
+
 
 

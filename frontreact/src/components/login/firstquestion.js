@@ -18,6 +18,10 @@ class FirstQuestion extends Component {
             {pathname: '/login',
             state: { type: type} })
     }
+    goAdmin(){
+        this.props.history.push(
+            {pathname: '/admin'})
+    }
     render() { 
         return (
         <div style={backdropStyle} >
@@ -36,6 +40,12 @@ class FirstQuestion extends Component {
                     <center>
                     <Button onClick={() => this.goLogin('Usuario')} variant="light" style={{ margin: 15}}><Image src={user}/></Button>
                     <p>Usuario</p> 
+                    </center>
+                    </Col>
+                    <Col>
+                    <center>
+                    <Button onClick={() => this.goAdmin()} variant="light" style={{ margin: 15}}><Image src={user}/></Button>
+                    <p>administrador</p> 
                     </center>
                     </Col>
                 </Row>

@@ -116,12 +116,40 @@ FOREIGN KEY (plaque) REFERENCES Taxi(plaque)
 
 create index intervalGps on Gps using btree (plaque, timestamp);
 
-/*
-DROP USER IF EXISTS clientRole;
-CREATE USER clientRole WITH PASSWORD '123';
+/*****************Client***************/
+
+DROP ROLE IF EXISTS clientRole;
+CREATE ROLE clientRole WITH LOGIN PASSWORD '123';
+
+GRANT SELECT ON TABLE Client TO clientRole;
+GRANT INSERT ON TABLE Client TO clientRole;
+
 GRANT SELECT ON TABLE FavCoordinates TO clientRole;
 
-SET ROLE clientRole;
+GRANT SELECT ON TABLE Ask TO clientRole;
+GRANT INSERT ON TABLE Ask TO clientRole;
+
+SET ROLE postgres;
+/*****************Driver***************/
+
+DROP ROLE IF EXISTS driverRole;
+CREATE ROLE driverRole WITH LOGIN PASSWORD '123';
+
+GRANT SELECT ON TABLE Driver TO driverRole;
+GRANT INSERT ON TABLE Drive TO driverRole;
+
+GRANT SELECT ON TABLE Taxi TO driverRole;
+GRANT INSERT ON TABLE Taxi TO driverRole;
+
+GRANT SELECT ON TABLE Ask TO driverRole;
+GRANT INSERT ON TABLE Ask TO driverRole;
+
+GRANT SELECT ON TABLE Gps TO driverRole;
+GRANT INSERT ON TABLE Gps TO driverRole;
+
+GRANT SELECT ON TABLE Drive TO driverRole;
+/*
+
 SET ROLE postgres;
 
 DROP ROLE IF EXISTS clientRole;
@@ -130,153 +158,9 @@ GRANT SELECT ON TABLE FavCoordinates TO clientRole;
 
 SET ROLE clientRole;
 
-
-/*Client*/
-/******************************************/
-drop user if exists userClientInsert;
-CREATE USER userClientInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE Client TO userClientInsert;
-
-drop user if exists userClientSelect;
-CREATE USER userClientSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE Client TO userClientSelect;
-
-drop user if exists userClientUpdate;
-CREATE USER userClientUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE Client TO userClientUpdate;
-
-drop user if exists userClientDelete;
-CREATE USER userClientDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE Client TO userClientDelete;
-
-
-/*FavCoordinates*/
-/******************************************/
-drop user if exists userFavCoordinatesInsert;
-CREATE USER userFavCoordinatesInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE FavCoordinates TO userFavCoordinatesInsert;
-
-drop user if exists userFavCoordinatesSelect;
-CREATE USER userFavCoordinatesSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE FavCoordinates TO userFavCoordinatesSelect;
-
-drop user if exists userFavCoordinatesUpdate;
-CREATE USER userFavCoordinatesUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE FavCoordinates TO userFavCoordinatesUpdate;
-
-drop user if exists userFavCoordinatesDelete;
-CREATE USER userFavCoordinatesDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE FavCoordinates TO userFavCoordinatesDelete;
-
-/*Driver*/
-/******************************************/
-drop user if exists userDriverInsert;
-CREATE USER userDriverInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE Driver TO userDriverInsert;
-
-drop user if exists userDriverSelect;
-CREATE USER userDriverSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE Driver TO userDriverSelect;
-
-drop user if exists userDriverUpdate;
-CREATE USER userDriverUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE Driver TO userDriverUpdate;
-
-drop user if exists userDriverDelete;
-CREATE USER userDriverDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE Driver TO userDriverDelete;
-
-/*ModelTaxi*/
-/******************************************/
-drop user if exists userModelTaxiInsert;
-CREATE USER userModelTaxiInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE ModelTaxi TO userModelTaxiInsert;
-
-drop user if exists userModelTaxiSelect;
-CREATE USER userModelTaxiSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE ModelTaxi TO userModelTaxiSelect;
-
-drop user if exists userModelTaxiUpdate;
-CREATE USER userModelTaxiUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE ModelTaxi TO userModelTaxiUpdate;
-
-drop user if exists userModelTaxiDelete;
-CREATE USER userModelTaxiDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE ModelTaxi TO userModelTaxiDelete;
-
-
-/*Taxi*/
-/******************************************/
-drop user if exists userTaxiInsert;
-CREATE USER userTaxiInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE Taxi TO userTaxiInsert;
-
-drop user if exists userTaxiSelect;
-CREATE USER userTaxiSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE Taxi TO userTaxiSelect;
-
-drop user if exists userTaxiUpdate;
-CREATE USER userTaxiUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE Taxi TO userTaxiUpdate;
-
-drop user if exists userTaxiDelete;
-CREATE USER userTaxiDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE Taxi TO userTaxiDelete;
-
-/*Drive*/
-/******************************************/
-drop user if exists userDriveInsert;
-CREATE USER userDriveInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE Drive TO userDriveInsert;
-
-drop user if exists userDriveSelect;
-CREATE USER userDriveSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE Drive TO userDriveSelect;
-
-drop user if exists userDriveUpdate;
-CREATE USER userDriveUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE Drive TO userDriveUpdate;
-
-drop user if exists userDriveDelete;
-CREATE USER userDriveDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE Drive TO userDriveDelete;
-
-/*Ask*/
-/******************************************/
-drop user if exists userAskInsert;
-CREATE USER userAskInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE Ask TO userAskInsert;
-
-drop user if exists userAskSelect;
-CREATE USER userAskSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE Ask TO userAskSelect;
-
-drop user if exists userAskUpdate;
-CREATE USER userAskUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE Ask TO userAskUpdate;
-
-drop user if exists userAskDelete;
-CREATE USER userAskDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE Ask TO userAskDelete;
-
-/*Gps*/
-/******************************************/
-drop user if exists userGpsInsert;
-CREATE USER userGpsInsert WITH PASSWORD '123';
-GRANT INSERT ON TABLE Gps TO userGpsInsert;
-
-drop user if exists userGpsSelect;
-CREATE USER userGpsSelect WITH PASSWORD '123';
-GRANT SELECT ON TABLE Gps TO userGpsSelect;
-
-drop user if exists userGpsUpdate;
-CREATE USER userGpsUpdate WITH PASSWORD '123';
-GRANT UPDATE ON TABLE Gps TO userGpsUpdate;
-
-drop user if exists userGpsDelete;
-CREATE USER userGpsDelete WITH PASSWORD '123';
-GRANT DELETE ON TABLE Gps TO userGpsDelete;
 */
+
+SET ROLE postgres;
 
 INSERT INTO Client (cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES
 	('3107307371', md5('hola'), 'Jaime Cuartas', GEOMETRY(POINT(3.413803722450137,283.4533059597016)),'0000000000000000', true),
@@ -344,6 +228,23 @@ $$ LANGUAGE plpgsql;
 
 SELECT distance(GEOMETRY(POINT (3.3993721615737833, 283.48647683858877)), GEOMETRY(POINT (3.3994524862586832, 283.48640173673635)));
 
+CREATE OR REPLACE VIEW lastPlaqueDriver AS (
+	WITH
+	driverLastRecord AS 
+	(select Driver.cellphoneDriver,  max(date) AS date
+	from driver inner join drive on driver.cellphonedriver=drive.cellphonedriver
+	group by (driver.cellphoneDriver)),
+	
+	driverLastPlaque AS
+	(SELECT Drive.cellphoneDriver, Drive.plaque
+	FROM driverLastRecord INNER JOIN drive 
+	ON driverLastRecord.cellphonedriver = drive.cellphoneDriver
+	AND driverLastRecord.date = drive.date )
+
+SELECT * FROM driverLastPlaque
+);
+
+
 CREATE OR REPLACE VIEW lastCoordinatesPlaques AS (
 	WITH
 	driverLastRecord AS 
@@ -402,6 +303,19 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION moveDriver (cellphoneDriverIn VARCHAR(10), destination GEOMETRY)
+RETURNS GEOMETRY AS $$
+DECLARE
+	actualPlaque VARCHAR(6) := (SELECT plaque FROM lastPlaqueDriver WHERE cellphoneDriver = cellphoneDriverIn);
+	currentDate TIMESTAMP := now();
+BEGIN
+	INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
+		(actualPlaque, currentDate, destination);
+	RETURN destination;
+END;
+$$ LANGUAGE plpgsql;
 
-SELECT * FROM lastcoordinatesplaques WHERE cellphoneDriver = '3102222222';
-SELECT findDriver('3107307371', GEOMETRY(POINT (1,1)), GEOMETRY(POINT(10,10)) );
+SELECT moveDriver('3102222222', GEOMETRY(POINT(7,10)));
+SELECT * FROM Gps
+
+

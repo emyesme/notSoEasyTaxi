@@ -2,67 +2,10 @@ const Pool  = require('pg-pool')
 const {validationResult} = require('express-validator/check')
 const config = require('./configs')
 
-const configDeveloper = {
-    user: 'postgres',//aqui tengo dudas
-    password: 'postgres',//aqui tengo dudas
-    host: 'localhost', //cambia con el docker
-    port: '5432',
-    database: 'easyTaxiDB', //cambia con el docker
-    ssl: true,
-    max: 10,
-    min: 2,
-    idleTimeputMillis: 1000//close idle clients after 1 second
-};
 
-
-
-const configDocker = {
-    user: 'postgres',//aqui tengo dudas
-    password: 'root',//aqui tengo dudas
-    host: 'db',
-    port: '5432',
-    database: 'easyTaxiDB',
-    ssl: true,
-    max: 10,
-    min: 2,
-    idleTimeputMillis: 1000//close idle clients after 1 second
-}
-
-const pool = new Pool(configDeveloper);
-
-
-const poolUserClientInsert = new Pool(config.configUserClientInsert);
-const poolUserClientSelect = new Pool(config.configUserClientSelect);
-const poolUserClientUpdate = new Pool(config.configUserClientUpdate);
-const poolUserClientDelete = new Pool(config.configUserClientDelete);
-const poolUserFavCoordinatesInsert = new Pool(config.configUserFavCoordinatesInsert);
-const poolUserFavCoordinatesSelect = new Pool(config.configUserFavCoordinatesSelect);
-const poolUserFavCoordinatesUpdate = new Pool(config.configUserFavCoordinatesUpdate);
-const poolUserFavCoordinatesDelete = new Pool(config.configUserFavCoordinatesDelete);
-const poolUserDriverInsert = new Pool(config.configUserDriverInsert);
-const poolUserDriverSelect = new Pool(config.configUserDriverSelect);
-const poolUserDriverUpdate = new Pool(config.configUserDriverUpdate);
-const poolUserDriverDelete = new Pool(config.configUserDriverDelete);
-const poolUserModelTaxiInsert = new Pool(config.configUserModelTaxiInsert);
-const poolUserModelTaxiSelect = new Pool(config.configUserModelTaxiSelect);
-const poolUserModelTaxiUpdate = new Pool(config.configUserModelTaxiUpdate);
-const poolUserModelTaxiDelete = new Pool(config.configUserModelTaxiDelete);
-const poolUserTaxiInsert = new Pool(config.configUserTaxiInsert);
-const poolUserTaxiSelect = new Pool(config.configUserTaxiSelect);
-const poolUserTaxiUpdate = new Pool(config.configUserTaxiUpdate);
-const poolUserTaxiDelete = new Pool(config.configUserTaxiDelete);
-const poolUserDriveInsert = new Pool(config.configUserDriveInsert);
-const poolUserDriveSelect = new Pool(config.configUserDriveSelect);
-const poolUserDriveUpdate = new Pool(config.configUserDriveUpdate);
-const poolUserDriveDelete = new Pool(config.configUserDriveDelete);
-const poolUserAskInsert = new Pool(config.configUserAskInsert);
-const poolUserAskSelect = new Pool(config.configUserAskSelect);
-const poolUserAskUpdate = new Pool(config.configUserAskUpdate);
-const poolUserAskDelete = new Pool(config.configUserAskDelete);
-const poolUserGpsInsert = new Pool(config.configUserGpsInsert);
-const poolUserGpsSelect = new Pool(config.configUserGpsSelect);
-const poolUserGpsUpdate = new Pool(config.configUserGpsUpdate);
-const poolUserGpsDelete = new Pool(config.configUserGpsDelete);
+const poolAdmin = new Pool(config.configAdmin);
+const poolClient = new Pool(config.configUserClient);
+const poolDriver = new Pool(config.configUserDriver);
 
 
 const validateCheck = (request,response) => {
@@ -76,7 +19,7 @@ const validateCheck = (request,response) => {
 
 const todo = (request,response) => {
     ( async () => {
-        var client = await pool.connect()
+        var client = await poolClient.connect()
         try{
             var result = await client.query('SELECT * FROM client')
             response.status(200).json(result.rows)
@@ -93,7 +36,9 @@ const todo = (request,response) => {
 const ingresarUsuario = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await pool.connect()
+
+        var client = await poolClient.connect()
+
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -118,7 +63,9 @@ const ingresarUsuario = (request, response) => {
 
 const usuario = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+
+        var client = await poolClient.connect()
+      
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -140,7 +87,7 @@ const usuario = (request, response) => {
 
 const registrarUsuario = (request, response) => {
     (async () => {
-        var client = await pool.connect() //#######################################
+        var client = await poolClient.connect() //#######################################
         try{
             //validacion de errores de sanitize 
             validateCheck(request,response)
@@ -168,7 +115,8 @@ const registrarUsuario = (request, response) => {
 
 const lugaresFavoritos = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolClient.connect()
+
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -187,7 +135,8 @@ const lugaresFavoritos = (request, response) => {
 
 const origen = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolClient.connect()
+
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -225,7 +174,7 @@ const askConductor = (request, response) => {
 
 const kilometrosRecorridos = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -256,7 +205,8 @@ const kilometrosRecorridos = (request, response) => {
 const ingresarConductor = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await pool.connect()
+        var client = await poolDriver.connect()
+
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -282,7 +232,9 @@ const ingresarConductor = (request, response) => {
 
 const conductor = (request, response) => {
     (async () => {
-        var client = await pool.connect()//o cambiar el query o escoger diferente
+
+        var client = await poolDriver.connect()//o cambiar el query o escoger diferente
+
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -305,7 +257,7 @@ const conductor = (request, response) => {
 
 const placa = (request, response) => {
     (async () => {
-        var client = await poolUserTaxiSelect.connect()
+        var client = await poolDriver.connect()
         try{
             validateCheck(request,response)
             const plaque = request.query.plaque;
@@ -326,7 +278,7 @@ const placa = (request, response) => {
 
 const cambiarTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolDriver.connect()
         try{
             validateCheck(request, response)
             var plaque = request.body.plaque;
@@ -348,7 +300,7 @@ const cambiarTaxi = (request, response) => {
 
 const adicionarTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolDriver.connect()
         try{
             validateCheck(request,response)
             var plaque = request.body.plaque;
@@ -373,7 +325,9 @@ const adicionarTaxi = (request, response) => {
 
 const modelos = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+
+        var client = await poolDriver.connect()
+
         try{
             var result = await client.query("SELECT * FROM modelTaxi")
             if (result.rowCount === 0){
@@ -394,10 +348,110 @@ const modelos = (request, response) => {
 }
 
 
+//###########################Administrador########################################
+
+const crearModelo = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            
+            var modelo = request.body.model;
+            var marca = request.body.trademark;
+            var baul = request.body.trunk;
+            
+            var result = await client.query("INSERT INTO ModelTaxi (model, trademark, trunk) VALUES ($1, $2, $3) RETURNING model", [modelo, marca, baul])
+
+
+            if (result.rows[0].model !== modelo){
+                response.status(200).json({mensaje: "Error al agregar modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Modelo agregado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const consultarModelo = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            
+            var modelo = request.query.model;
+            
+            var result = await client.query("SELECT * FROM ModelTaxi WHERE model = $1", [modelo])
+            
+            if (result.rowCount === 0){
+                response.status(200).json({mensaje: "El modelo no fue encontrado"});
+            }
+            else{
+                response.status(200).json(result.rows);
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const modificarModelo = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            
+            var modelo = request.body.model;
+            var marca = request.body.trademark;
+            var baul = request.body.trunk;
+
+            var result = await client.query("UPDATE ModelTaxi SET marca = $1, baul = $2 WHERE model = $3 RETURNING model", [modelo, marca, baul]);
+            
+            if (result.rows[0].model !== modelo){
+                response.status(200).json({mensaje: "Error al modificar modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Modelo modificado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const eliminarModelo = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            
+            var modelo = request.body.model;
+            
+            var result = await client.query("DELETE FROM ModelTaxi WHERE model = $1 RETURNING model", [modelo])
+            if (result.rows[0].model !== modelo){
+                response.status(200).json({mensaje: "No fue posible la eliminación del modelo, verifique la existencia del modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Modelo eliminado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
+
+
 
 const buscarPrimerTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolClient.connect()
         try{
             validateCheck(request,response)
             var cellphoneClient = request.body.cellphone;
@@ -423,7 +477,7 @@ const buscarPrimerTaxi = (request, response) => {
 
 const buscarCelularConAsk = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolClient.connect()
         try{
             validateCheck(request,response)
             var idAskIn = request.query.idAsk;
@@ -443,7 +497,7 @@ const buscarCelularConAsk = (request, response) => {
 
 const verDisponibilidadCellphone = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             var cellphoneDriver = request.query.cellphone;
@@ -463,7 +517,7 @@ const verDisponibilidadCellphone = (request, response) => {
 
 const askAceptada = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolClients.connect()
         try{
             validateCheck(request,response)
             var idAskIn = request.query.idAsk;
@@ -502,5 +556,11 @@ module.exports = {
     cambiarTaxi,
     adicionarTaxi,
     modelos,
+
     askConductor,
+    crearModelo,
+    consultarModelo,
+    modificarModelo,
+    eliminarModelo,
+
 }
