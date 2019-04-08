@@ -118,7 +118,7 @@ class RegisterUser extends Component {
                 </Modal.Footer>
             </Modal.Dialog>
             {/*Mostrar mapa para seleccionar punto*/}
-            <ModalMap show={this.state.showModal} onHide={modalClose} coordinates = { value => this.callback(value)}/>
+            <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoObtener={false}/>
         </div>
         );
     }

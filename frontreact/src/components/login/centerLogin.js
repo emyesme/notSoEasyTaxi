@@ -40,6 +40,7 @@ class CenterLogin extends React.Component {
         alert(response.data.error);
       }
       else{
+        console.log(response.data.cellphone)
         this.props.history.push(
           {pathname: "/"+this.state.type,
           state: { cellphone: response.data.cellphone} })

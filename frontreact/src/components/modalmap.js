@@ -25,7 +25,6 @@ class modalmap extends React.Component {
         }
     }
     getPoint(){
-        console.log(this.state.point)
         this.props.coordinates(this.state.point)
     }
     render() {

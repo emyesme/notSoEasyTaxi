@@ -72,7 +72,7 @@ class LMap extends Component {
                         icon={setPoint}>
                     <Popup onClick={this.handleClick} position={this.state.punto}>¿Seguro? Punto: <pre>{JSON.stringify(this.state.punto, null, 2)}</pre></Popup>
                     </Marker>}
-                    { this.state.origin.lat !== 0 ? <Marker position={this.state.origin} icon={origin}></Marker> : <div></div> }
+                    { this.state.origin.lat !== -1 ? <Marker position={this.state.origin} icon={origin}></Marker> : <div></div> }
                     {this.state.markers.map((data, id) =>  <Marker key={'marker-'+id} position={[data.point.x,data.point.y]} icon={favPlaces}><Popup>
                         <span> {data.namecoordinate} </span></Popup></Marker>)}
                 </Map>

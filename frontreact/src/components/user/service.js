@@ -7,7 +7,10 @@ import ModalMap from '../modalmap';
 import check from '../images/checked.png';
 import error from '../images/error.png';
 import DropdownItem from 'react-bootstrap/DropdownItem';
-/*import Axios from 'axios';*/
+import Axios from 'axios';
+import {withRouter} from 'react-router-dom';
+
+const api = "http://localhost:4000";
 class Service extends React.Component {
     constructor(props) {
         super(props);
@@ -23,7 +26,9 @@ class Service extends React.Component {
             lng: -1
           },
           favcoordinates: [],
-          searchAble : true
+          searchAble : true,
+          cellphone: this.props.cellphone,
+          idAsk: 0
         };
         this.getModalMapOrigin = this.getModalMapOrigin.bind(this);
         this.getModalMapDestiny = this.getModalMapDestiny.bind(this);
@@ -31,8 +36,7 @@ class Service extends React.Component {
         this.callbackDestiny = this.callbackDestiny.bind(this);
         this.findDriver = this.findDriver.bind(this);
     }
-    getPoint(coordinate){
-      
+    getPoint(coordinate){      
       this.setState({ destiny: { lat: coordinate.x, lng: coordinate.y} })
     }
     getModalMapDestiny(){
@@ -58,12 +62,20 @@ class Service extends React.Component {
         alert("No a ingresado la ubicación de origen o destino.")
         return;
       }
-      console.log("envia info")
-      /*Axios.post(api+'/TaxiCerca?='+this.state.point)
-      .then( response => {
-        
-      })*/
-
+      Axios.post(api+'/BuscarTaxi',{
+        cellphone: this.state.cellphone,
+        initialCoordinates: this.state.point,
+        finalCoordinates: this.state.destiny
+      }).then( response => {
+        if(response.data.error != null){
+            alert(response.data.error)
+        }
+        else{
+            this.setState({ idAsk : response.data.idAsk})
+            console.log(this.state.idAsk)
+            this.props.history.push({pathname: '/Servicio', state: { idAsk: this.state.idAsk}})
+        }
+      }).catch( error => console.log(error))
     }
     render() {
       let modalCloseOrigin = () => this.setState({ modalShowOrigin: false });
@@ -136,4 +148,4 @@ class Service extends React.Component {
     }
   }
 
-export default Service;
+export default withRouter(Service);

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import LMap from '../map';
 import car from '../images/logo.png';
-import { Button, Modal,ButtonGroup, DropdownButton,Dropdown, CardDeck, Card} from 'react-bootstrap';
+import { Button, Modal,ButtonGroup, CardDeck, Card, ListGroup} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
+import KmUsed from '../km'
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -37,32 +38,56 @@ class Menudriver extends Component {
             point : {
                 lat: 1.0,
                 lng: 1.0,
-            }
+            },
+            service: {
+                idAsk: 0,
+                cellphoneclient: '0000000000',
+                initialpoint: [],
+                finalpoint: []
+            },
+            show: false,
+            showModal: false,
         }
-        this.showMap = this.showMap.bind(this)
-        this.goUpdateTaxi = this.goUpdateTaxi.bind(this)
-        this.goChangeTaxi = this.goChangeTaxi.bind(this)
+        this.showMap = this.showMap.bind(this);
+        this.goUpdateTaxi = this.goUpdateTaxi.bind(this);
+        this.goChangeTaxi = this.goChangeTaxi.bind(this);
+        this.declineService = this.declineService.bind(this);
+        this.findService = this.findService.bind(this);
+        this.gokmUsed = this.gokmUsed.bind(this);
+    }
+    async findService(){
+        await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
+        .then( response => {
+            if( response.data.mensaje !== "Noy hay servicios"){
+                this.setState({ show: true, 
+                    service: {
+                        idAsk: response.data.servicio.idask, 
+                        cellphoneclient: response.data.servicio.cellphoneclient,
+                        initialpoint: [response.data.servicio.initialpoint.x, response.data.servicio.initialpoint.y],
+                        finalpoint: [response.data.servicio.finalpoint.x, response.data.servicio.finalpoint.y],}})
+            }
+            else{
+                console.log("no servicio")
+            }
+        })
     }
     componentWillMount(){
-        axios.get(api+"/Conductor?cellphone="+this.props.location.state.cellphone)
+        axios.get(api+"/Conductor?cellphone="+this.state.cellphone)
         .then( response => {
             if( response.data.error != null){
                 alert(response.data.error);
-              }
-              else{
-                this.setState({ name: response.data.name, plaque: response.data.plaque})
-              }
+            }
+            else{
+              this.setState({ name: response.data.name, plaque: response.data.plaque})
+            }
         }).catch(error => alert(error))
+        setInterval(this.findService, 3000)
     }
     showMap(){
-        this.setState({
-            showMap: !this.state.showMap
-        })
+        this.setState({showMap: !this.state.showMap})
     }
     callback (inputPoint){
-        this.setState({
-            point:{ lat: inputPoint.lat, lng: inputPoint.lng}
-        })
+        this.setState({point:{ lat: inputPoint.lat, lng: inputPoint.lng}})
     }
     goChangeTaxi (){
         this.props.history.push({
@@ -77,8 +102,15 @@ class Menudriver extends Component {
 
         })
     }
+    declineService(){
+        this.setState({ show: !this.state.show})
+    }
+    gokmUsed(){
+        this.setState({ showModal: !this.showModal})
+    }
     render() {
-        return (
+        let modalClose = () => this.setState({ showModal: false});
+        return (  
         <div style={backColor}>
             <Modal.Dialog  size='lg' centered>
             <Modal.Body style={grayRgb}>
@@ -94,14 +126,9 @@ class Menudriver extends Component {
                         <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
                         <Button style={pad}>Eliminar Taxi</Button>
                         <Button style={pad}>Eliminar Cuenta</Button>
-                        <Button style={pad}>Kilometros Recorridos</Button>
+                        <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
                         <Button style={pad}>Historial</Button>
                         <Button style={pad}>Estado: Libre</Button>
-                        <Button style={pad}>¡Hay un Servicio!</Button>
-                        <DropdownButton  style={pad} as={ButtonGroup} title="Dropdown" id="bg-vertical-dropdown-3">
-                            <Dropdown.Item eventKey="1">Dropdown link</Dropdown.Item>
-                            <Dropdown.Item eventKey="2">Dropdown link</Dropdown.Item>
-                        </DropdownButton>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
                         <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>
@@ -110,10 +137,34 @@ class Menudriver extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap  height={'695px'} width={'100%'} markers={[]}  origin={{lat:0,lng:0}} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
+                    <LMap  height={'695px'} width={'100%'} markers={[]}  origin={{lat:-1,lng:-1}} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
+            <Modal show={this.state.show} aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal.Body>
+                <h6>Servicio para tu Taxi!! </h6>
+                <ListGroup>
+                            <ListGroup.Item>
+                                idAsk: {this.state.service.idAsk}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                CellphoneClient: {this.state.service.cellphoneclient}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                Inicio: [{this.state.service.initialpoint[0]},{this.state.service.initialpoint[1]}]
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                Final: [{this.state.service.finalpoint[0]},{this.state.service.finalpoint[1]}]
+                            </ListGroup.Item>
+                        </ListGroup>                    
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='success' onClick={this.changeTaxi}>Si!</Button>
+                    <Button variant='danger' onClick={this.declineService}>Cancelar</Button>
+                </Modal.Footer>c
+            </Modal>
+           <KmUsed show={this.state.showModal} cellphonetype={'cellphonedriver'} cellphone={this.state.cellphone} onHide={modalClose}/>
         </div>
         );
     }
