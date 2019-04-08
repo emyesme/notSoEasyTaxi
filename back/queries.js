@@ -346,6 +346,103 @@ const modelos = (request, response) => {
     })().catch(error => console.log({error: error.message}))  
 }
 
+const crearModelo = (request, response) => {
+    (async () => {
+        var client = await poolUserModelTaxiInsert.connect()
+        try{
+            validateCheck(request,response);
+            
+            var modelo = request.body.model;
+            var marca = request.body.trademark;
+            var baul = request.body.trunk;
+            
+            var result = await client.query("INSERT INTO ModelTaxi (model, trademark, trunk) VALUES ($1, $2, $3) RETURNING model", [modelo, marca, baul])
+
+
+            if (result.rows[0].model !== modelo){
+                response.status(200).json({mensaje: "Error al agregar modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Modelo agregado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const consultarModelo = (request, response) => {
+    (async () => {
+        var client = await pool.connect()
+        try{
+            validateCheck(request,response);
+            
+            var modelo = request.query.model;
+            
+            var result = await client.query("SELECT * FROM ModelTaxi WHERE model = $1", [modelo])
+            
+            if (result.rowCount === 0){
+                response.status(200).json({mensaje: "El modelo no fue encontrado"});
+            }
+            else{
+                response.status(200).json(result.rows);
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const modificarModelo = (request, response) => {
+    (async () => {
+        var client = await poolUserModelTaxiDelete.connect()
+        try{
+            
+            var modelo = request.body.model;
+            var marca = request.body.trademark;
+            var baul = request.body.trunk;
+
+            var result = await client.query("UPDATE ModelTaxi SET marca = $1, baul = $2 WHERE model = $3 RETURNING model", [modelo, marca, baul]);
+            
+            if (result.rows[0].model !== modelo){
+                response.status(200).json({mensaje: "Error al modificar modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Modelo modificado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const eliminarModelo = (request, response) => {
+    (async () => {
+        var client = await poolUserModelTaxiDelete.connect()
+        try{
+            validateCheck(request,response);
+            
+            var modelo = request.body.model;
+            
+            var result = await client.query("DELETE FROM ModelTaxi WHERE model = $1 RETURNING model", [modelo])
+            if (result.rows[0].model !== modelo){
+                response.status(200).json({mensaje: "No fue posible la eliminación del modelo, verifique la existencia del modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Modelo eliminado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
+
 
 
 const buscarPrimerTaxi = (request, response) => {
@@ -457,4 +554,8 @@ module.exports = {
     cambiarTaxi,
     adicionarTaxi,
     modelos,
+    crearModelo,
+    consultarModelo,
+    modificarModelo,
+    eliminarModelo
 }
