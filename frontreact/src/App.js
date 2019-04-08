@@ -7,7 +7,7 @@ import Menudriver from './components/driver/menudriver';
 import RegisterUser from './components/registerUser';
 import ChangeTaxi from './components/driver/changeTaxi';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
-
+import StartService from './components/user/startservice';
 class App extends Component {
   state = { modalShow: true};
   render() {
@@ -20,6 +20,7 @@ class App extends Component {
       <Route path='/Usuario' component={() => <Menuser emily={'emily'}/>}/>
       <Route path='/Conductor' component={() => <Menudriver/>}/>
       <Route path='/Taxi' component={ () => < ChangeTaxi/>}/>
+      <Route path='/Servicio' component={() => <StartService/>}/>
       <Route path='*' component={() => <FirstQuestion/>}/>
       </Switch>
     </BrowserRouter>

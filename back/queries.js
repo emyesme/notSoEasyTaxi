@@ -93,7 +93,7 @@ const todo = (request,response) => {
 const ingresarUsuario = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await poolUserClientSelect.connect()
+        var client = await pool.connect()
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -118,7 +118,7 @@ const ingresarUsuario = (request, response) => {
 
 const usuario = (request, response) => {
     (async () => {
-        var client = await poolUserClientSelect.connect()
+        var client = await pool.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -154,7 +154,6 @@ const registrarUsuario = (request, response) => {
                                             "(cellphoneClient, passwordClient, nameClient, address, creditCard, status) VALUES"+
                                             "($1, md5($2), $3, GEOMETRY(POINT($4,$5)), $6, true) RETURNING cellphoneClient;", [cellphone, pass, name, pointx, pointy, creditCard])
             if (result.rows[0].cellphoneclient !== cellphone){
-                console.log(result.error)
                 response.status(200).json({mensaje: "Error en registrar usuario."})
             }
             else{
@@ -169,7 +168,7 @@ const registrarUsuario = (request, response) => {
 
 const lugaresFavoritos = (request, response) => {
     (async () => {
-        var client = await poolUserFavCoordinatesSelect.connect()
+        var client = await pool.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -188,7 +187,7 @@ const lugaresFavoritos = (request, response) => {
 
 const origen = (request, response) => {
     (async () => {
-        var client = await poolUserClientSelect.connect()
+        var client = await pool.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -196,7 +195,6 @@ const origen = (request, response) => {
             if (result.rowCount === 0){
                 response.status(200).json({error: "Usuario no encontrado"})
             }
-            console.log(result.rows[0].point)
             response.status(200).json({origin: result.rows[0].point})
         }finally{
             //cierra la conexion con el cliente
@@ -205,13 +203,33 @@ const origen = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const askConductor = (request, response) => {
+    (async () => {
+        var client = await pool.connect()
+        try{
+            validateCheck(request,response)
+            const cellphone = request.query.cellphone;
+            var result = await client.query('SELECT idask, cellphoneclient, POINT(initialcoordinates) AS initialpoint, POINT(finalcoordinates) AS finalpoint FROM ask WHERE cellphoneDriver=$1 AND initialTime IS NULL;',[cellphone])
+            if (result.rowCount < 1){
+                response.status(200).json({mensaje: "Noy hay servicios"})
+            }
+            else{
+                response.status(200).json({servicio: result.rows[0]})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))   
+}
+
 //###########################CONDUCTOR########################################
 
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
 const ingresarConductor = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await poolUserDriverSelect.connect()
+        var client = await pool.connect()
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -236,7 +254,7 @@ const ingresarConductor = (request, response) => {
 
 const conductor = (request, response) => {
     (async () => {
-        var client = await poolUserDriveSelect.connect()//o cambiar el query o escoger diferente
+        var client = await pool.connect()//o cambiar el query o escoger diferente
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -354,15 +372,16 @@ const buscarPrimerTaxi = (request, response) => {
         try{
             validateCheck(request,response)
             var cellphoneClient = request.body.cellphone;
-            var initialPoint = request.body.initialCoordinates;
-            var finalPoint = request.body.finalCoordinates;
-            
-            var result = await client.query("SELECT findDriver($1, $2, $3)",[cellphoneClient, initialPoint, finalPoint])
-            if (result.rows[0].findDriver === NULL){
+            var initialx = request.body.initialCoordinates.lat;
+            var initialy = request.body.initialCoordinates.lng;
+            var finalx = request.body.finalCoordinates.lat;
+            var finaly = request.body.finalCoordinates.lng;
+            var result = await client.query("SELECT findDriver( $1, GEOMETRY(POINT($2,$3)), GEOMETRY(POINT($4,$5)));",[cellphoneClient, initialx, initialy, finalx, finaly])
+            if (result.rowCount === 0){
                 response.status(200).json({error: "No encontramos ningun taxista disponible"})
             }
             else{
-                response.status(200).json({mensaje: "Taxista encontrado, por favor espere la respuesta del conductor asignado"})
+                response.status(200).json({idAsk: result.rows[0].finddriver})
             }
                 
         }finally{
@@ -378,17 +397,14 @@ const buscarCelularConAsk = (request, response) => {
         var client = await pool.connect()
         try{
             validateCheck(request,response)
-            var idAskIn = request.body.idAsk;
-            
-            var result = await client.query("SELECT cellphoneDriver FROM Ask WHERE idAsk = $1", [idAskIn]);
-            
-            if (result.rows[0].cellphonedriver === NULL){
+            var idAskIn = request.query.idAsk;
+            var result = await client.query("SELECT cellphoneDriver FROM Ask WHERE idAsk = $1;", [idAskIn]);
+            if (result.rowCount === 0){
                 response.status(200).json({error: "El celular de conductor no fue encontrado"})
             }
             else{
-                response.status(200).json({mensaje: "El celular de conductor fue encontrado"})
+                response.status(200).json({cellphonedriver: result.rows[0].cellphonedriver})
             }
-                
         }finally{
             //cierra la conexion con el cliente
             client.release()
@@ -396,23 +412,19 @@ const buscarCelularConAsk = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
-
 const verDisponibilidadCellphone = (request, response) => {
     (async () => {
         var client = await pool.connect()
         try{
             validateCheck(request,response)
-            var cellphoneDriver = request.body.cellphone;
-            
+            var cellphoneDriver = request.query.cellphone;
             var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphoneDriver]);
-            
-            if (result.rows[0].cellphonedriver === true){
-                response.status(200).json({error: "Esta disponible"})
+            if (result.rows[0].available){
+                response.status(200).json({mensaje: "Esta disponible"})
             }
             else{
                 response.status(200).json({mensaje: "No esta disponible"})
             }
-                
         }finally{
             //cierra la conexion con el cliente
             client.release()
@@ -425,12 +437,10 @@ const askAceptada = (request, response) => {
         var client = await pool.connect()
         try{
             validateCheck(request,response)
-            var idAskIn = request.body.idAsk;
-            
+            var idAskIn = request.query.idAsk;
             var result = await client.query("SELECT initialTime FROM Ask WHERE idAsk = $1", [idAskIn]);
-            
-            if (result.rows[0].initialTime === NULL){
-                response.status(200).json({error: "Aun no ha sido aceptada"})
+            if (typeof result.rows[0].initialTime === "undefined"){
+                response.status(200).json({mensaje: "Aun no ha sido aceptada"})
             }
             else{
                 response.status(200).json({mensaje: "Fue aceptada"})
@@ -443,6 +453,7 @@ const askAceptada = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+
 //importante 
 module.exports = {
     todo,
@@ -451,10 +462,15 @@ module.exports = {
     registrarUsuario,
     lugaresFavoritos,
     origen,
+    buscarPrimerTaxi,
+    buscarCelularConAsk,
+    verDisponibilidadCellphone,
+    askAceptada,
     ingresarConductor,
     conductor,
     placa,
     cambiarTaxi,
     adicionarTaxi,
     modelos,
+    askConductor,
 }

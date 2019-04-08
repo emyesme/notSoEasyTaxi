@@ -53,6 +53,20 @@ app.get('/Origen',
         ],
         db.origen)
 
+app.post('/BuscarTaxi',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('initialPoint').escape(),
+            check('finalPoint').escape()
+        ],
+        db.buscarPrimerTaxi)
+
+app.get('/HayServicio',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.askConductor)
+
 //###########################CONDUCTOR########################################        
 app.get('/IngresarConductor',
         [
@@ -91,6 +105,21 @@ app.post('/AdicionarTaxi',
         db.adicionarTaxi)
 
 app.get('/Modelos', db.modelos)
+
+app.get('/SolicitudConductor',
+        [
+            check('idAsk').isNumeric().escape()
+        ],db.buscarCelularConAsk)
+
+app.get( '/DisponibilidadConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],db.verDisponibilidadCellphone)
+
+app.get('/ServicioAceptado',
+        [
+            check('idAsk').isNumeric().escape()
+        ],db.askAceptada)
 
 //start server
 app.listen(port, () => {
