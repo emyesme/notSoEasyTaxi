@@ -2,67 +2,10 @@ const Pool  = require('pg-pool')
 const {validationResult} = require('express-validator/check')
 const config = require('./configs')
 
-const configDeveloper = {
-    user: 'postgres',//aqui tengo dudas
-    password: 'postgres',//aqui tengo dudas
-    host: 'localhost', //cambia con el docker
-    port: '5432',
-    database: 'easyTaxiDB', //cambia con el docker
-    ssl: true,
-    max: 10,
-    min: 2,
-    idleTimeputMillis: 1000//close idle clients after 1 second
-};
 
-
-
-const configDocker = {
-    user: 'postgres',//aqui tengo dudas
-    password: 'root',//aqui tengo dudas
-    host: 'db',
-    port: '5432',
-    database: 'easyTaxiDB',
-    ssl: true,
-    max: 10,
-    min: 2,
-    idleTimeputMillis: 1000//close idle clients after 1 second
-}
-
-const pool = new Pool(configDeveloper);
-
-
-const poolUserClientInsert = new Pool(config.configUserClientInsert);
-const poolUserClientSelect = new Pool(config.configUserClientSelect);
-const poolUserClientUpdate = new Pool(config.configUserClientUpdate);
-const poolUserClientDelete = new Pool(config.configUserClientDelete);
-const poolUserFavCoordinatesInsert = new Pool(config.configUserFavCoordinatesInsert);
-const poolUserFavCoordinatesSelect = new Pool(config.configUserFavCoordinatesSelect);
-const poolUserFavCoordinatesUpdate = new Pool(config.configUserFavCoordinatesUpdate);
-const poolUserFavCoordinatesDelete = new Pool(config.configUserFavCoordinatesDelete);
-const poolUserDriverInsert = new Pool(config.configUserDriverInsert);
-const poolUserDriverSelect = new Pool(config.configUserDriverSelect);
-const poolUserDriverUpdate = new Pool(config.configUserDriverUpdate);
-const poolUserDriverDelete = new Pool(config.configUserDriverDelete);
-const poolUserModelTaxiInsert = new Pool(config.configUserModelTaxiInsert);
-const poolUserModelTaxiSelect = new Pool(config.configUserModelTaxiSelect);
-const poolUserModelTaxiUpdate = new Pool(config.configUserModelTaxiUpdate);
-const poolUserModelTaxiDelete = new Pool(config.configUserModelTaxiDelete);
-const poolUserTaxiInsert = new Pool(config.configUserTaxiInsert);
-const poolUserTaxiSelect = new Pool(config.configUserTaxiSelect);
-const poolUserTaxiUpdate = new Pool(config.configUserTaxiUpdate);
-const poolUserTaxiDelete = new Pool(config.configUserTaxiDelete);
-const poolUserDriveInsert = new Pool(config.configUserDriveInsert);
-const poolUserDriveSelect = new Pool(config.configUserDriveSelect);
-const poolUserDriveUpdate = new Pool(config.configUserDriveUpdate);
-const poolUserDriveDelete = new Pool(config.configUserDriveDelete);
-const poolUserAskInsert = new Pool(config.configUserAskInsert);
-const poolUserAskSelect = new Pool(config.configUserAskSelect);
-const poolUserAskUpdate = new Pool(config.configUserAskUpdate);
-const poolUserAskDelete = new Pool(config.configUserAskDelete);
-const poolUserGpsInsert = new Pool(config.configUserGpsInsert);
-const poolUserGpsSelect = new Pool(config.configUserGpsSelect);
-const poolUserGpsUpdate = new Pool(config.configUserGpsUpdate);
-const poolUserGpsDelete = new Pool(config.configUserGpsDelete);
+const poolAdmin = new Pool(config.configAdmin);
+const poolClient = new Pool(config.configUserClient);
+const poolDriver = new Pool(config.configUserDriver);
 
 
 const validateCheck = (request,response) => {
@@ -76,7 +19,7 @@ const validateCheck = (request,response) => {
 
 const todo = (request,response) => {
     ( async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             var result = await client.query('SELECT * FROM client')
             response.status(200).json(result.rows)
@@ -93,7 +36,7 @@ const todo = (request,response) => {
 const ingresarUsuario = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await poolUserClientSelect.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -118,7 +61,7 @@ const ingresarUsuario = (request, response) => {
 
 const usuario = (request, response) => {
     (async () => {
-        var client = await poolUserClientSelect.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -140,7 +83,7 @@ const usuario = (request, response) => {
 
 const registrarUsuario = (request, response) => {
     (async () => {
-        var client = await pool.connect() //#######################################
+        var client = await poolAdmin.connect() //#######################################
         try{
             //validacion de errores de sanitize 
             validateCheck(request,response)
@@ -169,7 +112,7 @@ const registrarUsuario = (request, response) => {
 
 const lugaresFavoritos = (request, response) => {
     (async () => {
-        var client = await poolUserFavCoordinatesSelect.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -188,7 +131,7 @@ const lugaresFavoritos = (request, response) => {
 
 const origen = (request, response) => {
     (async () => {
-        var client = await poolUserClientSelect.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -211,7 +154,7 @@ const origen = (request, response) => {
 const ingresarConductor = (request, response) => {  
     ( async () => {
         //conexion con database obtiene cliente
-        var client = await poolUserDriverSelect.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             //obtiene la informacion 
@@ -236,7 +179,7 @@ const ingresarConductor = (request, response) => {
 
 const conductor = (request, response) => {
     (async () => {
-        var client = await poolUserDriveSelect.connect()//o cambiar el query o escoger diferente
+        var client = await poolAdmin.connect()//o cambiar el query o escoger diferente
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -258,7 +201,7 @@ const conductor = (request, response) => {
 
 const placa = (request, response) => {
     (async () => {
-        var client = await poolUserTaxiSelect.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             const plaque = request.query.plaque;
@@ -279,7 +222,7 @@ const placa = (request, response) => {
 
 const cambiarTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request, response)
             var plaque = request.body.plaque;
@@ -301,7 +244,7 @@ const cambiarTaxi = (request, response) => {
 
 const adicionarTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             var plaque = request.body.plaque;
@@ -326,7 +269,7 @@ const adicionarTaxi = (request, response) => {
 
 const modelos = (request, response) => {
     (async () => {
-        var client = await poolUserModelTaxiSelect.connect()
+        var client = await poolAdmin.connect()
         try{
             var result = await client.query("SELECT * FROM modelTaxi")
             if (result.rowCount === 0){
@@ -346,9 +289,12 @@ const modelos = (request, response) => {
     })().catch(error => console.log({error: error.message}))  
 }
 
+
+//###########################Administrador########################################
+
 const crearModelo = (request, response) => {
     (async () => {
-        var client = await poolUserModelTaxiInsert.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response);
             
@@ -374,7 +320,7 @@ const crearModelo = (request, response) => {
 
 const consultarModelo = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response);
             
@@ -397,7 +343,7 @@ const consultarModelo = (request, response) => {
 
 const modificarModelo = (request, response) => {
     (async () => {
-        var client = await poolUserModelTaxiDelete.connect()
+        var client = await poolAdmin.connect()
         try{
             
             var modelo = request.body.model;
@@ -421,7 +367,7 @@ const modificarModelo = (request, response) => {
 
 const eliminarModelo = (request, response) => {
     (async () => {
-        var client = await poolUserModelTaxiDelete.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response);
             
@@ -447,7 +393,7 @@ const eliminarModelo = (request, response) => {
 
 const buscarPrimerTaxi = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             var cellphoneClient = request.body.cellphone;
@@ -472,7 +418,7 @@ const buscarPrimerTaxi = (request, response) => {
 
 const buscarCelularConAsk = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             var idAskIn = request.body.idAsk;
@@ -496,7 +442,7 @@ const buscarCelularConAsk = (request, response) => {
 
 const verDisponibilidadCellphone = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             var cellphoneDriver = request.body.cellphone;
@@ -519,7 +465,7 @@ const verDisponibilidadCellphone = (request, response) => {
 
 const askAceptada = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolClients.connect()
         try{
             validateCheck(request,response)
             var idAskIn = request.body.idAsk;
