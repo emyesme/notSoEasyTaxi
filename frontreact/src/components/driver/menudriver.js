@@ -4,7 +4,7 @@ import car from '../images/logo.png';
 import { Button, Modal,ButtonGroup, CardDeck, Card, ListGroup} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
-import DropdownItem from 'react-bootstrap/DropdownItem';
+import KmUsed from '../km'
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -45,17 +45,15 @@ class Menudriver extends Component {
                 initialpoint: [],
                 finalpoint: []
             },
-            show: false
+            show: false,
+            showModal: false,
         }
         this.showMap = this.showMap.bind(this);
         this.goUpdateTaxi = this.goUpdateTaxi.bind(this);
         this.goChangeTaxi = this.goChangeTaxi.bind(this);
         this.declineService = this.declineService.bind(this);
         this.findService = this.findService.bind(this);
-    }
-    componentDidMount(){
-        console.log("empezo conductor")
-        setInterval(this.findService, 3000)
+        this.gokmUsed = this.gokmUsed.bind(this);
     }
     async findService(){
         await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
@@ -74,7 +72,7 @@ class Menudriver extends Component {
         })
     }
     componentWillMount(){
-        axios.get(api+"/Conductor?cellphone="+this.props.location.state.cellphone)
+        axios.get(api+"/Conductor?cellphone="+this.state.cellphone)
         .then( response => {
             if( response.data.error != null){
                 alert(response.data.error);
@@ -83,6 +81,7 @@ class Menudriver extends Component {
               this.setState({ name: response.data.name, plaque: response.data.plaque})
             }
         }).catch(error => alert(error))
+        setInterval(this.findService, 3000)
     }
     showMap(){
         this.setState({showMap: !this.state.showMap})
@@ -106,8 +105,12 @@ class Menudriver extends Component {
     declineService(){
         this.setState({ show: !this.state.show})
     }
+    gokmUsed(){
+        this.setState({ showModal: !this.showModal})
+    }
     render() {
-        return (
+        let modalClose = () => this.setState({ showModal: false});
+        return (  
         <div style={backColor}>
             <Modal.Dialog  size='lg' centered>
             <Modal.Body style={grayRgb}>
@@ -123,7 +126,7 @@ class Menudriver extends Component {
                         <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
                         <Button style={pad}>Eliminar Taxi</Button>
                         <Button style={pad}>Eliminar Cuenta</Button>
-                        <Button style={pad}>Kilometros Recorridos</Button>
+                        <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
                         <Button style={pad}>Historial</Button>
                         <Button style={pad}>Estado: Libre</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
@@ -159,8 +162,9 @@ class Menudriver extends Component {
                 <Modal.Footer>
                     <Button variant='success' onClick={this.changeTaxi}>Si!</Button>
                     <Button variant='danger' onClick={this.declineService}>Cancelar</Button>
-                </Modal.Footer>
+                </Modal.Footer>c
             </Modal>
+           <KmUsed show={this.state.showModal} cellphonetype={'cellphonedriver'} cellphone={this.state.cellphone} onHide={modalClose}/>
         </div>
         );
     }

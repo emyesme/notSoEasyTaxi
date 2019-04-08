@@ -223,6 +223,33 @@ const askConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))   
 }
 
+const kilometrosRecorridos = (request, response) => {
+    (async () => {
+        var client = await pool.connect()
+        try{
+            validateCheck(request,response)
+            const cellphone = request.query.cellphone;
+            const cellphonetype = request.query.type;
+            var result;
+            if( cellphonetype === 'cellphonedriver'){
+                result = await client.query('WITH kilometers AS (SELECT cellphonedriver, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphonedriver ) SELECT meters from kilometers where cellphonedriver=$1;',[cellphone])
+            }
+            else{
+                result = await client.query('WITH kilometers AS (SELECT cellphoneclient, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphoneclient ) SELECT meters from kilometers where cellphoneclient=$1;',[cellphone])
+            }
+            if (result.rowCount < 1){
+                response.status(200).json({error: "No hay kilometros recorridos"})
+            }
+            else{
+                response.status(200).json({km: result.rows[0].meters / 1000 })
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))    
+}
+
 //###########################CONDUCTOR########################################
 
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
@@ -242,6 +269,7 @@ const ingresarConductor = (request, response) => {
             }
             else{
                 //devuelve la informacion esperada
+                console.log("correcto ingresar conductor")
                 response.status(200).json({ cellphone: result.rows[0].cellphonedriver})
             }
         }
@@ -264,6 +292,7 @@ const conductor = (request, response) => {
             }
             else{
                 //devuelve la informacion esperada
+                console.log("correcto conductor")
                 response.status(200).json({cellphone: result.rows[0].cellphonedriver, name: result.rows[0].namedriver, plaque: result.rows[0].plaque})
             }
         }
@@ -344,7 +373,7 @@ const adicionarTaxi = (request, response) => {
 
 const modelos = (request, response) => {
     (async () => {
-        var client = await poolUserModelTaxiSelect.connect()
+        var client = await pool.connect()
         try{
             var result = await client.query("SELECT * FROM modelTaxi")
             if (result.rowCount === 0){
@@ -466,6 +495,7 @@ module.exports = {
     buscarCelularConAsk,
     verDisponibilidadCellphone,
     askAceptada,
+    kilometrosRecorridos,
     ingresarConductor,
     conductor,
     placa,

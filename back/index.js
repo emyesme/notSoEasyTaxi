@@ -67,6 +67,13 @@ app.get('/HayServicio',
         ],
         db.askConductor)
 
+app.get('/kilometrosRecorridos',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('type').isAlpha().trim().escape()
+        ],
+        db.kilometrosRecorridos)
+
 //###########################CONDUCTOR########################################        
 app.get('/IngresarConductor',
         [
