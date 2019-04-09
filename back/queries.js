@@ -200,6 +200,31 @@ const kilometrosRecorridos = (request, response) => {
     })().catch(error => console.log({error: error.message}))    
 }
 
+const finServicio = (request, response) => {
+    ( async () => {
+        //conexion con database obtiene cliente
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response)
+            //obtiene la informacion 
+            const idAsk = request.body.idAsk;
+            //ejecuta el query correspondiente
+            var result = await client.query('SELECT finalAsk($1)', [idAsk]);
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Error al terminar servicio."})
+            }
+            else{
+                //devuelve la informacion esperada
+                response.status(200).json({ idask: result.rows[0].finalask})
+            }
+        }
+        finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch( error => console.log({error: error.message}))    
+}
+
 //###########################CONDUCTOR########################################
 
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
@@ -366,6 +391,28 @@ const aceptaConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))   
 }
 
+const moverConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            var cellphonedriver = request.body.cellphonedriver
+            var destiny = request.body.destiny
+            var result = await client.query("SELECT moveDriver($1, ST_MakePoint($2,$3));", [cellphonedriver, destiny[0], destiny[1]])
+            console.log(result.rows[0].movedriver === null)
+            if (result.rows[0].movedriver === null){
+                response.status(200).json({error: "Error al mover conductor"})
+            }
+            else{
+                response.status(200).json({destiny:result.rows[0].movedriver})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))     
+}
+
 //###########################Administrador########################################
 
 const crearModelo = (request, response) => {
@@ -504,7 +551,6 @@ const buscarCelularConAsk = (request, response) => {
                 response.status(200).json({error: "El celular de conductor no fue encontrado"})
             }
             else{
-                console.log(result.rows)
                 response.status(200).json({cellphonedriver: result.rows[0].cellphonedriver})
             }
         }finally{
@@ -520,9 +566,7 @@ const verDisponibilidadCellphone = (request, response) => {
         try{
             validateCheck(request,response)
             var cellphonedriver = request.query.cellphone;
-            console.log(request.query)
             var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphonedriver]);
-            console.log(result.rows)
             if (result.rows[0].available){
                 response.status(200).json({mensaje: "Esta disponible"})
             }
@@ -570,6 +614,7 @@ module.exports = {
     buscarCelularConAsk,
     verDisponibilidadCellphone,
     askAceptada,
+    moverConductor,
     kilometrosRecorridos,
     ingresarConductor,
     conductor,
@@ -583,5 +628,5 @@ module.exports = {
     consultarModelo,
     modificarModelo,
     eliminarModelo,
-
+    finServicio,
 }

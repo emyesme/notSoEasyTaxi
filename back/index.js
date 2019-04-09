@@ -67,6 +67,19 @@ app.get('/HayServicio',
         ],
         db.askConductor)
 
+app.post('/FinServicio',
+        [
+            check('idAsk').isNumeric().escape()
+        ],
+        db.finServicio)
+
+app.post('/MoverConductor',
+        [
+            check('cellphonedriver').isNumeric().isLength({min:10}).trim().escape(),
+            check('destiny').isArray().escape()
+        ],
+        db.moverConductor)
+
 app.get('/kilometrosRecorridos',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),

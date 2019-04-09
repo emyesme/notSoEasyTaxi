@@ -45,6 +45,9 @@ class Menudriver extends Component {
                 initialpoint: [],
                 finalpoint: []
             },
+            mensaje : "Viajando...",
+            showTraveling: false,
+            showButtonCloseTraveling: false,
             show: false,
             showModal: false,
         }
@@ -55,6 +58,7 @@ class Menudriver extends Component {
         this.findService = this.findService.bind(this);
         this.gokmUsed = this.gokmUsed.bind(this);
         this.accept = this.accept.bind(this);
+        this.end = this.end.bind(this);
     }
     async findService(){
         await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
@@ -71,6 +75,27 @@ class Menudriver extends Component {
                 console.log("no servicio")
             }
         })
+        if ( this.state.showTraveling === true){
+            await axios.post(api + '/MoverConductor',
+            {
+                cellphonedriver: this.state.cellphone,
+                destiny: this.state.service.finalpoint
+            }).then( response => {
+                console.log(typeof response.data.error !== 'undefined')
+                if(typeof response.data.error !== 'undefined'){
+                    alert(response.data.error+ "jum")
+                }
+                else{
+                    console.log(this.state.service.finalpoint)
+                    const destinationOut = [ response.data.destiny.x, response.data.destiny.y]
+                    console.log(destinationOut)
+                    console.log(this.state.service.finalpoint[0] === destinationOut[0] && this.state.service.finalpoint[1] === destinationOut[1])
+                    if (this.state.service.finalpoint[0] === destinationOut[0]){
+                        this.setState({ showButtonCloseTraveling: true, mensaje: "Viaje Terminado Correctamente"})
+                    }
+                }
+            })            
+        }
     }
     componentWillMount(){
         axios.get(api+"/Conductor?cellphone="+this.state.cellphone)
@@ -110,7 +135,6 @@ class Menudriver extends Component {
         this.setState({ showModal: !this.showModal})
     }
     accept(){
-        console.log(this.state.service.idAsk)
         axios.post(api+'/AceptaConductor',
         {
             idAsk: this.state.service.idAsk
@@ -121,10 +145,13 @@ class Menudriver extends Component {
             }
             else{
                 if ( response.data.idAsk === this.state.service.idAsk){
-                    alert("Lo aceptaste!!!")
+                    this.setState({ show: !this.state.show, showTraveling : true})
                 }
             }            
         })
+    }
+    end(){
+        this.setState({ showTraveling: false})
     }
     render() {
         let modalClose = () => this.setState({ showModal: false});
@@ -180,7 +207,15 @@ class Menudriver extends Component {
                 <Modal.Footer>
                     <Button variant='success' onClick={this.accept}>Si!</Button>
                     <Button variant='danger' onClick={this.declineService}>Cancelar</Button>
-                </Modal.Footer>c
+                </Modal.Footer>
+            </Modal>
+            <Modal show={this.state.showTraveling} aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal.Body>
+                <center><h2>{this.state.mensaje} </h2></center>
+                </Modal.Body>
+                <Modal.Footer>
+                    { this.state.showButtonCloseTraveling === false ? <div></div> :  <Button variant='danger' onClick={this.end}>Terminar</Button>}
+                </Modal.Footer>
             </Modal>
            <KmUsed show={this.state.showModal} cellphonetype={'cellphonedriver'} cellphone={this.state.cellphone} onHide={modalClose}/>
         </div>

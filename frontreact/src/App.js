@@ -10,6 +10,7 @@ import Menuadmin from './components/admin/menuadmin';
 import ModelCar from './components/admin/modelcar';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
 import StartService from './components/user/startservice';
+import ScoreService from './components/user/scoreService';
 class App extends Component {
   state = { modalShow: true};
   render() {
@@ -25,7 +26,9 @@ class App extends Component {
       <Route path='/Conductor' component={() => <Menudriver/>}/>
       <Route path='/Taxi' component={ () => < ChangeTaxi/>}/>
       <Route path='/Servicio' component={() => <StartService/>}/>
+      <Route path='/Calificar' component={() => <ScoreService/>}/>
       <Route path='*' component={() => <FirstQuestion/>}/>
+
       </Switch>
     </BrowserRouter>
     );

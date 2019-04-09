@@ -84,6 +84,8 @@ class Service extends React.Component {
               alert(response.data.error)
           }
           else{
+              console.log(this.state.idAsk)
+              console.log(response.data)
               const cellphone = response.data.cellphonedriver
               console.log(response.data.cellphonedriver)
               this.props.history.push({pathname: '/Servicio', state: { idAsk: this.state.idAsk, cellphonedriver: cellphone}})
