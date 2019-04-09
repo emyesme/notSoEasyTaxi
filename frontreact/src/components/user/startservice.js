@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Modal,Button,Image} from 'react-bootstrap'
 import Axios from 'axios';
 import {withRouter} from 'react-router-dom';
-import { noConflict } from 'leaflet';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -15,44 +14,30 @@ class startService extends Component {
         super(props);
         this.state = { 
             idAsk: this.props.location.state.idAsk,
-            cellphonedriver: '0000000000',
+            cellphonedriver: this.props.location.state.cellphonedriver,
             plaque: '',
             stateAsk: 'no',
             count: 0,
             driver: false
         }
-        this.bringDriverId = this.bringDriverId.bind(this);
+        /*this.bringDriverId = this.bringDriverId.bind(this);*/
         this.verifyAvaliable = this.verifyAvaliable.bind(this);
         this.verifyAsk = this.verifyAsk.bind(this);
     }
-    componentDidMount(){
-        console.log('empezo')
-        this.bringDriverId()
+    componentWillMount(){
         this.verifyAvaliable()
         this.verifyAsk()
-        setInterval(this.verifyAsk,10000)//cada 10 segundos
+        setInterval(this.verifyAsk,5000)//cada 10 segundos
     }
     async verifyAsk(){
         try{
-            await this.bringDriverId()
             await this.verifyAvaliable()
             await this.verifyAsk()
             /*ahora aqui iria cuando cambie a acepto o cuando cancele */
-            this.setState({ count : this.state.count += 1})
+            await this.setState({ count : this.state.count += 1})
         }catch(error){
             console.log(error)
         }
-    }
-    bringDriverId(){
-        Axios.get(api+'/SolicitudConductor?idAsk='+this.state.idAsk)
-        .then( response => {
-            if(response.data.error != null){
-                alert(response.data.error)
-            }
-            else{
-                this.setState({ cellphonedriver: response.data.cellphonedriver})
-            }        
-        }).catch( error => console.log(error))
     }
     verifyAvaliable(){
         Axios.get(api+'/DisponibilidadConductor?cellphone='+this.state.cellphonedriver)
@@ -61,7 +46,7 @@ class startService extends Component {
                 alert(response.data.error)
             }
             else{
-                this.setState({ stateAsk: response.data.mensaje})
+                this.setState({ stateAsk: "available"})
             } 
         }).catch( error => console.log(error))
     }

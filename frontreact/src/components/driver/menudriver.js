@@ -54,6 +54,7 @@ class Menudriver extends Component {
         this.declineService = this.declineService.bind(this);
         this.findService = this.findService.bind(this);
         this.gokmUsed = this.gokmUsed.bind(this);
+        this.accept = this.accept.bind(this);
     }
     async findService(){
         await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
@@ -108,6 +109,23 @@ class Menudriver extends Component {
     gokmUsed(){
         this.setState({ showModal: !this.showModal})
     }
+    accept(){
+        console.log(this.state.service.idAsk)
+        axios.post(api+'/AceptaConductor',
+        {
+            idAsk: this.state.service.idAsk
+        }
+        ).then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+            }
+            else{
+                if ( response.data.idAsk === this.state.service.idAsk){
+                    alert("Lo aceptaste!!!")
+                }
+            }            
+        })
+    }
     render() {
         let modalClose = () => this.setState({ showModal: false});
         return (  
@@ -160,7 +178,7 @@ class Menudriver extends Component {
                         </ListGroup>                    
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='success' onClick={this.changeTaxi}>Si!</Button>
+                    <Button variant='success' onClick={this.accept}>Si!</Button>
                     <Button variant='danger' onClick={this.declineService}>Cancelar</Button>
                 </Modal.Footer>c
             </Modal>

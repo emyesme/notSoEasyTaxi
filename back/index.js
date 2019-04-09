@@ -121,17 +121,22 @@ app.get('/SolicitudConductor',
 app.get( '/DisponibilidadConductor',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape()
-        ],db.verDisponibilidadCellphone)
+        ],
+        db.verDisponibilidadCellphone)
 
 app.get('/ServicioAceptado',
         [
             check('idAsk').isNumeric().escape()
         ],db.askAceptada)
 
-//start server
-app.listen(port, () => {
-    console.log('Conexión a la base de datos puerto: ', port)
-})
+app.post('/AceptaConductor',
+        [
+            check('idAsk').isNumeric().escape()
+        ],
+        db.aceptaConductor)
+
+
+
 
 //###########################MODELO########################################
 
@@ -163,7 +168,10 @@ app.post('/EliminarModelo',
         ],
         db.eliminarModelo)
 
-
+//start server
+app.listen(port, () => {
+    console.log('Conexión a la base de datos puerto: ', port)
+})
 
 
 

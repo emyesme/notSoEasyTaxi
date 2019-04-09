@@ -154,7 +154,7 @@ const origen = (request, response) => {
 
 const askConductor = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -171,6 +171,7 @@ const askConductor = (request, response) => {
         }
     })().catch(error => console.log({error: error.message}))   
 }
+
 
 const kilometrosRecorridos = (request, response) => {
     (async () => {
@@ -219,7 +220,6 @@ const ingresarConductor = (request, response) => {
             }
             else{
                 //devuelve la informacion esperada
-                console.log("correcto ingresar conductor")
                 response.status(200).json({ cellphone: result.rows[0].cellphonedriver})
             }
         }
@@ -244,7 +244,6 @@ const conductor = (request, response) => {
             }
             else{
                 //devuelve la informacion esperada
-                console.log("correcto conductor")
                 response.status(200).json({cellphone: result.rows[0].cellphonedriver, name: result.rows[0].namedriver, plaque: result.rows[0].plaque})
             }
         }
@@ -347,6 +346,25 @@ const modelos = (request, response) => {
     })().catch(error => console.log({error: error.message}))  
 }
 
+const aceptaConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            var idAsk = request.body.idAsk
+            var result = await client.query("select aceptarConductor($1)", [idAsk])
+            if (result.rows[0].aceptarconductor !== idAsk){
+                response.status(200).json({error: "Error al aceptar solicitud"})
+            }
+            else{
+                response.status(200).json({idAsk: result.rows[0].aceptarconductor})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))   
+}
 
 //###########################Administrador########################################
 
@@ -451,7 +469,7 @@ const eliminarModelo = (request, response) => {
 
 const buscarPrimerTaxi = (request, response) => {
     (async () => {
-        var client = await poolClient.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             var cellphoneClient = request.body.cellphone;
@@ -481,7 +499,7 @@ const buscarCelularConAsk = (request, response) => {
         try{
             validateCheck(request,response)
             var idAskIn = request.query.idAsk;
-            var result = await client.query("SELECT cellphoneDriver FROM Ask WHERE idAsk = $1;", [idAskIn]);
+            var result = await client.query("SELECT cellphonedriver FROM Ask WHERE idAsk = $1;", [idAskIn]);
             if (result.rowCount === 0){
                 response.status(200).json({error: "El celular de conductor no fue encontrado"})
             }
@@ -500,8 +518,9 @@ const verDisponibilidadCellphone = (request, response) => {
         var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
-            var cellphoneDriver = request.query.cellphone;
-            var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphoneDriver]);
+            var cellphonedriver = request.query.cellphone;
+            var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphonedriver]);
+
             if (result.rows[0].available){
                 response.status(200).json({mensaje: "Esta disponible"})
             }
@@ -517,12 +536,12 @@ const verDisponibilidadCellphone = (request, response) => {
 
 const askAceptada = (request, response) => {
     (async () => {
-        var client = await poolClients.connect()
+        var client = await poolClient.connect()
         try{
             validateCheck(request,response)
             var idAskIn = request.query.idAsk;
             var result = await client.query("SELECT initialTime FROM Ask WHERE idAsk = $1", [idAskIn]);
-            if (typeof result.rows[0].initialTime === "undefined"){
+            if (typeof result.rows[0].initialtime === "undefined"){
                 response.status(200).json({mensaje: "Aun no ha sido aceptada"})
             }
             else{
@@ -556,8 +575,8 @@ module.exports = {
     cambiarTaxi,
     adicionarTaxi,
     modelos,
-
     askConductor,
+    aceptaConductor,
     crearModelo,
     consultarModelo,
     modificarModelo,
