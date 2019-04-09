@@ -87,6 +87,13 @@ app.get('/kilometrosRecorridos',
         ],
         db.kilometrosRecorridos)
 
+app.post('/Calificacion',
+        [
+            check('idAsk').isNumeric().escape(),
+            check('star').isNumeric().escape()
+        ],
+        db.calificar)
+
 //###########################CONDUCTOR########################################        
 app.get('/IngresarConductor',
         [

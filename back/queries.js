@@ -181,6 +181,7 @@ const kilometrosRecorridos = (request, response) => {
             const cellphone = request.query.cellphone;
             const cellphonetype = request.query.type;
             var result;
+            console.log(cellphonetype)
             if( cellphonetype === 'cellphonedriver'){
                 result = await client.query('WITH kilometers AS (SELECT cellphonedriver, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphonedriver ) SELECT meters from kilometers where cellphonedriver=$1;',[cellphone])
             }
@@ -224,6 +225,33 @@ const finServicio = (request, response) => {
         }
     })().catch( error => console.log({error: error.message}))    
 }
+
+const calificar = (request, response) => {
+    ( async () => {
+        //conexion con database obtiene cliente
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response)
+            //obtiene la informacion 
+            const idAsk = request.body.idAsk;
+            const star = request.body.star;
+            //ejecuta el query correspondiente
+            var result = await client.query('UPDATE ask SET stars = $1 WHERE idask = $2 RETURNING cellphoneclient;', [star,idAsk]);
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Error al calificar"})
+            }
+            else{
+                //devuelve la informacion esperada
+                response.status(200).json({ cellphoneclient: result.rows[0].cellphoneclient})
+            }
+        }
+        finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch( error => console.log({error: error.message}))    
+}
+
 
 //###########################CONDUCTOR########################################
 
@@ -629,4 +657,5 @@ module.exports = {
     modificarModelo,
     eliminarModelo,
     finServicio,
+    calificar,
 }

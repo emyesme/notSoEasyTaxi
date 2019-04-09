@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, Popup} from 'react-leaflet';
 import L from 'leaflet';
+import './map.css';
 
 const stamenTiles = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
 const stamenAttr = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
@@ -9,7 +10,7 @@ const zoomLevel = 12;
 
 const favPlaces = new L.Icon({
     iconUrl: require('./images/marker.svg'),
-    iconSize: new L.point(25,25),
+    iconSize: new L.Point(25, 25),
     className: 'leaflet-div-icon'
 }) 
 

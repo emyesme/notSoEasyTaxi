@@ -169,8 +169,6 @@ class Menudriver extends Component {
                         <Button style={pad} >Modificar Información Personal</Button>
                         <Button style={pad} onClick={this.goUpdateTaxi}>Modificar Información del Taxi</Button>
                         <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
-                        <Button style={pad}>Eliminar Taxi</Button>
-                        <Button style={pad}>Eliminar Cuenta</Button>
                         <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
                         <Button style={pad}>Historial</Button>
                         <Button style={pad}>Estado: Libre</Button>

@@ -13,6 +13,7 @@ class startService extends Component {
     constructor(props) {
         super(props);
         this.state = { 
+            idInterval: 0,
             idAsk: this.props.location.state.idAsk,
             cellphonedriver: this.props.location.state.cellphonedriver,
             plaque: '',
@@ -31,7 +32,7 @@ class startService extends Component {
     componentWillMount(){
         this.verifyAvaliable()
         this.verifyAsk()
-        setInterval(this.verifyAskAll,5000)//cada 10 segundos
+        this.setState({ idInterval : setInterval(this.verifyAskAll,5000)})//cada 10 segundos
     }
     async verifyAskAll(){
         try{
@@ -47,7 +48,8 @@ class startService extends Component {
         }
     }
     endTravel(){
-        console.log(this.state.idAsk)
+        clearInterval(this.state.idInterval)
+        console.log("deberia detenerse")
         Axios.post(api+'/FinServicio',
         {
             idAsk: this.state.idAsk
