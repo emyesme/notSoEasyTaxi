@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Modal,Button,Image} from 'react-bootstrap'
 import Axios from 'axios';
 import {withRouter} from 'react-router-dom';
-import { noConflict } from 'leaflet';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -14,44 +13,56 @@ class startService extends Component {
     constructor(props) {
         super(props);
         this.state = { 
+            idInterval: 0,
             idAsk: this.props.location.state.idAsk,
-            cellphonedriver: '0000000000',
+            cellphonedriver: this.props.location.state.cellphonedriver,
             plaque: '',
             stateAsk: 'no',
-            count: 0,
-            driver: false
+            driver: false,
+            show: false,
+            mensaje: 'Viajando.....'
         }
-        this.bringDriverId = this.bringDriverId.bind(this);
+        console.log(this.state.cellphonedriver)
+        /*this.bringDriverId = this.bringDriverId.bind(this);*/
         this.verifyAvaliable = this.verifyAvaliable.bind(this);
+        this.verifyAskAll = this.verifyAskAll.bind(this);
         this.verifyAsk = this.verifyAsk.bind(this);
+        this.endTravel = this.endTravel.bind(this);
     }
-    componentDidMount(){
-        console.log('empezo')
-        this.bringDriverId()
+    componentWillMount(){
         this.verifyAvaliable()
         this.verifyAsk()
-        setInterval(this.verifyAsk,10000)//cada 10 segundos
+        this.setState({ idInterval : setInterval(this.verifyAskAll,5000)})//cada 10 segundos
     }
-    async verifyAsk(){
+    async verifyAskAll(){
         try{
-            await this.bringDriverId()
             await this.verifyAvaliable()
             await this.verifyAsk()
             /*ahora aqui iria cuando cambie a acepto o cuando cancele */
-            this.setState({ count : this.state.count += 1})
+            if ( this.state.driver === "Fue aceptada"){
+                this.setState({ show: true })
+                this.endTravel()
+            }
         }catch(error){
             console.log(error)
         }
     }
-    bringDriverId(){
-        Axios.get(api+'/SolicitudConductor?idAsk='+this.state.idAsk)
-        .then( response => {
+    endTravel(){
+        clearInterval(this.state.idInterval)
+        console.log("deberia detenerse")
+        Axios.post(api+'/FinServicio',
+        {
+            idAsk: this.state.idAsk
+        }).then( response => {
             if(response.data.error != null){
                 alert(response.data.error)
             }
             else{
-                this.setState({ cellphonedriver: response.data.cellphonedriver})
-            }        
+                if ( this.state.idAsk === response.data.idask){
+                    this.setState({ mensaje: 'Viaje finalizado pasar a la etapa de Calificacion...'})
+                    this.props.history.push({ pathname: '/Calificar', state: { idAsk: this.state.idAsk}})
+                }
+            }             
         }).catch( error => console.log(error))
     }
     verifyAvaliable(){
@@ -61,7 +72,7 @@ class startService extends Component {
                 alert(response.data.error)
             }
             else{
-                this.setState({ stateAsk: response.data.mensaje})
+                this.setState({ stateAsk: "available"})
             } 
         }).catch( error => console.log(error))
     }
@@ -84,7 +95,7 @@ class startService extends Component {
                     aria-labelledby="contained-modal-title-vcenter"
                     centered>
                     <Modal.Header>
-                    <Modal.Title id="contained-modal-title-vcenter">
+                    <Modal.Title>
                         Conductor Encontrado
                     </Modal.Title>
                     </Modal.Header>
@@ -94,10 +105,14 @@ class startService extends Component {
                         <p> cellphone: {this.state.cellphonedriver} </p>
                         <p> verifyAvaliable: {this.state.stateAsk} </p>
                         <p> conductor?: {this.state.driver} </p>
-                        <p> count: {this.state.count} </p>
                     </Modal.Body>
                     <Modal.Footer ><Button href="/" variant='danger'>Solo programadores</Button></Modal.Footer>
                 </Modal.Dialog>
+                <Modal show={this.state.show} aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal.Body>
+                <center><h2>{this.state.mensaje} </h2></center>
+                </Modal.Body>
+            </Modal>
             </div>
         );
     }

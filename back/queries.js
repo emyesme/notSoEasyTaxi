@@ -154,7 +154,7 @@ const origen = (request, response) => {
 
 const askConductor = (request, response) => {
     (async () => {
-        var client = await pool.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
@@ -172,6 +172,7 @@ const askConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))   
 }
 
+
 const kilometrosRecorridos = (request, response) => {
     (async () => {
         var client = await poolAdmin.connect()
@@ -180,6 +181,7 @@ const kilometrosRecorridos = (request, response) => {
             const cellphone = request.query.cellphone;
             const cellphonetype = request.query.type;
             var result;
+            console.log(cellphonetype)
             if( cellphonetype === 'cellphonedriver'){
                 result = await client.query('WITH kilometers AS (SELECT cellphonedriver, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphonedriver ) SELECT meters from kilometers where cellphonedriver=$1;',[cellphone])
             }
@@ -198,6 +200,58 @@ const kilometrosRecorridos = (request, response) => {
         }
     })().catch(error => console.log({error: error.message}))    
 }
+
+const finServicio = (request, response) => {
+    ( async () => {
+        //conexion con database obtiene cliente
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response)
+            //obtiene la informacion 
+            const idAsk = request.body.idAsk;
+            //ejecuta el query correspondiente
+            var result = await client.query('SELECT finalAsk($1)', [idAsk]);
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Error al terminar servicio."})
+            }
+            else{
+                //devuelve la informacion esperada
+                response.status(200).json({ idask: result.rows[0].finalask})
+            }
+        }
+        finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch( error => console.log({error: error.message}))    
+}
+
+const calificar = (request, response) => {
+    ( async () => {
+        //conexion con database obtiene cliente
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response)
+            //obtiene la informacion 
+            const idAsk = request.body.idAsk;
+            const star = request.body.star;
+            //ejecuta el query correspondiente
+            var result = await client.query('UPDATE ask SET stars = $1 WHERE idask = $2 RETURNING cellphoneclient;', [star,idAsk]);
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Error al calificar"})
+            }
+            else{
+                //devuelve la informacion esperada
+                response.status(200).json({ cellphoneclient: result.rows[0].cellphoneclient})
+            }
+        }
+        finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch( error => console.log({error: error.message}))    
+}
+
 
 //###########################CONDUCTOR########################################
 
@@ -219,7 +273,6 @@ const ingresarConductor = (request, response) => {
             }
             else{
                 //devuelve la informacion esperada
-                console.log("correcto ingresar conductor")
                 response.status(200).json({ cellphone: result.rows[0].cellphonedriver})
             }
         }
@@ -244,7 +297,6 @@ const conductor = (request, response) => {
             }
             else{
                 //devuelve la informacion esperada
-                console.log("correcto conductor")
                 response.status(200).json({cellphone: result.rows[0].cellphonedriver, name: result.rows[0].namedriver, plaque: result.rows[0].plaque})
             }
         }
@@ -347,6 +399,47 @@ const modelos = (request, response) => {
     })().catch(error => console.log({error: error.message}))  
 }
 
+const aceptaConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            var idAsk = request.body.idAsk
+            var result = await client.query("select aceptarConductor($1)", [idAsk])
+            if (result.rows[0].aceptarconductor !== idAsk){
+                response.status(200).json({error: "Error al aceptar solicitud"})
+            }
+            else{
+                response.status(200).json({idAsk: result.rows[0].aceptarconductor})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))   
+}
+
+const moverConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            var cellphonedriver = request.body.cellphonedriver
+            var destiny = request.body.destiny
+            var result = await client.query("SELECT moveDriver($1, ST_MakePoint($2,$3));", [cellphonedriver, destiny[0], destiny[1]])
+            console.log(result.rows[0].movedriver === null)
+            if (result.rows[0].movedriver === null){
+                response.status(200).json({error: "Error al mover conductor"})
+            }
+            else{
+                response.status(200).json({destiny:result.rows[0].movedriver})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))     
+}
 
 //###########################Administrador########################################
 
@@ -451,7 +544,7 @@ const eliminarModelo = (request, response) => {
 
 const buscarPrimerTaxi = (request, response) => {
     (async () => {
-        var client = await poolClient.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
             var cellphoneClient = request.body.cellphone;
@@ -481,7 +574,7 @@ const buscarCelularConAsk = (request, response) => {
         try{
             validateCheck(request,response)
             var idAskIn = request.query.idAsk;
-            var result = await client.query("SELECT cellphoneDriver FROM Ask WHERE idAsk = $1;", [idAskIn]);
+            var result = await client.query("SELECT cellphonedriver FROM Ask WHERE idAsk = $1;", [idAskIn]);
             if (result.rowCount === 0){
                 response.status(200).json({error: "El celular de conductor no fue encontrado"})
             }
@@ -500,8 +593,8 @@ const verDisponibilidadCellphone = (request, response) => {
         var client = await poolAdmin.connect()
         try{
             validateCheck(request,response)
-            var cellphoneDriver = request.query.cellphone;
-            var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphoneDriver]);
+            var cellphonedriver = request.query.cellphone;
+            var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphonedriver]);
             if (result.rows[0].available){
                 response.status(200).json({mensaje: "Esta disponible"})
             }
@@ -517,12 +610,12 @@ const verDisponibilidadCellphone = (request, response) => {
 
 const askAceptada = (request, response) => {
     (async () => {
-        var client = await poolClients.connect()
+        var client = await poolClient.connect()
         try{
             validateCheck(request,response)
             var idAskIn = request.query.idAsk;
             var result = await client.query("SELECT initialTime FROM Ask WHERE idAsk = $1", [idAskIn]);
-            if (typeof result.rows[0].initialTime === "undefined"){
+            if (result.rows[0].initialtime === null){
                 response.status(200).json({mensaje: "Aun no ha sido aceptada"})
             }
             else{
@@ -549,6 +642,7 @@ module.exports = {
     buscarCelularConAsk,
     verDisponibilidadCellphone,
     askAceptada,
+    moverConductor,
     kilometrosRecorridos,
     ingresarConductor,
     conductor,
@@ -556,11 +650,12 @@ module.exports = {
     cambiarTaxi,
     adicionarTaxi,
     modelos,
-
     askConductor,
+    aceptaConductor,
     crearModelo,
     consultarModelo,
     modificarModelo,
     eliminarModelo,
-
+    finServicio,
+    calificar,
 }

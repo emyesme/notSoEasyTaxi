@@ -67,12 +67,32 @@ app.get('/HayServicio',
         ],
         db.askConductor)
 
+app.post('/FinServicio',
+        [
+            check('idAsk').isNumeric().escape()
+        ],
+        db.finServicio)
+
+app.post('/MoverConductor',
+        [
+            check('cellphonedriver').isNumeric().isLength({min:10}).trim().escape(),
+            check('destiny').isArray().escape()
+        ],
+        db.moverConductor)
+
 app.get('/kilometrosRecorridos',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
             check('type').isAlpha().trim().escape()
         ],
         db.kilometrosRecorridos)
+
+app.post('/Calificacion',
+        [
+            check('idAsk').isNumeric().escape(),
+            check('star').isNumeric().escape()
+        ],
+        db.calificar)
 
 //###########################CONDUCTOR########################################        
 app.get('/IngresarConductor',
@@ -121,17 +141,22 @@ app.get('/SolicitudConductor',
 app.get( '/DisponibilidadConductor',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape()
-        ],db.verDisponibilidadCellphone)
+        ],
+        db.verDisponibilidadCellphone)
 
 app.get('/ServicioAceptado',
         [
             check('idAsk').isNumeric().escape()
         ],db.askAceptada)
 
-//start server
-app.listen(port, () => {
-    console.log('Conexión a la base de datos puerto: ', port)
-})
+app.post('/AceptaConductor',
+        [
+            check('idAsk').isNumeric().escape()
+        ],
+        db.aceptaConductor)
+
+
+
 
 //###########################MODELO########################################
 
@@ -163,7 +188,10 @@ app.post('/EliminarModelo',
         ],
         db.eliminarModelo)
 
-
+//start server
+app.listen(port, () => {
+    console.log('Conexión a la base de datos puerto: ', port)
+})
 
 
 

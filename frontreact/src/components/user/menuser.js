@@ -3,7 +3,6 @@ import LMap from '../map'
 import car from '../images/logo.png'
 import { Modal, Button, ButtonGroup, Card, CardDeck } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
-import './menuser.css'
 import Axios from 'axios';
 import Service from './service'
 import KmUsed from '../km'
@@ -112,7 +111,6 @@ class Menuser extends Component {
                         <Button style={pad}>Historial</Button>
                         <Button style={pad}>Modificar Información</Button>
                         <Button onClick={this.getService} style={pad}>Solicitar Servicio!</Button>
-                        <Button style={pad}>Eliminar Cuenta</Button>
                         <Button style={pad}>Agregar Lugar Favorito</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>

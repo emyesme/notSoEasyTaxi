@@ -148,17 +148,6 @@ GRANT SELECT ON TABLE Gps TO driverRole;
 GRANT INSERT ON TABLE Gps TO driverRole;
 
 GRANT SELECT ON TABLE Drive TO driverRole;
-/*
-
-SET ROLE postgres;
-
-DROP ROLE IF EXISTS clientRole;
-CREATE ROLE clientRole;
-GRANT SELECT ON TABLE FavCoordinates TO clientRole;
-
-SET ROLE clientRole;
-
-*/
 
 SET ROLE postgres;
 
@@ -304,18 +293,40 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION moveDriver (cellphoneDriverIn VARCHAR(10), destination GEOMETRY)
-RETURNS GEOMETRY AS $$
+RETURNS POINT AS $$
 DECLARE
 	actualPlaque VARCHAR(6) := (SELECT plaque FROM lastPlaqueDriver WHERE cellphoneDriver = cellphoneDriverIn);
 	currentDate TIMESTAMP := now();
 BEGIN
 	INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
 		(actualPlaque, currentDate, destination);
-	RETURN destination;
+	UPDATE driver SET available= true WHERE cellphonedriver = cellphonedriverIn;
+	RETURN POINT(destination);
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT moveDriver('3102222222', GEOMETRY(POINT(7,10)));
-SELECT * FROM Gps
+CREATE OR REPLACE FUNCTION public.aceptarconductor(idaskin integer)
+    RETURNS integer AS $$
+DECLARE
+	cellphone varchar(10) := (SELECT cellphonedriver FROM ask WHERE idask = idaskIn);
+BEGIN
+	UPDATE ask SET initialTime = now() WHERE idask = idaskIn;
+	UPDATE driver SET available = false WHERE cellphonedriver = cellphone;
+	RETURN idaskIn;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION finalAsk (idAskIn integer) 
+RETURNS integer as $$
+DECLARE
+	currentDate TIMESTAMP := now();
+BEGIN
+	UPDATE ask SET finaltime = currentDate, pay = false WHERE idAsk = idAskIn;
+	RETURN;
+END;
+$$
+LANGUAGE plpgsql;
+
 
 

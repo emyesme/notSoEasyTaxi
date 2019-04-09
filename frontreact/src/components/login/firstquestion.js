@@ -3,6 +3,7 @@ import {Modal, Row, Col, Image, Button} from 'react-bootstrap'
 import car from '../images/car.png'
 import user from '../images/user.png'
 import {withRouter} from 'react-router-dom'
+import admin from '../images/admin.png'
 
 const backdropStyle = {
     backgroundColor: 'rgb(148, 150, 172)',
@@ -44,8 +45,8 @@ class FirstQuestion extends Component {
                     </Col>
                     <Col>
                     <center>
-                    <Button onClick={() => this.goAdmin()} variant="light" style={{ margin: 15}}><Image src={user}/></Button>
-                    <p>administrador</p> 
+                    <Button onClick={() => this.goAdmin()} variant="light" style={{ margin: 15}}><Image src={admin} height='64' width='64' /></Button>
+                    <p>Administrador</p> 
                     </center>
                     </Col>
                 </Row>
