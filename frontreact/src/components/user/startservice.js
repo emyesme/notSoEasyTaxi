@@ -20,6 +20,7 @@ class startService extends Component {
             count: 0,
             driver: false
         }
+        console.log(this.state.cellphonedriver)
         /*this.bringDriverId = this.bringDriverId.bind(this);*/
         this.verifyAvaliable = this.verifyAvaliable.bind(this);
         this.verifyAsk = this.verifyAsk.bind(this);

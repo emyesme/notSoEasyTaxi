@@ -504,6 +504,7 @@ const buscarCelularConAsk = (request, response) => {
                 response.status(200).json({error: "El celular de conductor no fue encontrado"})
             }
             else{
+                console.log(result.rows)
                 response.status(200).json({cellphonedriver: result.rows[0].cellphonedriver})
             }
         }finally{
@@ -519,8 +520,9 @@ const verDisponibilidadCellphone = (request, response) => {
         try{
             validateCheck(request,response)
             var cellphonedriver = request.query.cellphone;
+            console.log(request.query)
             var result = await client.query("SELECT available FROM Driver WHERE cellphoneDriver = $1", [cellphonedriver]);
-
+            console.log(result.rows)
             if (result.rows[0].available){
                 response.status(200).json({mensaje: "Esta disponible"})
             }
@@ -541,7 +543,7 @@ const askAceptada = (request, response) => {
             validateCheck(request,response)
             var idAskIn = request.query.idAsk;
             var result = await client.query("SELECT initialTime FROM Ask WHERE idAsk = $1", [idAskIn]);
-            if (typeof result.rows[0].initialtime === "undefined"){
+            if (result.rows[0].initialtime === null){
                 response.status(200).json({mensaje: "Aun no ha sido aceptada"})
             }
             else{

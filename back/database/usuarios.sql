@@ -148,17 +148,6 @@ GRANT SELECT ON TABLE Gps TO driverRole;
 GRANT INSERT ON TABLE Gps TO driverRole;
 
 GRANT SELECT ON TABLE Drive TO driverRole;
-/*
-
-SET ROLE postgres;
-
-DROP ROLE IF EXISTS clientRole;
-CREATE ROLE clientRole;
-GRANT SELECT ON TABLE FavCoordinates TO clientRole;
-
-SET ROLE clientRole;
-
-*/
 
 SET ROLE postgres;
 
@@ -314,6 +303,18 @@ BEGIN
 	RETURN destination;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.aceptarconductor(idaskin integer)
+    RETURNS integer AS $$
+DECLARE
+	cellphone varchar(10) := (SELECT cellphonedriver FROM ask WHERE idask = idaskIn);
+BEGIN
+	UPDATE ask SET initialTime = now() WHERE idask = idaskIn;
+	UPDATE driver SET available = false WHERE cellphonedriver = cellphone;
+	RETURN idaskIn;
+END;
+$$
+LANGUAGE plpgsql;
 
 SELECT moveDriver('3102222222', GEOMETRY(POINT(7,10)));
 SELECT * FROM Gps
