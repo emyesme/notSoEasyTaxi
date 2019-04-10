@@ -644,10 +644,10 @@ const historial = (request, response) => {
             var cellphonetype = request.query.cellphonetype;
             var result;
             if( cellphonetype === 'cellphonedriver'){
-                result = await client.query("SELECT * FROM historyDrivers WHERE cellphoneDriver = $1", [cellphoneIn]);
+                result = await client.query("SELECT * FROM historyDrivers WHERE cellphoneDriver = $1;", [cellphoneIn]);
             }
             else{
-                result = await client.query("SELECT * FROM historyClients WHERE cellphoneClient = $1", [cellphoneIn])
+                result = await client.query("SELECT * FROM historyClients WHERE cellphoneClient = $1;", [cellphoneIn])
             }
             if (result.rowCount === 0){
                 response.status(200).json({error: "El usuario no tiene historial aun"})
@@ -676,7 +676,7 @@ const searchFav = (request, response) => {
             var cellphoneIn = request.query.cellphone;
             var coordinateInX = request.query.coordinateX;
             var coordinateInY = request.query.coordinateY;
-            var result = await client.query("SELECT * FROM FavCoordinates WHERE cellphoneClient = $1 AND coordinate = GEOMETRY(POINT($2, $3))", [cellphoneIn, coordinateInX, coordinateInY]);
+            var result = await client.query("SELECT * FROM FavCoordinates WHERE cellphoneClient = $1 AND coordinate = GEOMETRY(POINT($2, $3));", [cellphoneIn, coordinateInX, coordinateInY]);
             if( result.rows[0].cellphoneClient === cellphoneIn){
                 response.status(200).json({nombre: result.rows[0].nameCoordinate});
             }
@@ -701,7 +701,7 @@ const deleteFav = (request, response) => {
             var cellphoneIn = request.body.cellphone;
             var coordinateXIn = request.body.coordinateX;
             var coordinateYIn = request.body.coordinateY;
-            var result = await client.query("DELETE FROM FavCoordinates WHERE cellphoneClient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneClient", [cellphoneIn, coordinateXIn, coordinateYIn]);
+            var result = await client.query("DELETE FROM FavCoordinates WHERE cellphoneClient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneClient;", [cellphoneIn, coordinateXIn, coordinateYIn]);
             if(result.rowCount === 0){
                 response.status(200).json({error: "Error al calificar"})
             }
@@ -727,7 +727,7 @@ const createFav = (request, response) => {
             var coordinateYIn = request.query.coordinateY;
             var nameIn = request.query.name;
 
-            var result = await client.query("INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES($1, GEOMETRY(POINT($2, $3)), $4) RETURNING cellphoneClient", [cellphoneIn, coordinateXIn, coordinateYIn, nameIn]);
+            var result = await client.query("INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES($1, GEOMETRY(POINT($2, $3)), $4) RETURNING cellphoneClient;", [cellphoneIn, coordinateXIn, coordinateYIn, nameIn]);
             
             if(result.rows[0].cellphoneClient === cellphoneIn){
                 response.status(200).json({cellphoneclient: result.rows[0].cellphoneclient});
