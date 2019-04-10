@@ -54,6 +54,7 @@ class Menuser extends Component {
     }
     addFav(){
         this.setState({ showModalCreateFav : true})
+        this.pay = this.pay.bind(this);
     }
     componentWillMount(){
         Axios.get(api+"/Usuario?cellphone="+this.state.cellphone)
@@ -105,6 +106,24 @@ class Menuser extends Component {
     goTable(){
         this.setState({ showModalTable: !this.showModalTable})
     }
+    pay(){
+        
+        Axios.post(api+'/pagar',
+        {
+            cellphone: this.state.cellphone
+        }).then( response => {
+            console.log(response.data)
+            if(typeof response.data.error !== "undefined"){
+                alert(response.data.error)
+            }
+            else{
+                alert("El pago de sus deudas a sido registrado")
+            }
+
+        }).catch(error => alert(error))
+    }
+    
+
     render() {
         let modalCloseTable = () => this.setState({ showModalTable: false});
         let modalCloseCreateFav = () => this.setState({ showModalCreateFav: false});
@@ -127,6 +146,7 @@ class Menuser extends Component {
                         <Button onClick={this.getService} style={pad}>Solicitar Servicio!</Button>
                         <Button style={pad} onClick={this.addFav}> Agregar Lugar Favorito</Button>
                         <Button style={pad}>Eliminar Lugar Favorito</Button>
+                        <Button style={pad} onClick={this.pay} >Pagar deudas</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
                         <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>

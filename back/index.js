@@ -236,6 +236,13 @@ app.get('/deleteFav',
         ],
         db.searchFav)
 
+
+app.post('/pagar',
+[
+    check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+],
+db.pagarDeudas)
+
 //start server
 app.listen(port, () => {
     console.log('Conexión a la base de datos puerto: ', port)
