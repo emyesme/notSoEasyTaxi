@@ -228,7 +228,7 @@ class Menudriver extends Component {
                         <Button style={pad} onClick={this.changeAvaliable}>Estado: {this.state.disponible}</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
-                        <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>
+                        {/*<p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>*/}
                         </div>
                         <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>
                         </center>

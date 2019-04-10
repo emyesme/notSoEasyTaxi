@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Modal,Button} from 'react-bootstrap'
 import Axios from 'axios';
 import {withRouter} from 'react-router-dom';
+import waiting from '../images/waiting.png';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -99,13 +100,14 @@ class startService extends Component {
                     </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        Esperando que el conductor acepte....
-                        <p> idAsk:  {this.state.idAsk}</p>
-                        <p> cellphone: {this.state.cellphonedriver} </p>
-                        <p> verifyAvaliable: {this.state.stateAsk} </p>
-                        <p> conductor?: {this.state.driver} </p>
+                    <center><img alt='' src={waiting} height='120' width='120'/></center>
+                        <p>Esperando que el conductor acepte....</p>
+                        {/*<p> idAsk:  {this.state.idAsk}</p>*/}
+                        <p> Telefono: {this.state.cellphonedriver} </p>
+                       {/*<p> verifyAvaliable: {this.state.stateAsk} </p>*/}
+                        <p> La solicitud: {this.state.driver} </p>
                     </Modal.Body>
-                    <Modal.Footer ><Button href="/" variant='danger'>Solo programadores</Button></Modal.Footer>
+                    {/*<Modal.Footer ><Button href="/" variant='danger'>Solo programadores</Button></Modal.Footer>*/}
                 </Modal.Dialog>
                 <Modal show={this.state.show} aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Body>
