@@ -94,7 +94,17 @@ app.post('/Calificacion',
         ],
         db.calificar)
 
-//###########################CONDUCTOR########################################        
+//###########################CONDUCTOR########################################  
+app.post('/RegistrarConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('pass').trim(),
+            check('name').isAlpha().trim().escape(),
+            check('cc').isNumeric().escape(),
+            check('creditCard').isNumeric().isLength({min:16}).trim().escape()
+        ],
+        db.registrarConductor)
+
 app.get('/IngresarConductor',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),

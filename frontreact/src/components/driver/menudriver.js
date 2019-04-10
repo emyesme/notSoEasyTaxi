@@ -4,7 +4,8 @@ import car from '../images/logo.png';
 import { Button, Modal,ButtonGroup, CardDeck, Card, ListGroup} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
-import KmUsed from '../km'
+import KmUsed from '../km';
+import History from '../historial';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -54,8 +55,8 @@ class Menudriver extends Component {
             showButtonCloseTraveling: false,
             show: false,
             showModal: false,
+            showModalTable: false
         }
-        console.log(this.state.showTraveling)
         this.showMap = this.showMap.bind(this);
         this.goUpdateTaxi = this.goUpdateTaxi.bind(this);
         this.goChangeTaxi = this.goChangeTaxi.bind(this);
@@ -65,6 +66,7 @@ class Menudriver extends Component {
         this.accept = this.accept.bind(this);
         this.end = this.end.bind(this);
         this.getGps = this.getGps.bind(this);
+        this.goTable = this.goTable.bind(this);
     }
     async findService(){
         await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
@@ -81,22 +83,17 @@ class Menudriver extends Component {
                 console.log("no servicio")
             }
         })
-        console.log(this.state.showTraveling)
         if ( this.state.showTraveling === true){
             await axios.post(api + '/MoverConductor',
             {
                 cellphonedriver: this.state.cellphone,
                 destiny: this.state.service.finalpoint
             }).then( response => {
-                console.log(typeof response.data.error !== 'undefined')
                 if(typeof response.data.error !== 'undefined'){
-                    alert(response.data.error+ "jum")
+                    alert(response.data.error)
                 }
                 else{
-                    console.log(this.state.service.finalpoint)
                     const destinationOut = [ response.data.destiny.x, response.data.destiny.y]
-                    console.log(destinationOut)
-                    console.log(this.state.service.finalpoint[0] === destinationOut[0] && this.state.service.finalpoint[1] === destinationOut[1])
                     if (this.state.service.finalpoint[0] === destinationOut[0]){
                         this.setState({ showButtonCloseTraveling: true, mensaje: "Viaje Terminado Correctamente"})
                     }
@@ -111,14 +108,26 @@ class Menudriver extends Component {
                 alert(response.data.error);
             }
             else{
-              this.setState({ name: response.data.name, plaque: response.data.plaque})
-              this.getGps()
+                console.log(response.data.plaque === null)
+                if( response.data.plaque === null){
+                    this.setState({ name: response.data.name, plaque: 'No tiene taxi'})
+                }
+                else{
+                    console.log("donde era")
+                    this.setState({ name: response.data.name, plaque: response.data.plaque})
+                    this.getGps()
+                }
+                
             }
         }).catch(error => alert(error))
         setInterval(this.findService, 3000)
     }
     getGps(){
         console.log(this.state.plaque)
+        if(this.state.plaque ===  'No tiene taxi' ){
+            alert("No tiene taxi asignado")
+            return 
+        }
         axios.get(api+"/Posicion?plaque="+this.state.plaque)
         .then(response => {
             if( response.data.error != null){
@@ -147,7 +156,6 @@ class Menudriver extends Component {
         this.props.history.push({
             pathname: "/Taxi",
             state: { cellphone: this.state.cellphone,plaque:this.state.plaque, enable: false, point: this.state.gps}
-
         })
     }
     declineService(){
@@ -155,6 +163,9 @@ class Menudriver extends Component {
     }
     gokmUsed(){
         this.setState({ showModal: !this.showModal})
+    }
+    goTable(){
+        this.setState({ showModalTable: !this.showModalTable})
     }
     accept(){
         axios.post(api+'/AceptaConductor',
@@ -174,9 +185,11 @@ class Menudriver extends Component {
     }
     end(){
         this.setState({ showTraveling: false})
+        this.getGps()
     }
     render() {
         let modalClose = () => this.setState({ showModal: false});
+        let modalCloseTable = () => this.setState({ showModalTable: false});
         return (  
         <div style={backColor}>
             <Modal.Dialog  size='lg' centered>
@@ -185,14 +198,14 @@ class Menudriver extends Component {
                     <Card style={grayRgb} >
                         <center>
                         <h2> <img alt='' src={car}/> Menu Conductor</h2> 
-                        <h6> Telefono: {this.state.cellphone} Placa: {this.state.plaque} </h6>
+                        <h6> Nombre: {this.state.name} Telefono: {this.state.cellphone} Placa: {this.state.plaque} </h6>
                         <div>
                         <ButtonGroup vertical>
-                        <Button style={pad} >Modificar Información Personal</Button>
+                        {/*<Button style={pad} >Modificar Información Personal</Button>*/}
                         <Button style={pad} onClick={this.goUpdateTaxi}>Modificar Información del Taxi</Button>
                         <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
                         <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
-                        <Button style={pad}>Historial</Button>
+                        <Button style={pad} onClick={this.goTable}>Historial</Button>
                         <Button style={pad}>Estado: Libre</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
@@ -239,6 +252,7 @@ class Menudriver extends Component {
                 </Modal.Footer>
             </Modal>
            <KmUsed show={this.state.showModal} cellphonetype={'cellphonedriver'} cellphone={this.state.cellphone} onHide={modalClose}/>
+           <History show={this.state.showModalTable} onHide={modalCloseTable} type={'Conductor'} cellphone={this.state.cellphone}/>
         </div>
         );
     }
