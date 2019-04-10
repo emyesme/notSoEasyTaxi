@@ -206,7 +206,8 @@ app.post('/EliminarModelo',
 
 app.get('/Historial',
         [
-            check('cellphone').isNumeric().isLength({max:10}).trim().escape()
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+            check('cellphonetype').escape()
         ],
         db.historial)
 

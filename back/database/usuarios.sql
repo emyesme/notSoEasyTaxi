@@ -202,9 +202,9 @@ INSERT INTO Ask (cellphoneClient, cellphoneDriver, initialCoordinates, finalCoor
 
 INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
 	
-	('VCC200', (TIMESTAMP '2019-03-09T09:45:28.772Z'), GEOMETRY(POINT(1,2))),
-	('VCC200', (TIMESTAMP '2019-03-10T09:45:28.772Z'), GEOMETRY(POINT(1,3))),
-	('VCF222', (TIMESTAMP '2019-02-08T09:45:28.772Z'), GEOMETRY(POINT(1,1)));
+	('VCC200', (TIMESTAMP '2019-03-09T09:45:28.772Z'), GEOMETRY(POINT(3.413803722450130,283.4533059597016))),
+	('VCC200', (TIMESTAMP '2019-03-10T09:45:28.772Z'), GEOMETRY(POINT(3.413803722450137,283.4533059597016))),
+	('VCF222', (TIMESTAMP '2019-02-08T09:45:28.772Z'), GEOMETRY(POINT(3.375973296733919,283.4671810269356)));
 	
 explain select * from client where cellphoneClient = '6176166' and status = true;
 
@@ -293,7 +293,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-DROP FUNCTION moveDriver;
+DROP FUNCTION IF EXISTS moveDriver;
 CREATE OR REPLACE FUNCTION moveDriver (cellphoneDriverIn VARCHAR(10), destination GEOMETRY)
 RETURNS POINT AS $$
 DECLARE
@@ -325,7 +325,7 @@ DECLARE
 	currentDate TIMESTAMP := now();
 BEGIN
 	UPDATE ask SET finaltime = currentDate, pay = false WHERE idAsk = idAskIn;
-	RETURN idAsk;
+	RETURN idAskIn;
 END;
 $$
 LANGUAGE plpgsql;

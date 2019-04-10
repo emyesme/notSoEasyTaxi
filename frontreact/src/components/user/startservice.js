@@ -49,7 +49,6 @@ class startService extends Component {
     }
     endTravel(){
         clearInterval(this.state.idInterval)
-        console.log("deberia detenerse")
         Axios.post(api+'/FinServicio',
         {
             idAsk: this.state.idAsk
