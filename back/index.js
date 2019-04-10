@@ -5,10 +5,11 @@ const app = myExpress()
 //check for sanitization
 const {check} = require('express-validator/check')
 //cors
-app.use(cors())
+app.use(cors());
 //body parser for post method
 app.use(bodyParser.urlencoded({ extended : false}));
 app.use(bodyParser.json());
+
 //db
 const db = require('./queries')
 //port
@@ -46,6 +47,24 @@ app.get('/LugaresFavoritos',
             check('cellphone').isNumeric().isLength({min:10}).trim().escape()
         ],
         db.lugaresFavoritos)
+
+app.post('/crearFavorito',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('coordinateX').isNumeric().escape(),
+            check('coordinateY').isNumeric().escape(),
+            check('name').isAlphanumeric().trim().escape()
+        ],
+        db.createFav)
+
+
+app.delete('/eliminarFavorito',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('coordinateX').isNumeric().escape(),
+            check('coordinateY').isNumeric().escape()
+        ],
+        db.deleteFav)       
 
 app.get('/Origen',
         [

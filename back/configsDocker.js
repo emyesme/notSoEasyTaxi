@@ -1,11 +1,12 @@
 
 const configAdmin = {
 	user: 'postgres',
-	password: 'postgres',
+	password: 'root',
 	host: 'db',
 	port: '5432',
 	database: 'easyTaxiDB',
 	ssl: true,
+	sslmode: require,
 	max: 10,
 	min: 2,
 	idleTimeputMillis: 1000
@@ -18,6 +19,7 @@ const configUserClient = {
 	port: '5432',
 	database: 'easyTaxiDB',
 	ssl: true,
+	sslmode: require,
 	max: 10,
 	min: 2,
 	idleTimeputMillis: 1000
@@ -31,6 +33,7 @@ const configUserDriver = {
 	port: '5432',
 	database: 'easyTaxiDB',
 	ssl: true,
+	sslmode: require,
 	max: 10,
 	min: 2,
 	idleTimeputMillis: 1000
