@@ -181,7 +181,6 @@ const kilometrosRecorridos = (request, response) => {
             const cellphone = request.query.cellphone;
             const cellphonetype = request.query.type;
             var result;
-            console.log(cellphonetype)
             if( cellphonetype === 'cellphonedriver'){
                 result = await client.query('WITH kilometers AS (SELECT cellphonedriver, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphonedriver ) SELECT meters from kilometers where cellphonedriver=$1;',[cellphone])
             }
@@ -330,14 +329,18 @@ const placa = (request, response) => {
 
 const cambiarTaxi = (request, response) => {
     (async () => {
-        var client = await poolDriver.connect()
+        var client = await poolAdmin.connect()
         try{
             validateCheck(request, response)
+            console.log(request.body)
             var plaque = request.body.plaque;
             var cellphone = request.body.cellphone;
             var date = request.body.date;
-            var result = await client.query("INSERT INTO Drive (cellPhoneDriver, plaque, date) VALUES ($1, $2, $3) RETURNING cellPhoneDriver;", [cellphone, plaque, date])
-            if (result.rows[0].cellphonedriver !== cellphone){
+            var pointx = request.body.point.x
+            var pointy = request.body.point.y;
+            var result = await client.query("SELECT cambiartaxi($1, $2, $3, GEOMETRY(POINT($4,$5)));", [cellphone, plaque, date, pointx,pointy])
+            console.log(result.cambiartaxi)
+            if (result.rows[0].cambiartaxi !== cellphone){
                 response.status(200).json({mensaje: "Error al cambiar taxi"})
             }
             else{
@@ -380,7 +383,7 @@ const adicionarTaxi = (request, response) => {
 const modelos = (request, response) => {
     (async () => {
 
-        var client = await poolDriver.connect()
+        var client = await poolAdmin.connect()
 
         try{
             var result = await client.query("SELECT * FROM modelTaxi")
@@ -429,7 +432,7 @@ const moverConductor = (request, response) => {
             var cellphonedriver = request.body.cellphonedriver
             var destiny = request.body.destiny
             var result = await client.query("SELECT moveDriver($1, ST_MakePoint($2,$3));", [cellphonedriver, destiny[0], destiny[1]])
-            console.log(result.rows[0].movedriver === null)
+            console.log("moverconductor "+result.rows)
             if (result.rows[0].movedriver === null){
                 response.status(200).json({error: "Error al mover conductor"})
             }
@@ -441,6 +444,28 @@ const moverConductor = (request, response) => {
             client.release()
         }
     })().catch(error => console.log({error: error.message}))     
+}
+
+const obtenerGps = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            var plaque = request.query.plaque
+            console.log(request.query)
+            var result = await client.query("select POINT(coordinate) AS point from gps where plaque=$1 ORDER BY timestamp DESC LIMIT 1;", [plaque])
+            console.log(result)
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Error al mover conductor"})
+            }
+            else{
+                response.status(200).json({point:result.rows[0].point})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))    
 }
 
 //###########################Administrador########################################
@@ -772,6 +797,7 @@ module.exports = {
     eliminarModelo,
     finServicio,
     calificar,
+    obtenerGps,
     historial,
     searchFav,
     deleteFav,

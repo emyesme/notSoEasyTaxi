@@ -29,13 +29,18 @@ class changeTaxi extends Component {
             trademark: '',
             trunk: '',
             show: false,
+            point: {
+                lat: this.props.location.state.point.lat,
+                lng: this.props.location.state.point.lng
+            },
             info: this.props.location.state.enable
             //nombre, celular y placa para cuando vuelva a la ventana
         };
-        this.handleChange = this.handleChange.bind(this)
-        this.addTaxi = this.addTaxi.bind(this)
-        this.changeTaxi = this.changeTaxi.bind(this)
-        this.verifyPlaque = this.verifyPlaque.bind(this)
+        this.handleChange = this.handleChange.bind(this);
+        this.addTaxi = this.addTaxi.bind(this);
+        this.changeTaxi = this.changeTaxi.bind(this);
+        this.verifyPlaque = this.verifyPlaque.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
     getDataModel(selectedModel){
         this.setState({ model: selectedModel.model, trademark: selectedModel.trademark, trunk: selectedModel.trunk})
@@ -49,16 +54,18 @@ class changeTaxi extends Component {
               }
               else{
                 this.setState({models: response.data.models})
-                console.log(this.state.models)
             }            
         })
     }
     changeTaxi(){
+        console.log(this.state.point)
         axios.post(api + '/CambiarTaxi',{
             plaque: this.state.plaque,
             cellphone: this.state.cellphone,
-            date: new Date()
+            date: new Date(),
+            point: { x: this.state.point.lat, y: this.state.point.lng}
         }).then( response => {
+            console.log(response.data)
             if(response.data.error != null){
                 alert("Se presento un error al cambiar el taxi.")
             }
@@ -118,6 +125,9 @@ class changeTaxi extends Component {
             }
         }).catch( err => alert(err))
     }
+    closeModal(){
+        this.setState({show: !this.state.show})
+    }
     render() { 
         return (
             <div style={backColor}>
@@ -146,7 +156,7 @@ class changeTaxi extends Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant='success' onClick={this.changeTaxi}>Si, Cambiar</Button>
-                        <Button variant='danger' href="/">Cancelar</Button>
+                        <Button variant='danger' onClick={this.closeModal}>Cancelar</Button>
                     </Modal.Footer>
                     </Modal>
                 </div>
@@ -166,6 +176,14 @@ class changeTaxi extends Component {
                             </Col>
                         </Row>
                         </Form.Group>
+                        <Dropdown style = {{ margin :5}}>
+                        <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                            Modelos
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                        {typeof this.state.models !== "undefined" ? this.state.models.map((data, id) =>  <Dropdown.Item key={'model-'+id} onClick={() => this.getDataModel(data)}>{data.model}, {data.trademark}, {data.trunk}</Dropdown.Item>) : <DropdownItem>No modelos disponibles</DropdownItem>}
+                        </Dropdown.Menu>
+                        </Dropdown> 
                         <Form.Group controlId="formSoat">
                             <Form.Label>Soat</Form.Label>
                             <Form.Control disabled={this.state.info} type="text" placeholder="Soat" name="soat" onChange={this.handleChange}/>
@@ -175,20 +193,12 @@ class changeTaxi extends Component {
                             <Form.Control disabled={this.state.info} type="integer" placeholder="Año" name="year" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group  controlId="formModel" >
-                            <Form.Label>Modelo</Form.Label >
-                        <Dropdown style = {{ margin :5}}>
-                        <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
-                            Modelos
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                        {typeof this.state.models !== "undefined" ? this.state.models.map((data, id) =>  <Dropdown.Item key={'model-'+id} onClick={() => this.getDataModel(data)}>{data.model}, {data.trademark}, {data.trunk}</Dropdown.Item>) : <DropdownItem>No modelos disponibles</DropdownItem>}
-                        </Dropdown.Menu>
-                        </Dropdown>                            
+                            <Form.Label>Modelo</Form.Label >                           
                         </Form.Group>
                         <Button variant='primary' style= {pad} type="submit">
                             Cambiar
                         </Button>
-                        <Button variant='danger' style= {pad} href="/">
+                        <Button variant='danger' style= {pad} href='/'>
                             Cancelar
                         </Button>
                         </Form>

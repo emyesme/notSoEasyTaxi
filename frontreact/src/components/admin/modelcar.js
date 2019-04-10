@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import { Modal, Button, ButtonGroup, Card, CardDeck } from 'react-bootstrap';
-import axios from 'axios';
+/*import axios from 'axios';*/
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -20,9 +20,6 @@ const grayRgb = {
 
 
 class Menuadmin extends Component {
-    constructor(props) {
-        super(props);
-    }
     
     render() {
         return (

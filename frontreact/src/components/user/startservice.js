@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Modal,Button,Image} from 'react-bootstrap'
+import {Modal,Button} from 'react-bootstrap'
 import Axios from 'axios';
 import {withRouter} from 'react-router-dom';
 
