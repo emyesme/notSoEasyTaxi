@@ -117,7 +117,7 @@ class Menuser extends Component {
                 alert(response.data.error)
             }
             else{
-                alert("El pago de sus deudas a sido registrado")
+                alert("El pago de sus deudas ha sido registrado")
             }
 
         }).catch(error => alert(error))
