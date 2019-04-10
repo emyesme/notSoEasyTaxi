@@ -341,3 +341,19 @@ CREATE OR REPLACE VIEW historyDrivers AS (
 );
 
 
+
+CREATE OR REPLACE FUNCTION cambiarTaxi (cellphoneDriverIn VARCHAR(10), plaqueIn VARCHAR(6), dateIn TIMESTAMP, pointIn GEOMETRY) 
+RETURNS VARCHAR(10) as $$
+BEGIN
+	INSERT INTO Drive (cellphoneDriver, plaque, date) VALUES
+		(cellphoneDriverIn, plaqueIn, dateIn);
+
+	INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
+		(plaqueIn, dateIn, pointIn);
+	RETURN cellphoneDriverIn;
+END;
+$$
+LANGUAGE plpgsql;
+
+select * from favCoordinates
+
