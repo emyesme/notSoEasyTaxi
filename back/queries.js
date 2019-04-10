@@ -209,7 +209,7 @@ const finServicio = (request, response) => {
             //obtiene la informacion 
             const idAsk = request.body.idAsk;
             //ejecuta el query correspondiente
-            var result = await client.query('SELECT finalAsk($1)', [idAsk]);
+            var result = await client.query('SELECT finalAsk($1);', [idAsk]);
             if (result.rowCount === 0){
                 response.status(200).json({error: "Error al terminar servicio."})
             }
@@ -361,14 +361,12 @@ const cambiarTaxi = (request, response) => {
         var client = await poolAdmin.connect()
         try{
             validateCheck(request, response)
-            console.log(request.body)
             var plaque = request.body.plaque;
             var cellphone = request.body.cellphone;
             var date = request.body.date;
             var pointx = request.body.point.x
             var pointy = request.body.point.y;
             var result = await client.query("SELECT cambiartaxi($1, $2, $3, GEOMETRY(POINT($4,$5)));", [cellphone, plaque, date, pointx,pointy])
-            console.log(result.cambiartaxi)
             if (result.rows[0].cambiartaxi !== cellphone){
                 response.status(200).json({mensaje: "Error al cambiar taxi"})
             }
@@ -461,7 +459,6 @@ const moverConductor = (request, response) => {
             var cellphonedriver = request.body.cellphonedriver
             var destiny = request.body.destiny
             var result = await client.query("SELECT moveDriver($1, ST_MakePoint($2,$3));", [cellphonedriver, destiny[0], destiny[1]])
-            console.log("moverconductor "+result.rows)
             if (result.rows[0].movedriver === null){
                 response.status(200).json({error: "Error al mover conductor"})
             }
@@ -481,9 +478,7 @@ const obtenerGps = (request, response) => {
         try{
             validateCheck(request,response);
             var plaque = request.query.plaque
-            console.log(request.query)
             var result = await client.query("select POINT(coordinate) AS point from gps where plaque=$1 ORDER BY timestamp DESC LIMIT 1;", [plaque])
-            console.log(result)
             if (result.rowCount === 0){
                 response.status(200).json({error: "Error al mover conductor"})
             }
@@ -698,7 +693,7 @@ const historial = (request, response) => {
             var cellphonetype = request.query.cellphonetype;
             var result;
             if( cellphonetype === 'cellphonedriver'){
-                result = await client.query("SELECT * FROM historyDrivers WHERE cellphoneDriver = $1;", [cellphoneIn]);
+                result = await client.query("SELECT * FROM historyDrivers WHERE cellphonedriver = $1;", [cellphoneIn]);
             }
             else{
                 result = await client.query("SELECT * FROM historyClients WHERE cellphoneClient = $1;", [cellphoneIn])
@@ -709,7 +704,10 @@ const historial = (request, response) => {
             else{
                 var package = [];
                 for (id in result.rows){
-                    package[id] = result.rows[id]
+                    package[id] = {distance: result.rows[id].distance,
+                                    xi:result.rows[id].initialpoint.x, yi: result.rows[id].initialpoint.y,
+                                    xf:result.rows[id].finalpoint.x, yf: result.rows[id].finalpoint.y }
+                   /*package[id] = result.rows[id]*/
                 }
                 response.status(200).json({historial: package})
             }

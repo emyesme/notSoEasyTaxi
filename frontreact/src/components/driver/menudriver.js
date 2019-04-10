@@ -55,7 +55,8 @@ class Menudriver extends Component {
             showButtonCloseTraveling: false,
             show: false,
             showModal: false,
-            showModalTable: false
+            showModalTable: false,
+            disponible:  "Libre"
         }
         this.showMap = this.showMap.bind(this);
         this.goUpdateTaxi = this.goUpdateTaxi.bind(this);
@@ -108,12 +109,10 @@ class Menudriver extends Component {
                 alert(response.data.error);
             }
             else{
-                console.log(response.data.plaque === null)
                 if( response.data.plaque === null){
                     this.setState({ name: response.data.name, plaque: 'No tiene taxi'})
                 }
                 else{
-                    console.log("donde era")
                     this.setState({ name: response.data.name, plaque: response.data.plaque})
                     this.getGps()
                 }
@@ -123,7 +122,6 @@ class Menudriver extends Component {
         setInterval(this.findService, 3000)
     }
     getGps(){
-        console.log(this.state.plaque)
         if(this.state.plaque ===  'No tiene taxi' ){
             alert("No tiene taxi asignado")
             return 
@@ -134,7 +132,6 @@ class Menudriver extends Component {
                 alert(response.data.error);
             }
             else{
-                console.log(response.data)
                 this.setState({gps: { lat: response.data.point.x, lng: response.data.point.y}})
             }            
         })
@@ -146,7 +143,6 @@ class Menudriver extends Component {
         this.setState({point:{ lat: inputPoint.lat, lng: inputPoint.lng}})
     }
     goChangeTaxi (){
-        console.log(this.state.gps)
         this.props.history.push({
             pathname: "/Taxi",
             state: { cellphone: this.state.cellphone,plaque: '', enable: true, point: this.state.gps}
@@ -160,6 +156,9 @@ class Menudriver extends Component {
     }
     declineService(){
         this.setState({ show: !this.state.show})
+    }
+    changeAvaliable(){
+        
     }
     gokmUsed(){
         this.setState({ showModal: !this.showModal})
@@ -206,7 +205,7 @@ class Menudriver extends Component {
                         <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
                         <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
                         <Button style={pad} onClick={this.goTable}>Historial</Button>
-                        <Button style={pad}>Estado: Libre</Button>
+                        <Button style={pad} onClick={this.changeAvaliable}>Estado: {this.state.disponible}</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
                         <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>
@@ -215,7 +214,6 @@ class Menudriver extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    {console.log(this.state.gps)}
                     <LMap  height={'695px'} width={'100%'} markers={[]}  origin={this.state.gps} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
@@ -240,7 +238,7 @@ class Menudriver extends Component {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='success' onClick={this.accept}>Si!</Button>
-                    <Button variant='danger' onClick={this.declineService}>Cancelar</Button>
+                    {/*<Button variant='danger' onClick={this.declineService}>Cancelar</Button>*/}
                 </Modal.Footer>
             </Modal>
             <Modal show={this.state.showTraveling} aria-labelledby="contained-modal-title-vcenter" centered>
@@ -252,7 +250,7 @@ class Menudriver extends Component {
                 </Modal.Footer>
             </Modal>
            <KmUsed show={this.state.showModal} cellphonetype={'cellphonedriver'} cellphone={this.state.cellphone} onHide={modalClose}/>
-           <History show={this.state.showModalTable} onHide={modalCloseTable} type={'Conductor'} cellphone={this.state.cellphone}/>
+           <History show={this.state.showModalTable} onHide={modalCloseTable} type={'cellphonedriver'} cellphone={this.state.cellphone}/>
         </div>
         );
     }

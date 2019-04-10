@@ -5,7 +5,9 @@ import { Modal, Button, ButtonGroup, Card, CardDeck } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import Axios from 'axios';
 import Service from './service'
-import KmUsed from '../km'
+import KmUsed from '../km';
+import History from '../historial';
+import CreateFav from './createfav';
 
 const backColor = {
     backgroundColor: '#731E6F',
@@ -40,11 +42,18 @@ class Menuser extends Component {
                 lat: 0,
                 lng: 0
             },
-            markers: []
+            markers: [],
+            showModalTable: false,
+            showModalCreateFav: false,
         }
         this.showMap = this.showMap.bind(this);
         this.getService = this.getService.bind(this);
         this.gokmUsed = this.gokmUsed.bind(this);
+        this.goTable = this.goTable.bind(this);
+        this.addFav = this.addFav.bind(this);
+    }
+    addFav(){
+        this.setState({ showModalCreateFav : true})
         this.pay = this.pay.bind(this);
     }
     componentWillMount(){
@@ -94,7 +103,9 @@ class Menuser extends Component {
     gokmUsed(){
         this.setState({ showModalKm: !this.showModalKm})
     }
-
+    goTable(){
+        this.setState({ showModalTable: !this.showModalTable})
+    }
     pay(){
         
         Axios.post(api+'/pagar',
@@ -112,7 +123,10 @@ class Menuser extends Component {
         }).catch(error => alert(error))
     }
     
+
     render() {
+        let modalCloseTable = () => this.setState({ showModalTable: false});
+        let modalCloseCreateFav = () => this.setState({ showModalCreateFav: false});
         let modalClose = () => this.setState({ showModal: false});
         let modalCloseKm = () => this.setState({ showModalKm: false});
         return (
@@ -127,11 +141,12 @@ class Menuser extends Component {
                         <div>
                         <ButtonGroup vertical>
                         <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
-                        <Button style={pad}>Historial</Button>
+                        <Button style={pad} onClick={this.goTable}>Historial</Button>
                         {/*<Button style={pad}>Modificar Información</Button>*/}
                         <Button onClick={this.getService} style={pad}>Solicitar Servicio!</Button>
+                        <Button style={pad} onClick={this.addFav}> Agregar Lugar Favorito</Button>
+                        <Button style={pad}>Eliminar Lugar Favorito</Button>
                         <Button style={pad} onClick={this.pay} >Pagar deudas</Button>
-                        <Button style={pad}>Agregar Lugar Favorito</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
                         <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>
@@ -144,6 +159,8 @@ class Menuser extends Component {
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
+            <CreateFav show={this.state.showModalCreateFav} onHide={modalCloseCreateFav} cellphone={this.state.cellphone}/>
+            <History show={this.state.showModalTable} onHide={modalCloseTable} type={'cellphoneclient'} cellphone={this.state.cellphone}/>
             <KmUsed show={this.state.showModalKm} cellphonetype={'cellphoneclient'} cellphone={this.state.cellphone} onHide={modalCloseKm}/>
             <Service show={this.state.showModal} cellphone={this.state.cellphone} firstpoint={this.state.origin} favcoordinates={this.state.markers.coordinates} onHide={modalClose}/>
         </div>
