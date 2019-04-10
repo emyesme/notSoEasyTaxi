@@ -164,13 +164,13 @@ app.post('/CrearModelo',
         [
             check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
             check('trademark').isAlphanumeric().isLength({max:15}).trim().escape(),
-            check('baul').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('baul').isAlphanumeric().isLength({max:15}).trim().escape()
         ],
         db.crearModelo)
 
 app.get('/ConsultarModelo',
         [
-            check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('model').isAlphanumeric().isLength({max:15}).trim().escape()
         ],
         db.consultarModelo)
 
@@ -178,21 +178,46 @@ app.post('/ModificarModelo',
         [
             check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
             check('trademark').isAlphanumeric().isLength({max:15}).trim().escape(),
-            check('trunk').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('trunk').isAlphanumeric().isLength({max:15}).trim().escape()
         ],
         db.modificarModelo)
 
 app.post('/EliminarModelo',
         [
-            check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
+            check('model').isAlphanumeric().isLength({max:15}).trim().escape()
         ],
         db.eliminarModelo)
 
 app.get('/Historial',
         [
-            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape()
         ],
         db.historial)
+
+app.get('/searchFav',
+        [
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+            check('coordinateX').escape(),
+            check('coordinateY').escape()
+        ],
+        db.searchFav)
+
+app.get('/deleteFav',
+        [
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+            check('coordinateX').escape(),
+            check('coordinateY').escape()
+        ],
+        db.searchFav)
+
+app.get('/deleteFav',
+        [
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+            check('coordinateX').escape(),
+            check('coordinateY').escape(),
+            check('name').isAlphanumeric().trim().escape()
+        ],
+        db.searchFav)
 
 //start server
 app.listen(port, () => {

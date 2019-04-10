@@ -666,7 +666,81 @@ const historial = (request, response) => {
     })().catch(error => console.log({error: error.message}))  
 }
 
+const searchFav = (request, response) => {
+    (async () => {
 
+        var client = await poolAdmin.connect()
+
+        try{
+            validateCheck(request,response)
+            var cellphoneIn = request.query.cellphone;
+            var coordinateInX = request.query.coordinateX;
+            var coordinateInY = request.query.coordinateY;
+            var result = await client.query("SELECT * FROM FavCoordinates WHERE cellphoneClient = $1 AND coordinate = GEOMETRY(POINT($2, $3))", [cellphoneIn, coordinateInX, coordinateInY]);
+            if( result.rows[0].cellphoneClient === cellphoneIn){
+                response.status(200).json({nombre: result.rows[0].nameCoordinate});
+            }
+            else{
+                response.status(200).json({error: "error, la coordenada para el usuario no fue encontrada"});
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
+
+
+const deleteFav = (request, response) => {
+    (async () => {
+
+        var client = await poolAdmin.connect()
+
+        try{
+            validateCheck(request,response)
+            var cellphoneIn = request.body.cellphone;
+            var coordinateXIn = request.body.coordinateX;
+            var coordinateYIn = request.body.coordinateY;
+            var result = await client.query("DELETE FROM FavCoordinates WHERE cellphoneClient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneClient", [cellphoneIn, coordinateXIn, coordinateYIn]);
+            if(result.rowCount === 0){
+                response.status(200).json({error: "Error al calificar"})
+            }
+            else{
+                response.status(200).json({cellphoneclient: result.rows[0].cellphoneclient});
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
+
+const createFav = (request, response) => {
+    (async () => {
+
+        var client = await poolAdmin.connect()
+
+        try{
+            validateCheck(request,response)
+            var cellphoneIn = request.query.cellphone;
+            var coordinateXIn = request.query.coordinateX;
+            var coordinateYIn = request.query.coordinateY;
+            var nameIn = request.query.name;
+
+            var result = await client.query("INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES($1, GEOMETRY(POINT($2, $3)), $4) RETURNING cellphoneClient", [cellphoneIn, coordinateXIn, coordinateYIn, nameIn]);
+            
+            if(result.rows[0].cellphoneClient === cellphoneIn){
+                response.status(200).json({cellphoneclient: result.rows[0].cellphoneclient});
+            }
+            else{
+                response.status(200).json({error: "error al añadir favoritos"})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
 
 
 
@@ -699,4 +773,7 @@ module.exports = {
     finServicio,
     calificar,
     historial,
+    searchFav,
+    deleteFav,
+    createFav,
 }
