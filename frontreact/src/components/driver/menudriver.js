@@ -34,6 +34,10 @@ class Menudriver extends Component {
             name: '',
             cellphone: this.props.location.state.cellphone,
             plaque: '',
+            gps: {
+                lat: -1,
+                lng: -1
+            },
             showMap: false,
             point : {
                 lat: 1.0,
@@ -51,6 +55,7 @@ class Menudriver extends Component {
             show: false,
             showModal: false,
         }
+        console.log(this.state.showTraveling)
         this.showMap = this.showMap.bind(this);
         this.goUpdateTaxi = this.goUpdateTaxi.bind(this);
         this.goChangeTaxi = this.goChangeTaxi.bind(this);
@@ -59,6 +64,7 @@ class Menudriver extends Component {
         this.gokmUsed = this.gokmUsed.bind(this);
         this.accept = this.accept.bind(this);
         this.end = this.end.bind(this);
+        this.getGps = this.getGps.bind(this);
     }
     async findService(){
         await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
@@ -75,6 +81,7 @@ class Menudriver extends Component {
                 console.log("no servicio")
             }
         })
+        console.log(this.state.showTraveling)
         if ( this.state.showTraveling === true){
             await axios.post(api + '/MoverConductor',
             {
@@ -105,9 +112,23 @@ class Menudriver extends Component {
             }
             else{
               this.setState({ name: response.data.name, plaque: response.data.plaque})
+              this.getGps()
             }
         }).catch(error => alert(error))
         setInterval(this.findService, 3000)
+    }
+    getGps(){
+        console.log(this.state.plaque)
+        axios.get(api+"/Posicion?plaque="+this.state.plaque)
+        .then(response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+            }
+            else{
+                console.log(response.data)
+                this.setState({gps: { lat: response.data.point.x, lng: response.data.point.y}})
+            }            
+        })
     }
     showMap(){
         this.setState({showMap: !this.state.showMap})
@@ -116,15 +137,16 @@ class Menudriver extends Component {
         this.setState({point:{ lat: inputPoint.lat, lng: inputPoint.lng}})
     }
     goChangeTaxi (){
+        console.log(this.state.gps)
         this.props.history.push({
             pathname: "/Taxi",
-            state: { cellphone: this.state.cellphone,plaque: '', enable: true}
+            state: { cellphone: this.state.cellphone,plaque: '', enable: true, point: this.state.gps}
         })
     }
     goUpdateTaxi(){
         this.props.history.push({
             pathname: "/Taxi",
-            state: { cellphone: this.state.cellphone,plaque:this.state.plaque, enable: false}
+            state: { cellphone: this.state.cellphone,plaque:this.state.plaque, enable: false, point: this.state.gps}
 
         })
     }
@@ -180,7 +202,8 @@ class Menudriver extends Component {
                         </center>
                     </Card>
                     { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap  height={'695px'} width={'100%'} markers={[]}  origin={{lat:-1,lng:-1}} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
+                    {console.log(this.state.gps)}
+                    <LMap  height={'695px'} width={'100%'} markers={[]}  origin={this.state.gps} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
