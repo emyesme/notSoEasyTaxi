@@ -821,6 +821,31 @@ const pagarDeudas = (request, response) => {
     })().catch(error => console.log({error: error.message}))  
 }
 
+
+const cambiarDisponibilidad = (request, response) => {
+    (async () => {
+
+        var client = await poolAdmin.connect()
+
+        try{
+            
+            validateCheck(request,response)
+            var cellphoneIn = request.body.cellphone;
+            
+            var result = await client.query("SELECT changeAvailableDriver($1)", [cellphoneIn]);
+            if(result.rowCount > 0){
+                response.status(200).json({available: result.rows[0].changeAvailableDriver});
+            }
+            else{
+                response.status(200).json({error: "error modificar disponibilidad del conductor"})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
+
 //importante 
 module.exports = {
     todo,
@@ -856,4 +881,5 @@ module.exports = {
     deleteFav,
     createFav,
     pagarDeudas,
+    cambiarDisponibilidad,
 }

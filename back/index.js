@@ -242,6 +242,12 @@ app.post('/pagar',
 ],
 db.pagarDeudas)
 
+app.post('/cambiarDisponibilidad',
+[
+    check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+],
+db.cambiarDisponibilidad)
+
 //start server
 app.listen(port, () => {
     console.log('Conexión a la base de datos puerto: ', port)

@@ -325,7 +325,7 @@ DECLARE
 	currentDate TIMESTAMP := now();
 BEGIN
 	UPDATE ask SET finaltime = currentDate, pay = false WHERE idAsk = idAskIn;
-	RETURN idAsk;
+	RETURN idAskIn;
 END;
 $$
 LANGUAGE plpgsql;
@@ -354,6 +354,24 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION changeAvailableDriver (cellphoneDriverIn VARCHAR(10))
+RETURNS BOOLEAN AS $$
+DECLARE 
+	result BOOLEAN;
+BEGIN
+IF (SELECT available FROM Driver WHERE cellphoneDriver = cellphoneDriverIn LIMIT 1) THEN
+	UPDATE Driver SET available = false  WHERE cellphoneDriver = cellphoneDriverIn RETURNING available INTO result;
+ELSE
+	UPDATE Driver SET available = true WHERE cellphoneDriver = cellphoneDriverIn RETURNING available INTO result;
+END IF;
+RETURN result;
+
+END
+$$ LANGUAGE plpgsql;
+
+SELECT changeAvailableDriver('3102222222');
 
 select * from favCoordinates
 
