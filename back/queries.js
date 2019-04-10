@@ -796,7 +796,30 @@ const createFav = (request, response) => {
     })().catch(error => console.log({error: error.message}))  
 }
 
+const pagarDeudas = (request, response) => {
+    (async () => {
 
+        
+        var client = await poolAdmin.connect()
+
+        try{
+            
+            validateCheck(request,response)
+            var cellphoneIn = request.body.cellphone;
+            
+            var result = await client.query("UPDATE Ask SET pay = true WHERE cellphoneClient = $1 RETURNING cellphoneClient", [cellphoneIn]);
+            if(result.rows[0].cellphoneclient === cellphoneIn){
+                response.status(200).json({cellphoneclient: result.rows[0].cellphoneclient});
+            }
+            else{
+                response.status(200).json({error: "error al pagar deudas"})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
 
 //importante 
 module.exports = {
@@ -832,4 +855,5 @@ module.exports = {
     searchFav,
     deleteFav,
     createFav,
+    pagarDeudas,
 }

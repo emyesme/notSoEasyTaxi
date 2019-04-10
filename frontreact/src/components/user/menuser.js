@@ -45,6 +45,7 @@ class Menuser extends Component {
         this.showMap = this.showMap.bind(this);
         this.getService = this.getService.bind(this);
         this.gokmUsed = this.gokmUsed.bind(this);
+        this.pay = this.pay.bind(this);
     }
     componentWillMount(){
         Axios.get(api+"/Usuario?cellphone="+this.state.cellphone)
@@ -93,6 +94,24 @@ class Menuser extends Component {
     gokmUsed(){
         this.setState({ showModalKm: !this.showModalKm})
     }
+
+    pay(){
+        
+        Axios.post(api+'/pagar',
+        {
+            cellphone: this.state.cellphone
+        }).then( response => {
+            console.log(response.data)
+            if(typeof response.data.error !== "undefined"){
+                alert(response.data.error)
+            }
+            else{
+                alert("El pago de sus deudas a sido registrado")
+            }
+
+        }).catch(error => alert(error))
+    }
+    
     render() {
         let modalClose = () => this.setState({ showModal: false});
         let modalCloseKm = () => this.setState({ showModalKm: false});
@@ -111,6 +130,7 @@ class Menuser extends Component {
                         <Button style={pad}>Historial</Button>
                         {/*<Button style={pad}>Modificar Información</Button>*/}
                         <Button onClick={this.getService} style={pad}>Solicitar Servicio!</Button>
+                        <Button style={pad} onClick={this.pay} >Pagar deudas</Button>
                         <Button style={pad}>Agregar Lugar Favorito</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
                         </ButtonGroup>
