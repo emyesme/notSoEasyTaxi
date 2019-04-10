@@ -187,7 +187,7 @@ const kilometrosRecorridos = (request, response) => {
             else{
                 result = await client.query('WITH kilometers AS (SELECT cellphoneclient, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphoneclient ) SELECT meters from kilometers where cellphoneclient=$1;',[cellphone])
             }
-            if (result.rowCount < 1){
+            if (result.rowCount < 0){
                 response.status(200).json({error: "No hay kilometros recorridos"})
             }
             else{
@@ -254,6 +254,35 @@ const calificar = (request, response) => {
 
 //###########################CONDUCTOR########################################
 
+const registrarConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            //validacion de errores de sanitize 
+            validateCheck(request,response)
+            var cellphone = request.body.cellphone;
+            var pass = request.body.pass;
+            var name = request.body.name;
+            var cc = request.body.cc;
+            var creditCard = request.body.creditCard;
+            var result = await client.query("INSERT INTO Driver"+
+                                            "(cellphoneDriver,cc, passwordDriver, nameDriver,  available, numAccount, status) VALUES"+
+                                            "($1, $2, md5($3), $4,false, $5, true) RETURNING cellphoneDriver;", [cellphone, cc,pass,name, creditCard])
+            if (result.rows[0].cellphonedriver !== cellphone){
+                response.status(200).json({mensaje: "Error en registrar conductor."})
+            }
+            else{
+                response.status(200).json({mensaje: "Usuario creado correctamente."})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
+
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
 const ingresarConductor = (request, response) => {  
     ( async () => {
@@ -290,7 +319,7 @@ const conductor = (request, response) => {
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
-            var result = await client.query('SELECT cellphonedriver, plaque, date FROM drive WHERE cellphonedriver = $1 ORDER BY date DESC LIMIT 1;', [cellphone]);
+            var result = await client.query('select driver.namedriver, driver.cellphonedriver, drive.plaque, date from driver left join drive on driver.cellphonedriver = drive.cellphonedriver where driver.cellphonedriver = $1 order by date desc limit 1;', [cellphone]);
             if (result.rowCount === 0){
                 response.status(200).json({error: "Conductor no encontrado"})
             }
@@ -784,6 +813,7 @@ module.exports = {
     moverConductor,
     kilometrosRecorridos,
     ingresarConductor,
+    registrarConductor,
     conductor,
     placa,
     cambiarTaxi,

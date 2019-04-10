@@ -109,7 +109,7 @@ class Menuser extends Component {
                         <ButtonGroup vertical>
                         <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
                         <Button style={pad}>Historial</Button>
-                        <Button style={pad}>Modificar Información</Button>
+                        {/*<Button style={pad}>Modificar Información</Button>*/}
                         <Button onClick={this.getService} style={pad}>Solicitar Servicio!</Button>
                         <Button style={pad}>Agregar Lugar Favorito</Button>
                         <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>

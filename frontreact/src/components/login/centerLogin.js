@@ -48,10 +48,19 @@ class CenterLogin extends React.Component {
     .catch( err => console.log(err))
   }
   register(){
-    this.props.history.push(
-      { pathname: "/Registrar",
-    state: { type: this.state.type}}
-    )
+    if( this.state.type === "Usuario"){
+      this.props.history.push(
+        { pathname: "/RegistrarUsuario",
+      state: { type: this.state.type}}
+      )
+    }
+    else{
+      this.props.history.push(
+        { pathname: "/RegistrarConductor",
+      state: { type: this.state.type}}
+      )      
+    }
+
   }
   handleChange(e){
     const { name, value} = e.target;
