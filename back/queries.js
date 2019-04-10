@@ -630,6 +630,44 @@ const askAceptada = (request, response) => {
 }
 
 
+
+const historial = (request, response) => {
+    (async () => {
+
+        var client = await poolAdmin.connect()
+
+        try{
+            validateCheck(request,response)
+            var cellphoneIn = request.query.cellphone;
+            var cellphonetype = request.query.cellphonetype;
+            var result;
+            if( cellphonetype === 'cellphonedriver'){
+                result = await client.query("SELECT * FROM historyDrivers WHERE cellphoneDriver = $1", [cellphoneIn]);
+            }
+            else{
+                result = await client.query("SELECT * FROM historyClients WHERE cellphoneClient = $1", [cellphoneIn])
+            }
+            if (result.rowCount === 0){
+                response.status(200).json({error: "El usuario no tiene historial aun"})
+            }
+            else{
+                var package = [];
+                for (id in result.rows){
+                    package[id] = result.rows[id]
+                }
+                response.status(200).json({historial: package})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))  
+}
+
+
+
+
+
 //importante 
 module.exports = {
     todo,
@@ -658,4 +696,5 @@ module.exports = {
     eliminarModelo,
     finServicio,
     calificar,
+    historial,
 }
