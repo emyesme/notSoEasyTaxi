@@ -1,6 +1,6 @@
 const Pool  = require('pg-pool')
 const {validationResult} = require('express-validator/check')
-const config = require('./configs')
+const config = require('./configsDocker')
 
 
 const poolAdmin = new Pool(config.configAdmin);
@@ -185,9 +185,11 @@ const kilometrosRecorridos = (request, response) => {
                 result = await client.query('WITH kilometers AS (SELECT cellphonedriver, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphonedriver ) SELECT meters from kilometers where cellphonedriver=$1;',[cellphone])
             }
             else{
+                
                 result = await client.query('WITH kilometers AS (SELECT cellphoneclient, SUM(distance(initialCoordinates, finalCoordinates)) as meters FROM Ask where pay=false GROUP BY cellphoneclient ) SELECT meters from kilometers where cellphoneclient=$1;',[cellphone])
             }
-            if (result.rowCount < 0){
+            
+            if (result.rowCount <= 0){
                 response.status(200).json({error: "No hay kilometros recorridos"})
             }
             else{
@@ -750,16 +752,13 @@ const deleteFav = (request, response) => {
 
         try{
             validateCheck(request,response)
-            var cellphoneIn = request.body.cellphone;
-            var coordinateXIn = request.body.coordinateX;
-            var coordinateYIn = request.body.coordinateY;
-            var result = await client.query("DELETE FROM FavCoordinates WHERE cellphoneClient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneClient;", [cellphoneIn, coordinateXIn, coordinateYIn]);
-            if(result.rowCount === 0){
-                response.status(200).json({error: "Error al calificar"})
-            }
-            else{
-                response.status(200).json({cellphoneclient: result.rows[0].cellphoneclient});
-            }
+            var cellphoneIn = request.query.cellphone;
+            var coordinateXIn = request.query.coordinateX;
+            var coordinateYIn = request.query.coordinateY;
+            console.log(request.query)
+            var result = await client.query("DELETE FROM favcoordinates WHERE cellphoneclient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneclient;", [cellphoneIn, coordinateXIn, coordinateYIn]);
+            console.log(result.rows)
+            response.status(200).json({cellphoneclient: cellphoneIn});
         }finally{
             //cierra la conexion con el cliente
             client.release()
@@ -774,15 +773,13 @@ const createFav = (request, response) => {
 
         try{
             validateCheck(request,response)
-            var cellphoneIn = request.query.cellphone;
-            var coordinateXIn = request.query.coordinateX;
-            var coordinateYIn = request.query.coordinateY;
-            var nameIn = request.query.name;
-
+            var cellphoneIn = request.body.cellphone;
+            var coordinateXIn = request.body.coordinateX;
+            var coordinateYIn = request.body.coordinateY;
+            var nameIn = request.body.name;
             var result = await client.query("INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES($1, GEOMETRY(POINT($2, $3)), $4) RETURNING cellphoneClient;", [cellphoneIn, coordinateXIn, coordinateYIn, nameIn]);
-            
-            if(result.rows[0].cellphoneClient === cellphoneIn){
-                response.status(200).json({cellphoneclient: result.rows[0].cellphoneclient});
+            if(result.rows[0].cellphoneclient === cellphoneIn){
+                response.json({cellphoneclient: result.rows[0].cellphoneclient});
             }
             else{
                 response.status(200).json({error: "error al añadir favoritos"})

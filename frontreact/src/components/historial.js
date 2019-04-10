@@ -22,7 +22,7 @@ class history extends Component {
             else{
                 this.setState({ data: response.data.historial})
             }            
-        })
+        }).catch(error => alert(error))
         
     }
     render() { 
