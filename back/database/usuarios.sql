@@ -239,7 +239,7 @@ CREATE OR REPLACE VIEW lastCoordinatesPlaques AS (
 	driverLastRecord AS 
 	(select Driver.cellphoneDriver,  max(date) AS date
 	from driver inner join drive on driver.cellphonedriver=drive.cellphonedriver
-	where available = true
+	where available = true and status = true
 	group by (driver.cellphoneDriver)),
 
 	driverLastPlaque AS
@@ -292,6 +292,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+DROP FUNCTION moveDriver;
 CREATE OR REPLACE FUNCTION moveDriver (cellphoneDriverIn VARCHAR(10), destination GEOMETRY)
 RETURNS POINT AS $$
 DECLARE
@@ -323,10 +325,35 @@ DECLARE
 	currentDate TIMESTAMP := now();
 BEGIN
 	UPDATE ask SET finaltime = currentDate, pay = false WHERE idAsk = idAskIn;
-	RETURN;
+	RETURN idAsk;
 END;
 $$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE VIEW historyClients AS (
+	SELECT cellphoneClient, POINT(initialCoordinates) AS initialPoint, POINT(finalCoordinates) AS finalPoint, distance(initialCoordinates, finalCoordinates) AS distance
+	FROM Ask
+);
+CREATE OR REPLACE VIEW historyDrivers AS (
+	SELECT cellphoneDriver, POINT(initialCoordinates) AS initialPoint, POINT(finalCoordinates) AS finalPoint, distance(initialCoordinates, finalCoordinates) AS distance
+	FROM Ask
+);
+
+
+
+CREATE OR REPLACE FUNCTION cambiarTaxi (cellphoneDriverIn VARCHAR(10), plaqueIn VARCHAR(6), dateIn TIMESTAMP, pointIn GEOMETRY) 
+RETURNS VARCHAR(10) as $$
+BEGIN
+	INSERT INTO Drive (cellphoneDriver, plaque, date) VALUES
+		(cellphoneDriverIn, plaqueIn, dateIn);
+
+	INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
+		(plaqueIn, dateIn, pointIn);
+	RETURN cellphoneDriverIn;
+END;
+$$
+LANGUAGE plpgsql;
+
+select * from favCoordinates
 
