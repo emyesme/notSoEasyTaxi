@@ -156,9 +156,9 @@ INSERT INTO Client (cellphoneClient, passwordClient, nameClient, address, credit
 	('3101111111', md5('hola'), 'Emily Carvajal', GEOMETRY(POINT(3.3992864819024993,283.4863239526749)),'1100000000000011', true);
 
 INSERT INTO FavCoordinates (cellphoneClient, coordinate, nameCoordinate) VALUES
-	('3107307371', GEOMETRY(POINT(3.413803722450137,283.4533059597016)), 'Mi casa'),
+	('3107307371', GEOMETRY(POINT(3.3992864819024993,283.4863239526749)), 'Mi casa'),
 	('3107307371', GEOMETRY(POINT(3.375973296733919,283.4671810269356)), 'Univalle'),
-	('3107307371', GEOMETRY(POINT(3.3992864819024993,283.4863239526749)), 'Casa de Emily'),
+	('3107307371', GEOMETRY(POINT(3.3992864819024990,283.4863239526745)), 'Casa de Emily'),
 
 	('3101111111', GEOMETRY(POINT(3.474354999536053,283.4922409057618)), 'Mi Casa'),
 	('3101111111', GEOMETRY(POINT(3.4287759029877747,283.52313995361334)), 'Parties Point'),
@@ -269,7 +269,7 @@ RETURNS INTEGER AS $$
 DECLARE
 	idAskOut INTEGER;
 	closerDriver VARCHAR(10) := (SELECT cellphoneDriver
-								FROM (select row_number() over (order by (distance(coordinate, initialCoordinatesIn))) rn, * from lastCoordinatesPlaques)
+								FROM (select row_number() over (order by (distance(coordinate, initialCoordinatesIn)) ASC) rn, * from lastCoordinatesPlaques)
 								AS closer
 								where rn = 1 LIMIT 1);
 BEGIN

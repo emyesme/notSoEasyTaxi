@@ -1,6 +1,6 @@
 const Pool  = require('pg-pool')
 const {validationResult} = require('express-validator/check')
-const config = require('./configsDocker')
+const config = require('./configs')
 
 
 const poolAdmin = new Pool(config.configAdmin);
@@ -321,13 +321,13 @@ const conductor = (request, response) => {
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
-            var result = await client.query('select driver.namedriver, driver.cellphonedriver, drive.plaque, date from driver left join drive on driver.cellphonedriver = drive.cellphonedriver where driver.cellphonedriver = $1 order by date desc limit 1;', [cellphone]);
+            var result = await client.query('select driver.namedriver, driver.cellphonedriver, drive.plaque, date, driver.available from driver left join drive on driver.cellphonedriver = drive.cellphonedriver where driver.cellphonedriver = $1 order by date desc limit 1;', [cellphone]);
             if (result.rowCount === 0){
                 response.status(200).json({error: "Conductor no encontrado"})
             }
             else{
                 //devuelve la informacion esperada
-                response.status(200).json({cellphone: result.rows[0].cellphonedriver, name: result.rows[0].namedriver, plaque: result.rows[0].plaque})
+                response.status(200).json({cellphone: result.rows[0].cellphonedriver, name: result.rows[0].namedriver, plaque: result.rows[0].plaque, available: result.rows[0].available})
             }
         }
         finally{
@@ -755,9 +755,7 @@ const deleteFav = (request, response) => {
             var cellphoneIn = request.query.cellphone;
             var coordinateXIn = request.query.coordinateX;
             var coordinateYIn = request.query.coordinateY;
-            console.log(request.query)
             var result = await client.query("DELETE FROM favcoordinates WHERE cellphoneclient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneclient;", [cellphoneIn, coordinateXIn, coordinateYIn]);
-            console.log(result.rows)
             response.status(200).json({cellphoneclient: cellphoneIn});
         }finally{
             //cierra la conexion con el cliente
@@ -823,13 +821,13 @@ const cambiarDisponibilidad = (request, response) => {
         var client = await poolAdmin.connect()
 
         try{
-            
             validateCheck(request,response)
             var cellphoneIn = request.body.cellphone;
             
             var result = await client.query("SELECT changeAvailableDriver($1)", [cellphoneIn]);
+            
             if(result.rowCount > 0){
-                response.status(200).json({available: result.rows[0].changeAvailableDriver});
+                response.status(200).json({available: result.rows[0].changeavailabledriver});
             }
             else{
                 response.status(200).json({error: "error modificar disponibilidad del conductor"})

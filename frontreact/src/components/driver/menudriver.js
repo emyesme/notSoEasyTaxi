@@ -68,6 +68,7 @@ class Menudriver extends Component {
         this.end = this.end.bind(this);
         this.getGps = this.getGps.bind(this);
         this.goTable = this.goTable.bind(this);
+        this.changeAvaliable = this.changeAvaliable.bind(this);
     }
     async findService(){
         await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
@@ -113,6 +114,11 @@ class Menudriver extends Component {
                     this.setState({ name: response.data.name, plaque: 'No tiene taxi'})
                 }
                 else{
+                    if (response.data.available){
+                        this.setState({ disponible: 'Libre'})
+                    }else{
+                        this.setState({ disponible: 'Ocupado'})
+                    }
                     this.setState({ name: response.data.name, plaque: response.data.plaque})
                     this.getGps()
                 }
@@ -158,7 +164,21 @@ class Menudriver extends Component {
         this.setState({ show: !this.state.show})
     }
     changeAvaliable(){
-        
+        axios.post(api+'/cambiarDisponibilidad',
+        {
+            cellphone: this.state.cellphone
+        }).then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+            }
+            else{
+                if ( response.data.available){
+                    this.setState({ disponible: "Libre"})
+                }else{
+                    this.setState({ disponible: "Ocupado"})
+                }
+            }            
+        })
     }
     gokmUsed(){
         this.setState({ showModal: !this.showModal})
@@ -201,7 +221,7 @@ class Menudriver extends Component {
                         <div>
                         <ButtonGroup vertical>
                         {/*<Button style={pad} >Modificar Información Personal</Button>*/}
-                        <Button style={pad} onClick={this.goUpdateTaxi}>Modificar Información del Taxi</Button>
+                        {/*<Button style={pad} onClick={this.goUpdateTaxi}>Modificar Información del Taxi</Button>*/}
                         <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
                         <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
                         <Button style={pad} onClick={this.goTable}>Historial</Button>

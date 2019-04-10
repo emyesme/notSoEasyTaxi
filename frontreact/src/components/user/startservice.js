@@ -32,7 +32,7 @@ class startService extends Component {
     componentWillMount(){
         this.verifyAvaliable()
         this.verifyAsk()
-        this.setState({ idInterval : setInterval(this.verifyAskAll,5000)})//cada 10 segundos
+        this.setState({ idInterval : setInterval(this.verifyAskAll,3000)})//cada 10 segundos
     }
     async verifyAskAll(){
         try{
