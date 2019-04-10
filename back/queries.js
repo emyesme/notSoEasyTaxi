@@ -359,9 +359,11 @@ const adicionarTaxi = (request, response) => {
             var soat = request.body.soat;
             var year = parseInt(request.body.year);
             var model = request.body.model;
-            var trademark = request.body.trademark;
-            var trunk = request.body.trunk;
+            var initialPoint = request.body.coordinate;
             var result = await client.query("INSERT INTO Taxi (plaque, soat, year, model) VALUES ($1, $2, $3, $4) RETURNING plaque;",[plaque, soat, year, model])
+
+            await client.query("INSERT INTO Gps (plaque, now(), initialPoint) VALUES ($1, $2, $3);",[plaque, initialPoint])
+
             if (result.rows[0].plaque !== plaque){
                 response.status(200).json({mensaje: "Error al adicionar taxi"})
             }

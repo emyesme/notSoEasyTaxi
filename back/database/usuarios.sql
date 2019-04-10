@@ -339,5 +339,5 @@ CREATE OR REPLACE VIEW historyDrivers AS (
 	SELECT cellphoneDriver, POINT(initialCoordinates) AS initialPoint, POINT(finalCoordinates) AS finalPoint, distance(initialCoordinates, finalCoordinates) AS distance
 	FROM Ask
 );
-SELECT * FROM historyDrivers;
+
 
