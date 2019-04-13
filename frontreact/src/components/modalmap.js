@@ -7,7 +7,6 @@ class modalmap extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
-            showModal: false,
             point:{
                 lat: 1,
                 lng: 1,
@@ -44,7 +43,7 @@ class modalmap extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                     <center>
-                    <LMap  height={'300px'} width={'100%'} markers={[]} origin={this.props.firstpoint} point = { value => this.callback(value)} modoObtener={true}/>
+                    <LMap  height={'300px'} width={'100%'} markers={[]} origin={this.props.firstpoint} point = { value => this.callback(value)} modoObtener={this.props.modoobtener} linea={this.props.linea}/>
                     </center>
                 </Modal.Body>
                 <Modal.Footer>

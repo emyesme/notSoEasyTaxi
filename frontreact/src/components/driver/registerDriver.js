@@ -4,11 +4,8 @@ import {Modal,Button,Form } from 'react-bootstrap'
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
 
-const backdropStyle = {
-    backgroundColor: 'rgb(93, 110, 128)',
-};
 
-const api = "http://localhost:4000";
+const c = require('../constants')
 
 class RegisterDriver extends Component {
     constructor(props) {
@@ -32,7 +29,7 @@ class RegisterDriver extends Component {
             alert("Alguno de los campos esta vacio")
         }
         else{
-            axios.post(api + '/RegistrarConductor',{
+            axios.post(c.api + '/RegistrarConductor',{
                 cellphone: this.state.cellphone,
                 pass: this.state.pass,
                 name: this.state.name,
@@ -60,7 +57,7 @@ class RegisterDriver extends Component {
     }
     render() {
         return (
-        <div style={backdropStyle}>
+        <div style={c.backdropStyle}>
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">

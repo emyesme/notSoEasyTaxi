@@ -6,16 +6,7 @@ import error from '../images/error.png';
 import ModalMap from '../modalmap';
 import Axios from 'axios';
 
-const pad = {
-    margin: 5,
-    align: 'center',
-    backgroundColor: '#21387C',
-    border:'#21387C',
-    font: 'white'
-}
-
-const api = "http://localhost:4000"; 
-
+const c = require('../constants')
 class createFav extends Component {
     constructor(props) {
         super(props);
@@ -40,7 +31,7 @@ class createFav extends Component {
             alert("Ingrese todos los campos")
             return;
         }
-        Axios.post(api+'/crearFavorito',{
+        Axios.post(c.api+'/crearFavorito',{
             cellphone: this.state.cellphone,
             name: this.state.nameFav,
             coordinateX: this.state.point.lat,
@@ -97,7 +88,7 @@ class createFav extends Component {
             </Form.Group>
             <Button style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>
             { this.state.point.lat === -1 ? <img style={{margin:5}} alt='' src={error} height={'30'} width={'30'}/> : <img style={{margin:5}} alt='' src={check} height={'30'} width={'30'}/>}
-            <Button disabled={this.state.cannotAdd} style={pad} variant="success" type="submit">
+            <Button disabled={this.state.cannotAdd} style= {c.padCreateFav} variant="success" type="submit">
                 Agregar
             </Button>
             </Form>

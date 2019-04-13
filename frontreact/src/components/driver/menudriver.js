@@ -1,33 +1,14 @@
 import React, { Component } from 'react';
 import LMap from '../map';
 import car from '../images/logo.png';
-import { Button, Modal,ButtonGroup, CardDeck, Card, ListGroup} from 'react-bootstrap';
+import { Button, Modal,ListGroupItem, CardDeck, Card, ListGroup} from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
 import KmUsed from '../km';
 import History from '../historial';
 
-const backColor = {
-    backgroundColor: '#731E6F',
-};
 
-const pad = {
-    margin: 5,
-    align: 'center',
-    backgroundColor: '#21387C',
-    border:'#21387C',
-    font: 'black',
-    focused:{
-        backgroundColor: '#808080'
-    }
-}
-
-const grayRgb = {
-    backgroundColor: 'rgb(148, 150, 172)',
-}
-
-const api = "http://localhost:4000";  
-
+const c = require('../constants')
 class Menudriver extends Component {
     constructor(props) {
         super(props);
@@ -71,7 +52,7 @@ class Menudriver extends Component {
         this.changeAvaliable = this.changeAvaliable.bind(this);
     }
     async findService(){
-        await axios.get(api+'/HayServicio?cellphone='+this.state.cellphone)
+        await axios.get(c.api+'/HayServicio?cellphone='+this.state.cellphone)
         .then( response => {
             if( response.data.mensaje !== "Noy hay servicios"){
                 this.setState({ show: true, 
@@ -86,7 +67,7 @@ class Menudriver extends Component {
             }
         })
         if ( this.state.showTraveling === true){
-            await axios.post(api + '/MoverConductor',
+            await axios.post(c.api + '/MoverConductor',
             {
                 cellphonedriver: this.state.cellphone,
                 destiny: this.state.service.finalpoint
@@ -104,7 +85,7 @@ class Menudriver extends Component {
         }
     }
     componentWillMount(){
-        axios.get(api+"/Conductor?cellphone="+this.state.cellphone)
+        axios.get(c.api+"/Conductor?cellphone="+this.state.cellphone)
         .then( response => {
             if( response.data.error != null){
                 alert(response.data.error);
@@ -132,7 +113,7 @@ class Menudriver extends Component {
             alert("No tiene taxi asignado")
             return 
         }
-        axios.get(api+"/Posicion?plaque="+this.state.plaque)
+        axios.get(c.api+"/Posicion?plaque="+this.state.plaque)
         .then(response => {
             if( response.data.error != null){
                 alert(response.data.error);
@@ -164,7 +145,7 @@ class Menudriver extends Component {
         this.setState({ show: !this.state.show})
     }
     changeAvaliable(){
-        axios.post(api+'/cambiarDisponibilidad',
+        axios.post(c.api+'/cambiarDisponibilidad',
         {
             cellphone: this.state.cellphone
         }).then( response => {
@@ -187,7 +168,7 @@ class Menudriver extends Component {
         this.setState({ showModalTable: !this.showModalTable})
     }
     accept(){
-        axios.post(api+'/AceptaConductor',
+        axios.post(c.api+'/AceptaConductor',
         {
             idAsk: this.state.service.idAsk
         }
@@ -210,57 +191,51 @@ class Menudriver extends Component {
         let modalClose = () => this.setState({ showModal: false});
         let modalCloseTable = () => this.setState({ showModalTable: false});
         return (  
-        <div style={backColor}>
+        <div style={c.backColor}>
+        {/*Menu */}
             <Modal.Dialog  size='lg' centered>
-            <Modal.Body style={grayRgb}>
+            <Modal.Body style={c.grayRgb}>
                 <CardDeck>
-                    <Card style={grayRgb} >
+                    <Card style={c.grayRgb}>
                         <center>
                         <h2> <img alt='' src={car}/> Menu Conductor</h2> 
-                        <h6> Nombre: {this.state.name} Telefono: {this.state.cellphone} Placa: {this.state.plaque} </h6>
-                        <div>
-                        <ButtonGroup vertical>
-                        {/*<Button style={pad} >Modificar Información Personal</Button>*/}
-                        {/*<Button style={pad} onClick={this.goUpdateTaxi}>Modificar Información del Taxi</Button>*/}
-                        <Button style={pad} onClick={this.goChangeTaxi}>Cambiar de Taxi</Button>
-                        <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
-                        <Button style={pad} onClick={this.goTable}>Historial</Button>
-                        <Button style={pad} onClick={this.changeAvaliable}>Estado: {this.state.disponible}</Button>
-                        <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
-                        </ButtonGroup>
-                        {/*<p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>*/}
-                        </div>
+                        <h6> Nombre: {this.state.name}<br></br>Telefono: {this.state.cellphone} Placa: {this.state.plaque} </h6>
+                        <ListGroup>
+                        <center>
+                        <ListGroupItem action variant={'light'}>Modificar Información Personal</ListGroupItem>
+                        <ListGroupItem action onClick={this.goUpdateTaxi} variant={'light'}>Modificar Información del Taxi</ListGroupItem>
+                        <ListGroupItem action onClick={this.goChangeTaxi} variant={'light'}>Cambiar de Taxi</ListGroupItem>
+                        <ListGroupItem action onClick={this.gokmUsed} variant={'light'} >Kilometros Recorridos</ListGroupItem>
+                        <ListGroupItem action onClick={this.goTable} variant={'light'}>Historial</ListGroupItem>
+                        <ListGroupItem action onClick={this.changeAvaliable} variant={'light'}>Estado: {this.state.disponible}</ListGroupItem>
+                        <ListGroupItem action href='/' variant={"danger"}>Cerrar Sección</ListGroupItem>
+                        </center>
+                        </ListGroup>
                         <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>
                         </center>
                     </Card>
-                    { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap  height={'695px'} width={'100%'} markers={[]}  origin={this.state.gps} point = { value => this.callback(value)} modoObtener={false}/> </Card> : <div></div>}
+                    { this.state.showMap === true ? <Card style={c.grayRgb}> 
+                    <LMap  height={'625px'} width={'100%'} markers={[]}  origin={this.state.gps} point = { value => this.callback(value)} modoObtener={'false'} linea={'false'}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>
+            {/*Menu de servicio */}
             <Modal show={this.state.show} aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal.Header>
+                    <Modal.Title>
+                        <h5><img alt='' height='48px' width='48px' src={car}/> Servicio para tu Taxi!!</h5>
+                    </Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
-                <h6>Servicio para tu Taxi!! </h6>
-                <ListGroup>
-                            <ListGroup.Item>
-                                idAsk: {this.state.service.idAsk}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                CellphoneClient: {this.state.service.cellphoneclient}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                Inicio: [{this.state.service.initialpoint[0]},{this.state.service.initialpoint[1]}]
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                Final: [{this.state.service.finalpoint[0]},{this.state.service.finalpoint[1]}]
-                            </ListGroup.Item>
-                        </ListGroup>                    
+                <p>Id Servicio: {this.state.service.idAsk} </p>
+                <p>Telefono Usuario:    {this.state.service.cellphoneclient}</p>
+                <LMap  height={'300px'} width={'100%'} markers={[{point: {x:this.state.service.initialpoint[0] ,y:this.state.service.initialpoint[1]}}]} origin={{lat:this.state.service.finalpoint[0] ,lng:this.state.service.finalpoint[1]}} point = { value => this.callback(value)} modoObtener={'false'} linea={'true'}/>                   
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='success' onClick={this.accept}>Si!</Button>
-                    {/*<Button variant='danger' onClick={this.declineService}>Cancelar</Button>*/}
                 </Modal.Footer>
             </Modal>
+            {/*Termino servicio */}
             <Modal show={this.state.showTraveling} aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Body>
                 <center><h2>{this.state.mensaje} </h2></center>

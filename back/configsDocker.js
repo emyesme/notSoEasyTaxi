@@ -5,7 +5,7 @@ const configAdmin = {
 	host: 'db',
 	port: '5432',
 	database: 'easyTaxiDB',
-	ssl: true,
+	SSL: true,
 	sslmode: require,
 	max: 10,
 	min: 2,
@@ -13,12 +13,12 @@ const configAdmin = {
 };
 
 const configUserClient = {
-	user: 'clientRole',
+	user: 'clientrole',
 	password: '123',
 	host: 'db',
 	port: '5432',
 	database: 'easyTaxiDB',
-	ssl: true,
+	SSL: true,
 	sslmode: require,
 	max: 10,
 	min: 2,
@@ -27,12 +27,12 @@ const configUserClient = {
 
 
 const configUserDriver = {
-	user: 'driverRole',
+	user: 'driverrole',
 	password: '123',
 	host: 'db',
 	port: '5432',
 	database: 'easyTaxiDB',
-	ssl: true,
+	SSL: true,
 	sslmode: require,
 	max: 10,
 	min: 2,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import LMap from '../map'
 import car from '../images/logo.png'
-import { Modal, Button, ButtonGroup, Card, CardDeck } from 'react-bootstrap';
+import { Modal, Button, ListGroup, ListGroupItem, Card, CardDeck } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import Axios from 'axios';
 import Service from './service'
@@ -10,23 +10,7 @@ import History from '../historial';
 import CreateFav from './createfav';
 import DeleteFav from './deletefav';
 
-const backColor = {
-    backgroundColor: '#731E6F',
-};
-
-const pad = {
-    margin: 5,
-    align: 'center',
-    backgroundColor: '#21387C',
-    border:'#21387C',
-    font: 'white'
-}
-
-const grayRgb = {
-    backgroundColor: 'rgb(148, 150, 172)',
-}
-
-const api = "http://localhost:4000";
+const c = require('../constants')
 class Menuser extends Component {
     constructor(props) {
         super(props);
@@ -52,6 +36,7 @@ class Menuser extends Component {
         this.getService = this.getService.bind(this);
         this.gokmUsed = this.gokmUsed.bind(this);
         this.goTable = this.goTable.bind(this);
+        this.goChangeUser = this.goChangeUser.bind(this);
         this.addFav = this.addFav.bind(this);
         this.deleteFav = this.deleteFav.bind(this);
         this.pay = this.pay.bind(this);
@@ -63,7 +48,7 @@ class Menuser extends Component {
         this.setState({ showModalDeleteFav: true})
     }
     componentWillMount(){
-        Axios.get(api+"/Usuario?cellphone="+this.state.cellphone)
+        Axios.get(c.api+"/Usuario?cellphone="+this.state.cellphone)
         .then( response => {
             if( response.data.error != null){
                 alert(response.data.error);
@@ -73,7 +58,7 @@ class Menuser extends Component {
             }
         }).catch(error => alert(error))
         //origen
-        Axios.get(api+"/Origen?cellphone="+this.state.cellphone)
+        Axios.get(c.api+"/Origen?cellphone="+this.state.cellphone)
         .then( response => {
             if( response.data.error != null){
                alert(response.data.error);
@@ -83,14 +68,13 @@ class Menuser extends Component {
             }            
         }).catch(error => alert(error))
         //lugares favoritos
-        Axios.get(api+"/LugaresFavoritos?cellphone="+this.state.cellphone)
+        Axios.get(c.api+"/LugaresFavoritos?cellphone="+this.state.cellphone)
         .then( response => {
             if( response.data.error != null){
                 alert(response.data.error);
             }
             else{
                 this.setState({markers: response.data});
-                console.log(response.data)
             }
         }).catch(error => alert(error))
     }
@@ -113,9 +97,14 @@ class Menuser extends Component {
     goTable(){
         this.setState({ showModalTable: !this.showModalTable})
     }
+    goChangeUser(){
+        this.props.history.push({
+            pathname: '/ActualizarUsuario',
+            state: { cellphone: this.state.cellphone}
+        })
+    }
     pay(){
-        
-        Axios.post(api+'/pagar',
+        Axios.post(c.api+'/pagar',
         {
             cellphone: this.state.cellphone
         }).then( response => {
@@ -128,8 +117,6 @@ class Menuser extends Component {
 
         }).catch(error => alert(error))
     }
-    
-
     render() {
         let modalCloseTable = () => this.setState({ showModalTable: false});
         let modalCloseCreateFav = () => this.setState({ showModalCreateFav: false});
@@ -137,32 +124,29 @@ class Menuser extends Component {
         let modalClose = () => this.setState({ showModal: false});
         let modalCloseKm = () => this.setState({ showModalKm: false});
         return (
-            <div style={backColor} className="menuser">
+            <div style={c.backColor} className="menuser">
             <Modal.Dialog  size='lg' centered>
-            <Modal.Body style={grayRgb}>
+            <Modal.Body style={c.grayRgb}>
                 <CardDeck>
-                    <Card style={grayRgb} >
+                    <Card style={c.grayRgb} >
                         <center>
                         <h2> <img alt='' src={car}/> Menu Usuario</h2> 
-                        <h6> Datos: { this.state.name}, {this.state.cellphone}</h6>
-                        <div>
-                        <ButtonGroup vertical>
-                        <Button style={pad} onClick={this.gokmUsed} >Kilometros Recorridos</Button>
-                        <Button style={pad} onClick={this.goTable}>Historial</Button>
-                        {/*<Button style={pad}>Modificar Información</Button>*/}
-                        <Button onClick={this.getService} style={pad}>Solicitar Servicio!</Button>
-                        <Button style={pad} onClick={this.pay} >Pagar deudas</Button>
-                        <Button style={pad} onClick={this.addFav}> Agregar Lugar Favorito</Button>
-                        {/*<Button style={pad} onClick={this.deleteFav}>Eliminar Lugar Favorito</Button>*/}
-                        <Button style = {{    margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
-                        </ButtonGroup>
-                       {/* <p>latitud: {this.state.point.lat}, longitud: {this.state.point.lng}</p>*/}
-                        </div>
+                        <h6> Datos: { this.state.name} <br></br> Telefono: {this.state.cellphone}</h6>
+                        <ListGroup>
+                        <ListGroupItem action style={{width:'50', height:'50', margin:'center'}} variant="light" onClick={this.gokmUsed} >Kilometros Recorridos</ListGroupItem>
+                        <ListGroupItem action variant="light" onClick={this.goTable}>Historial</ListGroupItem>
+                        <ListGroupItem action variant="light" onClick={this.goChangeUser}>Modificar Información</ListGroupItem>
+                        <ListGroupItem action variant="light" onClick={this.getService} >Solicitar Servicio!</ListGroupItem>
+                        <ListGroupItem action variant="light" onClick={this.pay} >Pagar deudas</ListGroupItem>
+                        <ListGroupItem action variant="light" onClick={this.addFav}> Agregar Lugar Favorito</ListGroupItem>
+                        <ListGroupItem action variant="light" onClick={this.deleteFav}>Eliminar Lugar Favorito</ListGroupItem>
+                        <ListGroupItem action href='/' variant="danger">Cerrar Sección</ListGroupItem>
+                        </ListGroup>
                         <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>
                         </center>
                     </Card>
-                    { this.state.showMap === true ? <Card style={grayRgb}> 
-                    <LMap height={'500px'} width={'100%'} markers={this.state.markers.coordinates} origin={this.state.origin} point = { value => this.callbackMap(value)} modoObtener={false}/> </Card> : <div></div>}
+                    { this.state.showMap === true ? <Card style={c.grayRgb}> 
+                    <LMap height={'600px'} width={'100%'} markers={this.state.markers.coordinates} origin={this.state.origin} point = { value => this.callbackMap(value)} modoobtener={'false'}  linea={'false'}/> </Card> : <div></div>}
                 </CardDeck>
             </Modal.Body>
             </Modal.Dialog>

@@ -7,11 +7,7 @@ import ModalMap from '../components/modalmap';
 import check from './images/checked.png';
 import error from './images/error.png';
 
-const backdropStyle = {
-    backgroundColor: 'rgb(93, 110, 128)',
-};
-
-const api = "http://localhost:4000";
+const c = require('./constants')
 
 class RegisterUser extends Component {
     constructor(props) {
@@ -40,7 +36,7 @@ class RegisterUser extends Component {
             alert("Alguno de los campos esta vacio")
         }
         else{
-            axios.post(api + '/RegistrarUsuario',{
+            axios.post(c.api + '/RegistrarUsuario',{
                 cellphone: this.state.cellphone,
                 pass: this.state.pass,
                 name: this.state.name,
@@ -78,7 +74,7 @@ class RegisterUser extends Component {
     render() {
         let modalClose = () => this.setState({ showModal: false });
         return (
-        <div style={backdropStyle}>
+        <div style={c.backColor}>
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">
@@ -92,7 +88,7 @@ class RegisterUser extends Component {
                             <Form.Control type="text" placeholder="Ingrese su nombre" name="name" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoCelular">
-                            <Form.Label>Celular</Form.Label>
+                            <Form.Label>Contraseña</Form.Label>
                             <Form.Control type="text" placeholder="Ingrese su celular" name="cellphone" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoContrasenia">
@@ -118,7 +114,7 @@ class RegisterUser extends Component {
                 </Modal.Footer>
             </Modal.Dialog>
             {/*Mostrar mapa para seleccionar punto*/}
-            <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoObtener={false}/>
+            <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoobtener={'true'} linea={'false'}/>
         </div>
         );
     }

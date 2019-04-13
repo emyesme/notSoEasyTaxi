@@ -1,22 +1,8 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
-import { Modal, Button, ButtonGroup, Card, CardDeck } from 'react-bootstrap';
+import { Modal,ListGroup, ListGroupItem, Card, CardDeck } from 'react-bootstrap';
 
-const backColor = {
-    backgroundColor: '#731E6F',
-};
-
-const pad = {
-    margin : 5,
-    align: 'center'
-}
-
-
-const grayRgb = {
-    backgroundColor: 'rgb(148, 150, 172)',
-}
-
-
+const c = require('../constants')
 
 class Menuadmin extends Component {
 
@@ -27,26 +13,30 @@ class Menuadmin extends Component {
     
     render() {
         return (
-        <div style={backColor}>
-            <Modal.Body style={grayRgb}>
+        <div style={c.backColor}>
+            <Modal.Dialog 
+            size="xs"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered>
+            <Modal.Body>
                 <CardDeck>
-                    <Card style={grayRgb} >
+                    <Card>
                         <center>
                         <h2>Menu Administrador</h2> 
                             <div>
-                                <ButtonGroup vertical>
-                                    <Button style={pad} href='/modelCar'>Modelos</Button>
-                                    <Button style={pad}>Eminiar Cliente</Button>
-                                    <Button style={pad}>Eminiar Conductor</Button>
-                                    <Button style = {{margin: 5, align: 'center'}} href='/' variant="danger">Cerrar Sección</Button>
-                                </ButtonGroup>
+                                <ListGroup>
+                                    <ListGroupItem action variant='light' href='/Modelo'>Modelos</ListGroupItem>
+                                    <ListGroupItem action variant='light'>Eliminar Cliente</ListGroupItem>
+                                    <ListGroupItem action variant='light'>Eliminar Conductor</ListGroupItem>
+                                    <ListGroupItem action  href='/' variant="danger">Cerrar Sección</ListGroupItem>
+                                </ListGroup>
                             </div>
                         </center>
                     </Card>
                     
                 </CardDeck>
             </Modal.Body>
-            
+            </Modal.Dialog>    
         </div>
         );
     }

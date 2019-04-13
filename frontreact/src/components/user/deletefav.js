@@ -4,15 +4,7 @@ import {Modal,Button, Dropdown} from 'react-bootstrap';
 import DropdownItem from 'react-bootstrap/DropdownItem';
 import Axios from 'axios';
 
-const pad = {
-    margin: 5,
-    align: 'center',
-    backgroundColor: '#21387C',
-    border:'#21387C',
-    font: 'white'
-}
-
-const api = "http://localhost:4000"; 
+const c = require('../constants')
 
 class deleteFav extends Component {
     constructor(props) {
@@ -27,13 +19,11 @@ class deleteFav extends Component {
             name: '',
             cannotAdd: true
         }
-        console.log(this.state.markers)
         this.deleteFav = this.deleteFav.bind(this);
         this.getPoint = this.getPoint.bind(this);
 
     }
-    getPoint(selectedId,data){
-        console.log(data)
+    getPoint(data){
         this.setState({name: data.namecoordinate, point: { x: data.point.x, y: data.point.y}, cannotAdd: false})
         
     }
@@ -43,9 +33,8 @@ class deleteFav extends Component {
             alert("Ingrese todos los campos")
             return;
         }
-        Axios.delete(api+'/eliminarFavorito?cellphone='+this.state.cellphone+'&coordinateX='+this.state.point.x+'&coordinateY='+this.state.point.y)
+        Axios.delete(c.api+'/eliminarFavorito?cellphone='+this.state.cellphone+'&coordinateX='+this.state.point.x+'&coordinateY='+this.state.point.y)
         .then( response => {
-            console.log(response.data)
             if(typeof response.data.error !== "undefined"){
                 alert(response.data.error)
             }
@@ -68,7 +57,7 @@ class deleteFav extends Component {
             centered>
             <Modal.Header>
               <Modal.Title id="contained-modal-title-vcenter">
-                Eliminar Lugar Favorito {console.log(this.props.markers)}
+                Eliminar Lugar Favorito
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -77,15 +66,15 @@ class deleteFav extends Component {
                             Marcadores
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                        {typeof this.props.markers !== "undefined" ? this.props.markers.map((data, id) =>  <Dropdown.Item key={'m-'+id} onClick={() => this.getPoint(id,data)}>{data.namecoordinate}</Dropdown.Item>) : <DropdownItem>No hay marcadores disponibles</DropdownItem>}
+                        {typeof this.props.markers !== "undefined" ? this.props.markers.map((data, id) =>  <Dropdown.Item key={'m-'+id} onClick={() => this.getPoint(data)}>{data.namecoordinate}</Dropdown.Item>) : <DropdownItem>No hay marcadores disponibles</DropdownItem>}
                         </Dropdown.Menu>
             </Dropdown>
-            <Button disabled={this.state.cannotAdd} style={pad} variant="success" onClick={this.deleteFav}>
+            <Button disabled={this.state.cannotAdd} style={c.pad} variant="success" onClick={this.deleteFav}>
                 Eliminar
             </Button>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="danger" onClick={this.props.onHide}>Close</Button>
+              <Button variant="danger" onClick={this.props.onHide}>Cerrar</Button>
             </Modal.Footer>
           </Modal>
           </div>

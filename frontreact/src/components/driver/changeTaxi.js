@@ -5,16 +5,8 @@ import { Button, Form, Modal, Col, Row, ListGroup, Dropdown} from 'react-bootstr
 import axios from 'axios';
 import DropdownItem from 'react-bootstrap/DropdownItem';
 
-const backColor = {
-    backgroundColor: '#731E6F',
-};
 
-const pad = {
-    margin : 5,
-    align: 'center'
-}
-
-const api = "http://localhost:4000";
+const c = require('../constants')
 
 class changeTaxi extends Component {
     constructor(props) {
@@ -47,7 +39,7 @@ class changeTaxi extends Component {
         console.log(selectedModel)
     }
     componentWillMount(){
-        axios.get(api+'/Modelos')
+        axios.get(c.api+'/Modelos')
         .then( response => {
             if( response.data.error != null){
                 alert(response.data.error);
@@ -59,7 +51,7 @@ class changeTaxi extends Component {
     }
     changeTaxi(){
         console.log(this.state.point)
-        axios.post(api + '/CambiarTaxi',{
+        axios.post(c.api + '/CambiarTaxi',{
             plaque: this.state.plaque,
             cellphone: this.state.cellphone,
             date: new Date(),
@@ -77,13 +69,12 @@ class changeTaxi extends Component {
         }).catch( error => alert("Se presento un error al comunicarse con el api."))
     }
     addTaxi(e){
-        console.log(this.state)
         if ( (this.state.plaque === "") && (this.state.soat === "") && (this.state.trademark === "") && (this.state.trunk === "") && (this.state.year === "")){
             alert ("Alguno de los campos esta vacio.")
         }
         else{
             e.preventDefault()
-            axios.post(api+'/AdicionarTaxi',{
+            axios.post(c.api+'/AdicionarTaxi',{
                 plaque: this.state.plaque,
                 model: this.state.model,
                 soat: this.state.soat,
@@ -109,7 +100,7 @@ class changeTaxi extends Component {
             alert("Alguno de los campos esta vacio")
             return
         }
-        axios.get(api + "/Placa?plaque="+this.state.plaque)
+        axios.get(c.api + "/Placa?plaque="+this.state.plaque)
         .then( response => {
             if( response.data.error != null){
                 alert("No se encontro un vehiculo con la placa ingresada, adicione el taxi");
@@ -130,8 +121,7 @@ class changeTaxi extends Component {
     }
     render() { 
         return (
-            <div style={backColor}>
-                {/*Informacion*/}
+            <div style={c.backColor}>
                 <div>
                     <Modal show={this.state.show} aria-labelledby="contained-modal-title-vcenter" centered>
                     <Modal.Body>
@@ -169,7 +159,7 @@ class changeTaxi extends Component {
                             <Form.Label>Placa</Form.Label>
                         <Row>
                             <Col>
-                            <Form.Control disabled={!this.state.info} value={this.state.plaque} style={pad} type="Placa" placeholder="Placa" name="plaque" onChange={this.handleChange}/>
+                            <Form.Control disabled={!this.state.info} value={this.state.plaque} style={c.pad} type="Placa" placeholder="Placa" name="plaque" onChange={this.handleChange}/>
                             </Col>
                             <Col>
                             <Button disabled={!this.state.info} onClick={this.verifyPlaque} variant='secondary'> Verificar </Button>
@@ -195,10 +185,10 @@ class changeTaxi extends Component {
                         <Form.Group  controlId="formModel" >
                             <Form.Label>Modelo</Form.Label >                           
                         </Form.Group>
-                        <Button variant='primary' style= {pad} type="submit">
+                        <Button variant='primary' style= {c.pad} type="submit">
                             Cambiar
                         </Button>
-                        <Button variant='danger' style= {pad} href='/'>
+                        <Button variant='danger' style= {c.pad} href='/'>
                             Cancelar
                         </Button>
                         </Form>

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { Map, TileLayer, Marker, Popup} from 'react-leaflet';
+import { Map, TileLayer, Marker, Popup, Polyline} from 'react-leaflet';
 import L from 'leaflet';
 import './map.css';
+
+
+const c = require('./constants')
 
 const stamenTiles = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
 const stamenAttr = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
@@ -44,10 +47,17 @@ class LMap extends Component {
                 lng: this.props.origin.lng
             },
             markers: this.props.markers,
-            modoObtener: this.props.modoObtener //pruebas
+            modoObtener: this.props.modoobtener === "true",
+            linea: this.props.linea === "true"
         }
     }
+    componentWillMount(){
+        const modo = (this.props.modoObtener === "true")
+        const linea = (this.props.linea === "true")
+        this.setState({ modoObtener: modo, linea: linea})
+    }
     handleClick = (e) => {
+        console.log(e.latlng)
         this.setState({ punto: {lat:e.latlng.lat, lng:e.latlng.lng}});
         this.props.point(this.state.punto)
     }
@@ -64,7 +74,6 @@ class LMap extends Component {
                         attribution={stamenAttr}
                         url={stamenTiles}
                     />
-                    {/*Este es para poner puntos y guardarlos*/}
                     { this.state.punto && this.state.modoObtener &&
                     <Marker
                         onClick={this.handleClick}
@@ -76,6 +85,7 @@ class LMap extends Component {
                     { this.state.origin.lat !== -1 ? <Marker position={this.state.origin} icon={origin}></Marker> : <div></div> }
                     {this.state.markers.map((data, id) =>  <Marker key={'marker-'+id} position={[data.point.x,data.point.y]} icon={favPlaces}><Popup>
                         <span> {data.namecoordinate} </span></Popup></Marker>)}
+                    { this.state.linea ? <Polyline style={c.line} color='purple' positions={[[this.state.markers[0].point.x,this.state.markers[0].point.y],this.state.origin]}/>: <div></div>}
                 </Map>
                 </center>
             </div>

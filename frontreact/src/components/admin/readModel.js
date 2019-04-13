@@ -2,11 +2,8 @@ import React, {Component}  from 'react';
 import {Modal,Button,Form } from 'react-bootstrap';
 import axios from 'axios';
 
-const backdropStyle = {
-    backgroundColor: 'rgb(93, 110, 128)',
-};
 
-const api = "http://localhost:4000";
+const c = require('../constants')
 
 class ReadModel extends Component {
     constructor(props) {
@@ -22,7 +19,7 @@ class ReadModel extends Component {
             alert("El campo modelo esta vacio")
         }
         else{
-            axios.post(api + '/ConsultarModelo',{
+            axios.post(c.api + '/ConsultarModelo',{
                 model: this.state.model
             }).then( response => {
                 console.log("info enviada")
@@ -48,27 +45,27 @@ class ReadModel extends Component {
 
         
         return (
-        <div style={backdropStyle}>
-            <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+        <div style={c.backColor}>
+            <Modal.Dialog>
                 <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    <center>/>Crear modelo</center>
+                <Modal.Title>
+                    <center>Crear modelo</center>
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={this.createModel}>
                         <Form.Group controlId="IngresoModelo">
-                            <Form.Label>Model</Form.Label>
-                            <Form.Control type="text" placeholder="Modelo: " name="model" onChange={this.handleChange}/>
+                            <Form.Label>Modelo</Form.Label>
+                            <Form.Control type="text" placeholder="Ingresa modelo" name="model" onChange={this.handleChange}/>
                         </Form.Group>
-
                         <Button variant="primary" type="submit">
-                            Eliminar
+                            Buscar
                         </Button>
-
                     </Form>
                 </Modal.Body>
-                
+                <Modal.Footer>
+                    <Button href='/admin' variant='danger' className="float-right">Cancelar</Button>
+                </Modal.Footer>
             </Modal.Dialog>
             
         </div>

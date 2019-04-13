@@ -4,11 +4,12 @@ const bodyParser = require('body-parser')
 const app = myExpress()
 //check for sanitization
 const {check} = require('express-validator/check')
-//cors
-app.use(cors());
+
+
 //body parser for post method
 app.use(bodyParser.urlencoded({ extended : false}));
 app.use(bodyParser.json());
+
 
 //db
 const db = require('./queries')
@@ -16,6 +17,28 @@ const db = require('./queries')
 const port = 4000
 
 //end-points
+
+var config = {
+    origin: true,
+    methods: ['GET','PUT','POST','OPTIONS','DELETE'],
+    allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
+    credentials: true,
+    preflightContinue: true
+
+}
+
+app.use(function(request, response, next) {
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    response.setHeader("Access-Control-Allow-Credentials", "true");
+    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+    response.setHeader("Access-Control-Max-Age", "3600");
+    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
+    next();
+  
+  });
+
+app.options('*', cors(config));
+
 app.get('/', db.todo)
 
 //###########################USUARIO######################################## 
@@ -199,7 +222,7 @@ app.post('/CrearModelo',
         [
             check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
             check('trademark').isAlphanumeric().isLength({max:15}).trim().escape(),
-            check('baul').isAlphanumeric().isLength({max:15}).trim().escape()
+            check('trunk').isAlpha().isLength({max:15}).trim().escape()
         ],
         db.crearModelo)
 
@@ -257,16 +280,16 @@ app.get('/deleteFav',
 
 
 app.post('/pagar',
-[
-    check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
-],
-db.pagarDeudas)
+        [
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+        ],
+        db.pagarDeudas)
 
 app.post('/cambiarDisponibilidad',
-[
-    check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
-],
-db.cambiarDisponibilidad)
+        [
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+        ],
+        db.cambiarDisponibilidad)
 
 //start server
 app.listen(port, () => {

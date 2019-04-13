@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import {Modal,Button} from 'react-bootstrap'
+import {Modal} from 'react-bootstrap';
 import Axios from 'axios';
 import {withRouter} from 'react-router-dom';
-import waiting from '../images/waiting.png';
+import waiting from '../images/waiting.gif';
+import check from '../images/checked.png';
+import error from '../images/error.png';
+import car from '../images/logo.png';
 
-const backColor = {
-    backgroundColor: '#731E6F',
-};
-
-const api = "http://localhost:4000";
+const c = require('../constants')
 
 class startService extends Component {
     constructor(props) {
@@ -50,7 +49,7 @@ class startService extends Component {
     }
     endTravel(){
         clearInterval(this.state.idInterval)
-        Axios.post(api+'/FinServicio',
+        Axios.post(c.api+'/FinServicio',
         {
             idAsk: this.state.idAsk
         }).then( response => {
@@ -66,7 +65,7 @@ class startService extends Component {
         }).catch( error => console.log(error))
     }
     verifyAvaliable(){
-        Axios.get(api+'/DisponibilidadConductor?cellphone='+this.state.cellphonedriver)
+        Axios.get(c.api+'/DisponibilidadConductor?cellphone='+this.state.cellphonedriver)
         .then( response => {
             if(response.data.error != null){
                 alert(response.data.error)
@@ -77,7 +76,7 @@ class startService extends Component {
         }).catch( error => console.log(error))
     }
     verifyAsk(){
-        Axios.get(api+'/ServicioAceptado?idAsk='+this.state.idAsk)
+        Axios.get(c.api+'/ServicioAceptado?idAsk='+this.state.idAsk)
         .then( response => {
             if(response.data.error != null){
                 alert(response.data.error)
@@ -89,23 +88,23 @@ class startService extends Component {
     }
     render() { 
         return ( 
-            <div style={backColor}>
+            <div style={c.backColor}>
                 <Modal.Dialog
                     size="xs"
                     aria-labelledby="contained-modal-title-vcenter"
                     centered>
                     <Modal.Header>
                     <Modal.Title>
-                        Conductor Encontrado
+                    <img alt='' src={car} height='48px' width='48px'/>   Conductor Encontrado
                     </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                    <center><img alt='' src={waiting} height='120' width='120'/></center>
-                        <p>Esperando que el conductor acepte....</p>
+                    <center><img alt='loading...' src={waiting} height='240px' width='240px'/></center>
+                        <p>Esperando...</p>
                         {/*<p> idAsk:  {this.state.idAsk}</p>*/}
                         <p> Telefono: {this.state.cellphonedriver} </p>
                        {/*<p> verifyAvaliable: {this.state.stateAsk} </p>*/}
-                        <p> La solicitud: {this.state.driver} </p>
+                        <p> Estado de la solicitud: { this.state.driver !== "Aceptada" ? <img style={{margin:5}} alt='' src={error} height={'30'} width={'30'}/> : <img style={{margin:5}} alt='' src={check} height={'30'} width={'30'}/>} </p>
                     </Modal.Body>
                     {/*<Modal.Footer ><Button href="/" variant='danger'>Solo programadores</Button></Modal.Footer>*/}
                 </Modal.Dialog>

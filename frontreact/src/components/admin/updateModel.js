@@ -2,12 +2,8 @@ import React, {Component}  from 'react';
 import {Modal,Button,Form } from 'react-bootstrap';
 import axios from 'axios';
 
-const backdropStyle = {
-    backgroundColor: 'rgb(93, 110, 128)',
-};
 
-const api = "http://localhost:4000";
-
+const c = require('../constants')
 class UpdateModel extends Component {
     constructor(props) {
         super(props);
@@ -24,7 +20,7 @@ class UpdateModel extends Component {
             alert("Alguno de los campos esta vacio")
         }
         else{
-            axios.post(api + '/ModificarModelo',{
+            axios.post(c.api + '/ModificarModelo',{
                 model: this.state.model,
                 trademark: this.state.trademark,
                 trunk: this.state.trunk
@@ -51,11 +47,11 @@ class UpdateModel extends Component {
     render() {
 
         return (
-        <div style={backdropStyle}>
-            <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+        <div style={c.backColor}>
+            <Modal.Dialog>
                 <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    <center>/>Eliminar modelo</center>
+                <Modal.Title>
+                    <center>Eliminar modelo</center>
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -74,14 +70,14 @@ class UpdateModel extends Component {
                             <Form.Label>Model</Form.Label>
                             <Form.Control type="text" placeholder="Baúl: " name="trademark" onChange={this.handleChange}/>
                         </Form.Group>
-
                         <Button variant="primary" type="submit">
                             Crear
                         </Button>
-
                     </Form>
                 </Modal.Body>
-                
+                <Modal.Footer>
+                    <Button href='/admin' variant='danger' className="float-right">Cancelar</Button>
+                </Modal.Footer>
             </Modal.Dialog>
             
         </div>
