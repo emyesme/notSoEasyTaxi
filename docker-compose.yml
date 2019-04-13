@@ -37,7 +37,7 @@ services:
     container_name: postgres-image
     build: ./back/database
     ports:
-      - "5432:5432"
+      - "5432"
     volumes:
       - ./back/db/scriptProyecto.sql:/docker-entrypoint.initdb.d/db.sql
     environment:

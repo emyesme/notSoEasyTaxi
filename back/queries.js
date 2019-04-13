@@ -1,5 +1,6 @@
 const Pool  = require('pg-pool')
 const {validationResult} = require('express-validator/check')
+/*const config = require('./configsDocker')*/
 const config = require('./configs')
 
 
