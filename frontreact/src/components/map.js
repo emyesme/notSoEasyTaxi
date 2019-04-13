@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Map, TileLayer, Marker, Popup, Polyline} from 'react-leaflet';
 import L from 'leaflet';
 import './map.css';
-import { ModalDialog } from 'react-bootstrap';
 
 
 const c = require('./constants')

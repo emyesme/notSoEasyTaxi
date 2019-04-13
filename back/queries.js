@@ -506,16 +506,13 @@ const crearModelo = (request, response) => {
             var modelo = request.body.model;
             var marca = request.body.trademark;
             var baul = request.body.trunk;
-            
             var result = await client.query("INSERT INTO ModelTaxi (model, trademark, trunk) VALUES ($1, $2, $3) RETURNING model", [modelo, marca, baul])
-
-
             if (result.rows[0].model !== modelo){
                 response.status(200).json({mensaje: "Error al agregar modelo"})
             }
             else{
                 response.status(200).json({mensaje: "Modelo agregado correctamente"})
-            }            
+            }          
         }finally{
             //cierra la conexion con el cliente
             client.release()
@@ -527,12 +524,9 @@ const consultarModelo = (request, response) => {
     (async () => {
         var client = await poolAdmin.connect()
         try{
-            validateCheck(request,response);
-            
+            validateCheck(request,response);  
             var modelo = request.query.model;
-            
             var result = await client.query("SELECT * FROM ModelTaxi WHERE model = $1", [modelo])
-            
             if (result.rowCount === 0){
                 response.status(200).json({mensaje: "El modelo no fue encontrado"});
             }

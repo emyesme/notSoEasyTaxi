@@ -222,7 +222,7 @@ app.post('/CrearModelo',
         [
             check('model').isAlphanumeric().isLength({max:15}).trim().escape(),
             check('trademark').isAlphanumeric().isLength({max:15}).trim().escape(),
-            check('baul').isAlphanumeric().isLength({max:15}).trim().escape()
+            check('trunk').isAlpha().isLength({max:15}).trim().escape()
         ],
         db.crearModelo)
 
@@ -280,16 +280,16 @@ app.get('/deleteFav',
 
 
 app.post('/pagar',
-[
-    check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
-],
-db.pagarDeudas)
+        [
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+        ],
+        db.pagarDeudas)
 
 app.post('/cambiarDisponibilidad',
-[
-    check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
-],
-db.cambiarDisponibilidad)
+        [
+            check('cellphone').isNumeric().isLength({max:10}).trim().escape(),
+        ],
+        db.cambiarDisponibilidad)
 
 //start server
 app.listen(port, () => {

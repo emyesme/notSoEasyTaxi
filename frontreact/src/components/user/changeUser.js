@@ -5,7 +5,6 @@ import {withRouter} from 'react-router-dom';
 import check from '../images/checked.png';
 import error from '../images/error.png';
 import ModalMap from '../modalmap';
-import axios from 'axios';
 
 const c = require('../constants')
 

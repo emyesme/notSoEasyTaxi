@@ -45,27 +45,27 @@ class ReadModel extends Component {
 
         
         return (
-        <div style={c.backdropStyle}>
-            <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+        <div style={c.backColor}>
+            <Modal.Dialog>
                 <Modal.Header>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    <center>/>Crear modelo</center>
+                <Modal.Title>
+                    <center>Crear modelo</center>
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={this.createModel}>
                         <Form.Group controlId="IngresoModelo">
-                            <Form.Label>Model</Form.Label>
-                            <Form.Control type="text" placeholder="Modelo: " name="model" onChange={this.handleChange}/>
+                            <Form.Label>Modelo</Form.Label>
+                            <Form.Control type="text" placeholder="Ingresa modelo" name="model" onChange={this.handleChange}/>
                         </Form.Group>
-
                         <Button variant="primary" type="submit">
-                            Eliminar
+                            Buscar
                         </Button>
-
                     </Form>
                 </Modal.Body>
-                
+                <Modal.Footer>
+                    <Button href='/admin' variant='danger' className="float-right">Cancelar</Button>
+                </Modal.Footer>
             </Modal.Dialog>
             
         </div>

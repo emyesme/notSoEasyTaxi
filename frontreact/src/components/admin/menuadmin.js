@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
-import { Modal, Button, ListGroup, ListGroupItem, Card, CardDeck } from 'react-bootstrap';
+import { Modal,ListGroup, ListGroupItem, Card, CardDeck } from 'react-bootstrap';
 
 const c = require('../constants')
 
@@ -25,7 +25,7 @@ class Menuadmin extends Component {
                         <h2>Menu Administrador</h2> 
                             <div>
                                 <ListGroup>
-                                    <ListGroupItem action variant='light' href='/modelCar'>Modelos</ListGroupItem>
+                                    <ListGroupItem action variant='light' href='/Modelo'>Modelos</ListGroupItem>
                                     <ListGroupItem action variant='light'>Eliminar Cliente</ListGroupItem>
                                     <ListGroupItem action variant='light'>Eliminar Conductor</ListGroupItem>
                                     <ListGroupItem action  href='/' variant="danger">Cerrar Sección</ListGroupItem>

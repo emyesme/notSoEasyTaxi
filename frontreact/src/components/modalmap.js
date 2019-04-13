@@ -7,7 +7,6 @@ class modalmap extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
-            showModal: false,
             point:{
                 lat: 1,
                 lng: 1,
