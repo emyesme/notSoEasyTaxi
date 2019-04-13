@@ -2,11 +2,8 @@ import React, {Component}  from 'react';
 import {Modal,Button,Form } from 'react-bootstrap';
 import axios from 'axios';
 
-const backdropStyle = {
-    backgroundColor: 'rgb(93, 110, 128)',
-};
 
-const api = "http://localhost:4000";
+const c = require('../constants')
 
 class DeleteModel extends Component {
     constructor(props) {
@@ -22,7 +19,7 @@ class DeleteModel extends Component {
             alert("El campo modelo esta vacio")
         }
         else{
-            axios.post(api + '/EliminarModelo',{
+            axios.post(c.api + '/EliminarModelo',{
                 model: this.state.model
             }).then( response => {
                 console.log("info enviada")
@@ -48,7 +45,7 @@ class DeleteModel extends Component {
 
         
         return (
-        <div style={backdropStyle}>
+        <div style={c.backdropStyle}>
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">

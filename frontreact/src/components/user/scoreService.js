@@ -5,12 +5,7 @@ import {withRouter} from 'react-router-dom';
 import stars from '../images/stars.png';
 import star from '../images/star.png';
 
-
-const backColor = {
-    backgroundColor: '#731E6F',
-};
-
-const api = "http://localhost:4000";
+const c = require('../constants')
 class scoreService extends Component {
     constructor(props) {
         super(props);
@@ -26,7 +21,7 @@ class scoreService extends Component {
     }
     getScore(starIn){
         console.log(this.state.idAsk)
-        Axios.post(api+'/Calificacion',
+        Axios.post(c.api+'/Calificacion',
         {
             idAsk: this.state.idAsk,
             star: starIn
@@ -48,7 +43,7 @@ class scoreService extends Component {
     }
     render() { 
         return ( 
-            <div style={backColor}>
+            <div style={c.backColor}>
             <Modal.Dialog
                 size="xs"
                 aria-labelledby="contained-modal-title-vcenter"

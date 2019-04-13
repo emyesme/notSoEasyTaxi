@@ -4,16 +4,7 @@ import {Modal,Button,Form } from 'react-bootstrap';
 import axios from 'axios';
 import {withRouter} from 'react-router-dom';
 
-const backdropStyle = {
-  backgroundColor: 'rgb(148, 150, 172)',
-};
-
-const pad = {
-  margin: 5,
-  align: 'center'
-}
-
-const api = "http://localhost:4000";
+const c = require('../constants')
 
 class CenterLogin extends React.Component {
   constructor(props) {
@@ -34,7 +25,7 @@ class CenterLogin extends React.Component {
     if((this.state.type !== "Usuario") && (this.state.type !== "Conductor")){
       alert("Tipo de usuario invalido")
     }
-    axios.get(api + "/Ingresar"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
+    axios.get(c.api + "/Ingresar"+this.state.type+"?cellphone="+this.state.cellphone+"&pass="+this.state.pass)
     .then(response => {
       if( response.data.error != null){
         alert(response.data.error);
@@ -70,7 +61,7 @@ class CenterLogin extends React.Component {
   }
   render() {
     return (
-      <div style={backdropStyle}>
+      <div style={c.backColor}>
       <Modal.Dialog
         size="xs"
         aria-labelledby="contained-modal-title-vcenter"
@@ -90,7 +81,7 @@ class CenterLogin extends React.Component {
               <Form.Label>Contraseña</Form.Label>
               <Form.Control type="password" placeholder="Ingrese su contraseña" name="pass" onChange={this.handleChange}/>
           </Form.Group>
-            <Button style={pad} variant="primary" type="submit">
+            <Button style={c.pad} variant="primary" type="submit">
                 Ingreso {this.state.type}
             </Button>
           </Form>

@@ -2,12 +2,8 @@ import React, {Component}  from 'react';
 import {Modal,Button,Form } from 'react-bootstrap';
 import axios from 'axios';
 
-const backdropStyle = {
-    backgroundColor: 'rgb(93, 110, 128)',
-};
 
-const api = "http://localhost:4000";
-
+const c = require('../constants')
 class UpdateModel extends Component {
     constructor(props) {
         super(props);
@@ -24,7 +20,7 @@ class UpdateModel extends Component {
             alert("Alguno de los campos esta vacio")
         }
         else{
-            axios.post(api + '/ModificarModelo',{
+            axios.post(c.api + '/ModificarModelo',{
                 model: this.state.model,
                 trademark: this.state.trademark,
                 trunk: this.state.trunk
@@ -51,7 +47,7 @@ class UpdateModel extends Component {
     render() {
 
         return (
-        <div style={backdropStyle}>
+        <div style={c.backdropStyle}>
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">

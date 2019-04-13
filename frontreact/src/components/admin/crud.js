@@ -5,32 +5,24 @@ import ReadModel from './readModel';
 import UpdateModel from './updateModel';
 import DeleteModel from './deleteModel';
 
-
-const backdropStyle = {
-    backgroundColor: 'rgb(93, 110, 128)',
-};
-
-const api = "http://localhost:4000";
-
+const c = require('../constants')
 class crud extends Component {
     constructor(props) {
         super(props);
         
     }
     
-
-
     render() {
 
         return (
-            <div style={backdropStyle}>
+            <div style={c.backdropStyle}>
                 <div>
-                    <Card style={grayRgb}> 
+                    <Card style={c.grayRgb}> 
                         <ReadModel/>
                     </Card>
                 </div>
                 <div>
-                    <Card style={grayRgb}> 
+                    <Card style={c.grayRgb}> 
                         <CreateModel/>
                     </Card>
                 </div>

@@ -10,7 +10,8 @@ import DropdownItem from 'react-bootstrap/DropdownItem';
 import Axios from 'axios';
 import {withRouter} from 'react-router-dom';
 
-const api = "http://localhost:4000";
+
+const c = require('../constants')
 class Service extends React.Component {
     constructor(props) {
         super(props);
@@ -63,7 +64,7 @@ class Service extends React.Component {
         alert("No a ingresado la ubicación de origen o destino.")
         return;
       }
-      Axios.post(api+'/BuscarTaxi',{
+      Axios.post(c.api+'/BuscarTaxi',{
         cellphone: this.state.cellphone,
         initialCoordinates: this.state.point,
         finalCoordinates: this.state.destiny
@@ -78,7 +79,7 @@ class Service extends React.Component {
       }).catch( error => console.log(error))
     }
     bringDriverId(){
-      Axios.get(api+'/SolicitudConductor?idAsk='+this.state.idAsk)
+      Axios.get(c.api+'/SolicitudConductor?idAsk='+this.state.idAsk)
       .then( response => {
           if(response.data.error != null){
               alert(response.data.error)
@@ -157,8 +158,8 @@ class Service extends React.Component {
             <Button variant="danger" onClick={this.props.onHide}>Close</Button>
           </Modal.Footer>
         </Modal>
-        <ModalMap show={this.state.modalShowOrigin} onHide={modalCloseOrigin} firstpoint={this.props.firstpoint} coordinates = { value => this.callbackOrigin(value)}/>
-        <ModalMap show={this.state.modalShowDestiny} onHide={modalCloseDestiny} firstpoint={this.props.firstpoint} coordinates = { value => this.callbackDestiny(value)}/>
+        <ModalMap show={this.state.modalShowOrigin} onHide={modalCloseOrigin} firstpoint={this.props.firstpoint} coordinates = { value => this.callbackOrigin(value) } modoobtener={'true'} linea={'false'}/>
+        <ModalMap show={this.state.modalShowDestiny} onHide={modalCloseDestiny} firstpoint={this.props.firstpoint} coordinates = { value => this.callbackDestiny(value)} modoobtener={'true'} linea={'false'}/>
         </div>
       );
     }
