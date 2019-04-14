@@ -11,6 +11,8 @@ class DeleteModel extends Component {
         this.state = {
             model: ''
         }
+        this.DeleteModel = this.DeleteModel.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
     
     DeleteModel(e){
@@ -33,17 +35,13 @@ class DeleteModel extends Component {
         }  
 
     }
-
     handleChange(e){
         const { name, value} = e.target;
         this.setState({
             [name]: value
         })
     }
-
     render() {
-
-        
         return (
         <div style={c.backColor}>
             <Modal.Dialog>
@@ -53,7 +51,7 @@ class DeleteModel extends Component {
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={this.createModel}>
+                    <Form onSubmit={this.DeleteModel}>
                         <Form.Group controlId="IngresoModelo">
                             <Form.Label>Model</Form.Label>
                             <Form.Control type="text" placeholder="Modelo: " name="model" onChange={this.handleChange}/>

@@ -1,7 +1,7 @@
 import React, {Component}  from 'react';
-import {Modal,Button,Form } from 'react-bootstrap';
+import {Modal,Button,Form, Dropdown} from 'react-bootstrap';
 import axios from 'axios';
-
+import DropdownItem from 'react-bootstrap/DropdownItem';
 
 const c = require('../constants')
 class UpdateModel extends Component {
@@ -10,13 +10,31 @@ class UpdateModel extends Component {
         this.state = {
             model: '',
             trademark: '',
-            trunk: ''
+            trunk: '',
+            models: []
         }
+        this.UpdateModel = this.UpdateModel.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.getDataModel = this.getDataModel.bind(this);
     }
-    
+    componentWillMount(){
+        axios.get(c.api+'/Modelos')
+        .then( response => {
+            if( response.data.error != null){
+                alert(response.data.error);
+              }
+              else{
+                this.setState({models: response.data.models})
+            }            
+        })
+    }
+    getDataModel(selectedModel){
+        this.setState({model: selectedModel.model, trademark: selectedModel.trademark, trunk: selectedModel.trunk})
+        console.log(this.state)
+    }
     UpdateModel(e){
         e.preventDefault()
-        if (this.state.model === "" || this.state.trademark === "" || this.state.trunk){
+        if (this.state.model === "" || this.state.trademark === "" || this.state.trunk === ""){
             alert("Alguno de los campos esta vacio")
         }
         else{
@@ -43,7 +61,6 @@ class UpdateModel extends Component {
             [name]: value
         })
     }
-
     render() {
 
         return (
@@ -51,27 +68,29 @@ class UpdateModel extends Component {
             <Modal.Dialog>
                 <Modal.Header>
                 <Modal.Title>
-                    <center>Eliminar modelo</center>
+                    <center>Modificar modelo</center>
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={this.createModel}>
-                        <Form.Group controlId="IngresoModelo">
-                            <Form.Label>Model</Form.Label>
-                            <Form.Control type="text" placeholder="Modelo: " name="model" onChange={this.handleChange}/>
-                        </Form.Group>
-
+                    <Form onSubmit={this.UpdateModel}>
+                        <Dropdown style = {{ margin :5}}>
+                            <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                                Modelos
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                            {typeof this.state.models !== "undefined" ? this.state.models.map((data, id) =>  <Dropdown.Item key={'model-'+id} onClick={() => this.getDataModel(data)}>{data.model}, {data.trademark}, {data.trunk}</Dropdown.Item>) : <DropdownItem>No modelos disponibles</DropdownItem>}
+                            </Dropdown.Menu>
+                        </Dropdown>                        
                         <Form.Group controlId="IngresoMarca">
-                            <Form.Label>Model</Form.Label>
-                            <Form.Control type="text" placeholder="Marca: " name="trademark" onChange={this.handleChange}/>
+                            <Form.Label>Marca</Form.Label>
+                            <Form.Control type="text" value={this.state.trademark} name="trademark" onChange={this.handleChange}/>
                         </Form.Group>
-
                         <Form.Group controlId="IngresoMarca">
-                            <Form.Label>Model</Form.Label>
-                            <Form.Control type="text" placeholder="Baúl: " name="trademark" onChange={this.handleChange}/>
+                            <Form.Label>Baul</Form.Label>
+                            <Form.Control type="text" value={this.state.trunk} name="trademark" onChange={this.handleChange}/>
                         </Form.Group>
                         <Button variant="primary" type="submit">
-                            Crear
+                            Modificar
                         </Button>
                     </Form>
                 </Modal.Body>

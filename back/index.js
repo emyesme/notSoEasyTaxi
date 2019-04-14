@@ -37,6 +37,8 @@ app.use(function(request, response, next) {
   
   });
 
+app.use(cors());
+
 app.options('*', cors(config));
 
 app.get('/', db.todo)
@@ -81,7 +83,7 @@ app.post('/crearFavorito',
         db.createFav)
 
 
-app.delete('/eliminarFavorito',
+app.post('/eliminarFavorito',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
             check('coordinateX').isNumeric().escape(),

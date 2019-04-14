@@ -83,7 +83,7 @@ class RegisterDriver extends Component {
                             <Form.Control type="text" placeholder="Ingresa cedula" name="cc" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoTarjetaCredito">
-                            <Form.Label>Tarjeta de Credito</Form.Label>
+                            <Form.Label>Numero de Cuenta</Form.Label>
                             <Form.Control type="text" placeholder="Numero de tarjeta" name="creditCard" onChange={this.handleChange}/>
                         </Form.Group>
                         <Button variant="primary" type="submit">

@@ -544,13 +544,12 @@ const modificarModelo = (request, response) => {
     (async () => {
         var client = await poolAdmin.connect()
         try{
-            
             var modelo = request.body.model;
             var marca = request.body.trademark;
             var baul = request.body.trunk;
-
-            var result = await client.query("UPDATE ModelTaxi SET marca = $1, baul = $2 WHERE model = $3 RETURNING model", [modelo, marca, baul]);
-            
+            console.log(request.body)
+            var result = await client.query("UPDATE ModelTaxi SET trademark = $1, trunk = $2 WHERE model = $3 RETURNING model;", [modelo, marca, baul]);
+            console.log(result.rows)
             if (result.rows[0].model !== modelo){
                 response.status(200).json({mensaje: "Error al modificar modelo"})
             }

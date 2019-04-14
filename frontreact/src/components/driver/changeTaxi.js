@@ -50,7 +50,6 @@ class changeTaxi extends Component {
         })
     }
     changeTaxi(){
-        console.log(this.state.point)
         axios.post(c.api + '/CambiarTaxi',{
             plaque: this.state.plaque,
             cellphone: this.state.cellphone,

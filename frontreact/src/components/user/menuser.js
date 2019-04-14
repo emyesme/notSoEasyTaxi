@@ -136,7 +136,7 @@ class Menuser extends Component {
                         <ListGroupItem action style={{width:'50', height:'50', margin:'center'}} variant="light" onClick={this.gokmUsed} >Kilometros Recorridos</ListGroupItem>
                         <ListGroupItem action variant="light" onClick={this.goTable}>Historial</ListGroupItem>
                         <ListGroupItem action variant="light" onClick={this.goChangeUser}>Modificar Información</ListGroupItem>
-                        <ListGroupItem action variant="light" onClick={this.getService} >Solicitar Servicio!</ListGroupItem>
+                        <ListGroupItem action variant="light" onClick={this.getService} >¡Solicitar Servicio!</ListGroupItem>
                         <ListGroupItem action variant="light" onClick={this.pay} >Pagar deudas</ListGroupItem>
                         <ListGroupItem action variant="light" onClick={this.addFav}> Agregar Lugar Favorito</ListGroupItem>
                         <ListGroupItem action variant="light" onClick={this.deleteFav}>Eliminar Lugar Favorito</ListGroupItem>

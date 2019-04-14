@@ -33,7 +33,7 @@ class deleteFav extends Component {
             alert("Ingrese todos los campos")
             return;
         }
-        Axios.delete(c.api+'/eliminarFavorito?cellphone='+this.state.cellphone+'&coordinateX='+this.state.point.x+'&coordinateY='+this.state.point.y)
+        Axios.post(c.api+'/eliminarFavorito?cellphone='+this.state.cellphone+'&coordinateX='+this.state.point.x+'&coordinateY='+this.state.point.y)
         .then( response => {
             if(typeof response.data.error !== "undefined"){
                 alert(response.data.error)
