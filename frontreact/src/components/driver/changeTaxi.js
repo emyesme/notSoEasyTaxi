@@ -29,7 +29,8 @@ class changeTaxi extends Component {
                 lat: this.props.location.state.point.lat,
                 lng: this.props.location.state.point.lng
             },
-            info: this.props.location.state.enable
+            info: this.props.location.state.enable,
+            mensaje: 'Cambiar Taxi'
             //nombre, celular y placa para cuando vuelva a la ventana
         };
         this.handleChange = this.handleChange.bind(this);
@@ -39,7 +40,10 @@ class changeTaxi extends Component {
         this.closeModal = this.closeModal.bind(this);
         this.finish = this.finish.bind(this);
         this.getMap = this.getMap.bind(this);
+        this.goTaxi = this.goTaxi.bind(this);
+        this.modifyTaxi = this.modifyTaxi.bind(this);
     }
+
     getMap(){
         this.setState( { showModal: !this.state.showModal})
     }
@@ -54,6 +58,9 @@ class changeTaxi extends Component {
         console.log(selectedModel)
     }
     componentWillMount(){
+        if(!this.props.location.state.enable){
+            this.setState({mensaje: 'Modificar Taxi Actual' })
+        }
         axios.get(c.api+'/Modelos')
         .then( response => {
             if( response.data.error != null){
@@ -63,6 +70,7 @@ class changeTaxi extends Component {
                 this.setState({models: response.data.models})
             }            
         })
+        
     }
     changeTaxi(){
         if(this.state.point.lat === -1){
@@ -146,6 +154,16 @@ class changeTaxi extends Component {
             state : {cellphone: this.state.cellphone}
         })
     }
+    modifyTaxi(){
+        //si algo es vacio no luego envia a /ModificarTaxi
+    }
+    goTaxi(){
+        if ( this.state.mensaje === 'Cambiar Taxi'){
+            this.addTaxi()
+        }else{
+            this.modifyTaxi()
+        }
+    }
     render() { 
         let modalClose = () => this.setState({ showModal: false });
         return (
@@ -180,8 +198,8 @@ class changeTaxi extends Component {
                 </div>
                 <Modal.Dialog size='xs' centered>
                     <Modal.Body>
-                        <Form onSubmit={this.addTaxi} enable={'false'}>
-                        <h2> <img alt='' src={car}/> Cambiar Taxi</h2>
+                        <Form onSubmit={this.goTaxi} enable={'false'}>
+                        <h2> <img alt='' src={car}/>{this.state.mensaje}</h2>
                         <p>Ingresa los datos del vehiculo: </p>
                         <Form.Group controlId="formPlaque">
                             <Form.Label>Placa</Form.Label>

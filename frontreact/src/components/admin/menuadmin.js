@@ -1,17 +1,30 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import { Modal,ListGroup, ListGroupItem, Card, CardDeck } from 'react-bootstrap';
+import DeleteDriver from './deleteDriver';
+import DeleteUser from './deleteUser';
 
 const c = require('../constants')
 
 class Menuadmin extends Component {
-
-    goModelCar(){
-        this.props.history.push({
-            pathname: "/ModelCar"})
+    constructor(props){
+        super(props);
+        this.state = {
+            showModalDeleteUser: false,
+            showModalDeleteDriver: false
+        }
+        this.goDeleteDriver = this.goDeleteDriver.bind(this);
+        this.goDeleteUser = this.goDeleteUser.bind(this);
     }
-    
+    goDeleteDriver(){
+        this.setState({ showModalDeleteDriver: true})
+    }
+    goDeleteUser(){
+        this.setState({ showModalDeleteUser: true})
+    }
     render() {
+        let modalCloseDeleteUser = () => this.setState({ showModalDeleteUser: false});
+        let modalCloseDeleteDriver = () => this.setState({ showModalDeleteDriver: false});
         return (
         <div style={c.backColor}>
             <Modal.Dialog 
@@ -26,8 +39,8 @@ class Menuadmin extends Component {
                             <div>
                                 <ListGroup>
                                     <ListGroupItem action variant='light' href='/Modelo'>Modelos</ListGroupItem>
-                                    <ListGroupItem action variant='light'>Eliminar Cliente</ListGroupItem>
-                                    <ListGroupItem action variant='light'>Eliminar Conductor</ListGroupItem>
+                                    <ListGroupItem action onClick={this.goDeleteUser} variant='light'>Eliminar Cliente</ListGroupItem>
+                                    <ListGroupItem action onClick={this.goDeleteDriver} variant='light'>Eliminar Conductor</ListGroupItem>
                                     <ListGroupItem action  href='/' variant="danger">Cerrar Sesión</ListGroupItem>
                                 </ListGroup>
                             </div>
@@ -36,7 +49,9 @@ class Menuadmin extends Component {
                     
                 </CardDeck>
             </Modal.Body>
-            </Modal.Dialog>    
+            </Modal.Dialog>
+            <DeleteUser show={this.state.showModalDeleteUser} onHide={modalCloseDeleteUser}/>    
+            <DeleteDriver show={this.state.showModalDeleteDriver} onHide={modalCloseDeleteDriver}/> 
         </div>
         );
     }

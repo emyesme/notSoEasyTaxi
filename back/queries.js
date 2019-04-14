@@ -356,6 +356,28 @@ const infoConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const eliminarConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            validateCheck(request,response);
+            var cellphone = request.body.cellphone;
+            var result = await client.query("DELETE FROM driver WHERE cellphonedriver = $1 RETURNING cellphonedriver", [cellphone])
+            if (result.rows[0].cellphonedriver !== cellphone){
+                response.status(200).json({mensaje: "No fue posible la eliminación del conductor, verifique la existencia del modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Conductor eliminado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
+
 const modificarConductor = (request, response) => {
     (async () => {
         var client = await poolAdmin.connect() //#######################################
@@ -436,6 +458,27 @@ const conductor = (request, response) => {
         }
     })().catch(error => console.log({error: error.message}))
 }
+
+const eliminarUsuario = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            var cellphone = request.body.cellphone;
+            var result = await client.query("DELETE FROM client WHERE cellphoneclient = $1 RETURNING cellphoneclient", [cellphone])
+            if (result.rows[0].cellphoneclient !== cellphone){
+                response.status(200).json({mensaje: "No fue posible la eliminación del usuario, verifique la existencia del modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Usuario eliminado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
 
 const placa = (request, response) => {
     (async () => {
@@ -942,6 +985,7 @@ module.exports = {
     todo,
     ingresarUsuario,
     usuario,
+    eliminarUsuario,
     infoUsuario,
     modificarUsuario,
     registrarUsuario,
@@ -957,6 +1001,7 @@ module.exports = {
     registrarConductor,
     infoConductor,
     modificarConductor,
+    eliminarConductor,
     conductor,
     placa,
     cambiarTaxi,

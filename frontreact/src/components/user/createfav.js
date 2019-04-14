@@ -94,10 +94,10 @@ class createFav extends Component {
             </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="danger" onClick={this.props.onHide}>Close</Button>
+              <Button variant="danger" onClick={this.props.onHide}>Cerrar</Button>
             </Modal.Footer>
           </Modal>
-          <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoObtener={'true'} linea={'false'}/>
+          <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoobtener={'true'} linea={'false'}/>
           </div>
         );
     }

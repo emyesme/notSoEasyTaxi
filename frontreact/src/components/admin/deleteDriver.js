@@ -1,0 +1,74 @@
+import React, {Component} from 'react';
+import {withRouter} from 'react-router-dom';
+import {Modal,Button, Form} from 'react-bootstrap';
+import Axios from 'axios';
+
+const c = require('../constants')
+
+class deleteDriver extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { 
+            cellphone: ''
+        }
+        this.deleteDriver = this.deleteDriver.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+    handleChange(e){
+        const { name, value} = e.target;
+        this.setState({
+            [name]: value
+        })
+    }
+    deleteDriver(e){
+        e.preventDefault()
+        if ( this.state.cellpone === ''){
+            alert("Campo vacio ingrese el dato porfavor.")
+            return
+        }
+        Axios.post(c.api+'/EliminarConductor',
+        {
+            cellphone: this.state.cellphone
+        }).then( response => {
+            if(typeof response.data.error !== 'undefined'){
+                alert(response.data.error)
+            }else{
+                alert(response.data.mensaje)
+                this.props.onHide()
+            }
+        })
+    }
+    render() {
+        return (
+            <div>
+            <Modal
+            {...this.props}
+            size="sm"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered>
+            <Modal.Header>
+              <Modal.Title id="contained-modal-title-vcenter">
+                Eliminar Conductor
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            <Form onSubmit={this.deleteDriver}>
+            <Form.Group controlId="Celular">
+                <Form.Label>Celular</Form.Label>
+                <Form.Control type="text" placeholder="Telefono del Conductor" name="cellphone" onChange={this.handleChange}/>
+            </Form.Group>
+            <Button style={c.pad} variant="success" type="submit">
+                Eliminar
+            </Button>
+            </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="danger" onClick={this.props.onHide}>Cerrar</Button>
+            </Modal.Footer>
+          </Modal>
+          </div>
+        );
+    }
+}
+ 
+export default withRouter(deleteDriver);

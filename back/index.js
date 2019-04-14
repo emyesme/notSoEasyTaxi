@@ -63,6 +63,11 @@ app.get('/InfoUsuario',
         ],
         db.infoUsuario)
 
+app.post('/EliminarUsuario',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.eliminarUsuario)
 
 app.post('/RegistrarUsuario',
         [
@@ -172,6 +177,14 @@ app.get('/IngresarConductor',
             check('pass').trim()
         ],
         db.ingresarConductor)
+
+
+app.post('/EliminarConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.eliminarConductor)
+
 
 app.get('/InfoConductor',
         [
