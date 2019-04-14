@@ -393,15 +393,15 @@ CREATE OR REPLACE FUNCTION fn_audit () RETURNS trigger AS
 $$
 BEGIN 
 	IF (TG_OP = 'DELETE') THEN
-		INSERT INTO Audit (table_name, operation, query, old_value, new_value, user_name, date_oper)
+		INSERT INTO Audit (table_name, operation, old_value, new_value, user_name, date_oper)
 			VALUES (TG_TABLE_NAME, 'D', ROW(OLD.*), NULL, USER, now());
 		RETURN OLD;
 	ELSIF (TG_OP = 'UPDATE') THEN
-		INSERT INTO Audit (table_name, operation, query, old_value, new_value, user_name, date_oper)
+		INSERT INTO Audit (table_name, operation, old_value, new_value, user_name, date_oper)
 			VALUES (TG_TABLE_NAME, 'U', ROW(OLD.*), ROW(NEW.*), USER, now());
 		RETURN NEW;
 	ELSIF (TG_OP = 'INSERT') THEN
-		INSERT INTO Audit (table_name, operation, query, old_value, new_value, user_name, date_oper)
+		INSERT INTO Audit (table_name, operation, old_value, new_value, user_name, date_oper)
 			VALUES (TG_TABLE_NAME, 'I', NULL, ROW(NEW.*), USER, now());
 		RETURN NEW;
 	END IF;
