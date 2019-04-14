@@ -11,10 +11,16 @@ class kmUse extends Component {
         this.state = {
             cellphonetype: this.props.cellphonetype,
             cellphone: this.props.cellphone,
-            km: 0
+            km: 0,
+            mensaje: ''
         }
     }
     componentWillMount(){
+        if(this.state.cellphonetype === 'cellphoneclient'){
+            this.setState({ mensaje: 'pagados'})
+        }else{
+            this.setState({mensaje: 'debidatos'})
+        }
         Axios.get(api + "/kilometrosRecorridos?cellphone="+this.state.cellphone+"&type="+this.state.cellphonetype)
         .then( response => {
             if( response.data.error != null){
@@ -34,7 +40,7 @@ class kmUse extends Component {
                         <Modal.Body>
                         <center>
                             <h5>Kilometros Recorridos </h5>
-                            <p>Estos son los kilometros que haz recorrido, y no se han debitado</p>
+                            <p>Estos son los kilometros que haz recorrido, y no se han sido {this.state.mensaje}</p>
                             <h6> { this.state.km } km </h6>
                         </center>
                         </Modal.Body>   

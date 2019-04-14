@@ -208,7 +208,7 @@ class Menudriver extends Component {
                         <ListGroupItem action onClick={this.gokmUsed} variant={'light'} >Kilometros Recorridos</ListGroupItem>
                         <ListGroupItem action onClick={this.goTable} variant={'light'}>Historial</ListGroupItem>
                         <ListGroupItem action onClick={this.changeAvaliable} variant={'light'}>Estado: {this.state.disponible}</ListGroupItem>
-                        <ListGroupItem action href='/' variant={"danger"}>Cerrar Sección</ListGroupItem>
+                        <ListGroupItem action href='/' variant={"danger"}>Cerrar Sesión</ListGroupItem>
                         </center>
                         </ListGroup>
                         <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>

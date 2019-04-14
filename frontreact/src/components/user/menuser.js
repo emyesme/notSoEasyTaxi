@@ -140,7 +140,7 @@ class Menuser extends Component {
                         <ListGroupItem action variant="light" onClick={this.pay} >Pagar deudas</ListGroupItem>
                         <ListGroupItem action variant="light" onClick={this.addFav}> Agregar Lugar Favorito</ListGroupItem>
                         <ListGroupItem action variant="light" onClick={this.deleteFav}>Eliminar Lugar Favorito</ListGroupItem>
-                        <ListGroupItem action href='/' variant="danger">Cerrar Sección</ListGroupItem>
+                        <ListGroupItem action href='/' variant="danger">Cerrar Sesión</ListGroupItem>
                         </ListGroup>
                         <Button style = {{ margin: 5}} onClick={this.showMap} variant="success" className="float-right">Ver Mapa</Button>
                         </center>

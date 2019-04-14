@@ -88,7 +88,7 @@ class RegisterUser extends Component {
                             <Form.Control type="text" placeholder="Ingrese su nombre" name="name" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoCelular">
-                            <Form.Label>Contraseña</Form.Label>
+                            <Form.Label>Celular</Form.Label>
                             <Form.Control type="text" placeholder="Ingrese su celular" name="cellphone" onChange={this.handleChange}/>
                         </Form.Group>
                         <Form.Group controlId="IngresoContrasenia">
