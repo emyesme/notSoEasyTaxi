@@ -1,8 +1,7 @@
 # notSoEasyTaxi
 
-# Cosas de DockerFile y DockerCompose (Ubuntu 16.04)
-
-Para tener docker
+# Docker (Ubuntu 16.04)
+r
 
 ```
 sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -30,5 +29,21 @@ Estudiantes:
 Jaime Cuartas
 Emily Carvajal
 
-# Nota: 
-Falta la extension de postgis
+# Estandar
+
+Descargar el repositorio 
+
+Entra en la carpeta frontreact y ejecuta
+```
+npm install 
+npm start
+```
+
+Entra en la carpeta back y ejecuta
+```
+npm install
+npm run dev
+```
+
+Una vez iniciado en front y back
+ver el localhost:3000/
