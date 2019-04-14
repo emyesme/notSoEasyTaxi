@@ -885,19 +885,14 @@ const deleteFav = (request, response) => {
 
         try{
             validateCheck(request,response)
-            var cellphoneIn = request.query.cellphone;
-            var coordinateXIn = request.query.coordinateX;
-            var coordinateYIn = request.query.coordinateY;
-            console.log(request.query)
-            var result = await client.query("DELETE FROM favcoordinates WHERE cellphoneclient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneclient;", [cellphoneIn, coordinateXIn, coordinateYIn]);
-            console.log(result.rows)
+            var cellphoneIn = request.body.cellphone;
+            var name = request.body.name;
+            var result = await client.query("DELETE FROM favcoordinates WHERE cellphoneclient = $1 AND namecoordinate = $2 RETURNING cellphoneclient;", [cellphoneIn, name]);
             if(result.rows[0].cellphoneclient === cellphoneIn){
                 response.status(200).json({cellphoneclient: cellphoneIn});
             }else{
                 response.status(200).json({error: "Error al eliminar favorito"});
             }
-            
-
         }finally{
             //cierra la conexion con el cliente
             client.release()

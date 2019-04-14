@@ -108,8 +108,7 @@ app.post('/crearFavorito',
 app.post('/eliminarFavorito',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
-            check('coordinateX').isNumeric().escape(),
-            check('coordinateY').isNumeric().escape()
+            check('name').isAlphanumeric().trim().escape()
         ],
         db.deleteFav)       
 

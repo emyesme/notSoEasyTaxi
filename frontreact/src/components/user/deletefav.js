@@ -29,11 +29,15 @@ class deleteFav extends Component {
     }
     deleteFav(e){
         e.preventDefault()
-        if( this.state.name === "" || this.state.point.lat === -1){
+        if( this.state.name === "" || this.state.name === ""){
             alert("Ingrese todos los campos")
             return;
         }
-        Axios.post(c.api+'/eliminarFavorito?cellphone='+this.state.cellphone+'&coordinateX='+this.state.point.x+'&coordinateY='+this.state.point.y)
+        Axios.post(c.api+'/eliminarFavorito',
+        {
+            cellphone: this.state.cellphone,
+            name: this.state.name
+        })
         .then( response => {
             if(typeof response.data.error !== "undefined"){
                 alert(response.data.error)
