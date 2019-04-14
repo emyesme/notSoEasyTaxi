@@ -179,6 +179,16 @@ app.get('/InfoConductor',
         ],
         db.infoConductor)
 
+app.post('/ModificarConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('pass').trim(),
+            check('name').trim().escape(),
+            check('cc').isNumeric().escape(),
+            check('numaccount').isNumeric().isLength({min:16}).trim().escape()
+        ],
+        db.modificarConductor)
+
 app.get('/Conductor',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape()

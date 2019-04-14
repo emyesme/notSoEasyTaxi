@@ -356,6 +356,35 @@ const infoConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const modificarConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            //validacion de errores de sanitize 
+            console.log("aqui")
+            validateCheck(request,response)
+            console.log("aqui")
+            var cellphone = request.body.cellphone;
+            var pass = request.body.pass;
+            var name = request.body.name;
+            var cc = request.body.cc;
+            var numaccount = request.body.numaccount;
+            var result = await client.query("UPDATE Driver SET "+
+                                            "passworddriver = md5($1), namedriver=$2, cc=$3, numaccount=$4"+
+                                            "WHERE cellphonedriver = $5 RETURNING cellphonedriver;",[pass,name,cc,numaccount,cellphone])
+            if (result.rows[0].cellphonedriver !== cellphone){
+                response.status(200).json({mensaje: "Error en registrar conductor."})
+            }
+            else{
+                response.status(200).json({mensaje: "Usuario modificado correctamente."})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
 const ingresarConductor = (request, response) => {  
     ( async () => {
@@ -462,10 +491,10 @@ const adicionarTaxi = (request, response) => {
             var soat = request.body.soat;
             var year = parseInt(request.body.year);
             var model = request.body.model;
-            var initialPoint = request.body.coordinate;
+            var initialPointx = request.body.point.x;
+            var initialPointy = request.body.point.y;
             var result = await client.query("INSERT INTO Taxi (plaque, soat, year, model) VALUES ($1, $2, $3, $4) RETURNING plaque;",[plaque, soat, year, model])
-
-            await client.query("INSERT INTO Gps (plaque, now(), initialPoint) VALUES ($1, $2, $3);",[plaque, initialPoint])
+            await client.query("INSERT INTO Gps (plaque, timestamp, coordinate) VALUES ($1,now(), GEOMETRY(POINT($2,$3)));",[plaque, initialPointx, initialPointy])
 
             if (result.rows[0].plaque !== plaque){
                 response.status(200).json({mensaje: "Error al adicionar taxi"})
@@ -550,7 +579,7 @@ const obtenerGps = (request, response) => {
         var client = await poolAdmin.connect()
         try{
             validateCheck(request,response);
-            var plaque = request.query.plaque
+            var plaque = request.query.plaque;
             var result = await client.query("select POINT(coordinate) AS point from gps where plaque=$1 ORDER BY timestamp DESC LIMIT 1;", [plaque])
             if (result.rowCount === 0){
                 response.status(200).json({error: "Error al mover conductor"})
@@ -928,6 +957,7 @@ module.exports = {
     ingresarConductor,
     registrarConductor,
     infoConductor,
+    modificarConductor,
     conductor,
     placa,
     cambiarTaxi,

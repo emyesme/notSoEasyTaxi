@@ -28,7 +28,7 @@ class Menuadmin extends Component {
                                     <ListGroupItem action variant='light' href='/Modelo'>Modelos</ListGroupItem>
                                     <ListGroupItem action variant='light'>Eliminar Cliente</ListGroupItem>
                                     <ListGroupItem action variant='light'>Eliminar Conductor</ListGroupItem>
-                                    <ListGroupItem action  href='/' variant="danger">Cerrar Sección</ListGroupItem>
+                                    <ListGroupItem action  href='/' variant="danger">Cerrar Sesión</ListGroupItem>
                                 </ListGroup>
                             </div>
                         </center>

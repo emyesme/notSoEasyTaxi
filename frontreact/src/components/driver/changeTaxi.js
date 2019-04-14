@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import car from '../images/logo.png'
+import check from '../images/checked.png';
+import error from '../images/error.png';
+import ModalMap from '../modalmap';
 import { Button, Form, Modal, Col, Row, ListGroup, Dropdown} from 'react-bootstrap';
 import axios from 'axios';
 import DropdownItem from 'react-bootstrap/DropdownItem';
@@ -21,6 +24,7 @@ class changeTaxi extends Component {
             trademark: '',
             trunk: '',
             show: false,
+            showModal: false,
             point: {
                 lat: this.props.location.state.point.lat,
                 lng: this.props.location.state.point.lng
@@ -33,6 +37,17 @@ class changeTaxi extends Component {
         this.changeTaxi = this.changeTaxi.bind(this);
         this.verifyPlaque = this.verifyPlaque.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.finish = this.finish.bind(this);
+        this.getMap = this.getMap.bind(this);
+    }
+    getMap(){
+        this.setState( { showModal: !this.state.showModal})
+    }
+    callback (inputPoint){
+        this.setState({
+            point:{ lat: inputPoint.lat, lng: inputPoint.lng},
+            showModal: false
+        })
     }
     getDataModel(selectedModel){
         this.setState({ model: selectedModel.model, trademark: selectedModel.trademark, trunk: selectedModel.trunk})
@@ -50,6 +65,10 @@ class changeTaxi extends Component {
         })
     }
     changeTaxi(){
+        if(this.state.point.lat === -1){
+            alert("Ingrese una posicion actual para el taxi")
+            return
+        }
         axios.post(c.api + '/CambiarTaxi',{
             plaque: this.state.plaque,
             cellphone: this.state.cellphone,
@@ -57,13 +76,13 @@ class changeTaxi extends Component {
             point: { x: this.state.point.lat, y: this.state.point.lng}
         }).then( response => {
             console.log(response.data)
-            if(response.data.error != null){
+            if(response.data.error !== null){
                 alert("Se presento un error al cambiar el taxi.")
             }
             else{
                 alert(response.data.mensaje)
                 this.props.history.push({pathname: "/Conductor",
-                 state: { cellphone: this.state.cellphone}})
+                state: { cellphone: this.state.cellphone}})
             }
         }).catch( error => alert("Se presento un error al comunicarse con el api."))
     }
@@ -77,15 +96,19 @@ class changeTaxi extends Component {
                 plaque: this.state.plaque,
                 model: this.state.model,
                 soat: this.state.soat,
-                year: this.state.year
+                year: this.state.year,
+                point: { x: this.state.point.lat, y: this.state.point.lng}
             }).then( response => {
                 if( response.data.error != null){
                     console.log(response.data.error)
                     alert("Se presento un error al ingresar el taxi.")
                     return
                 }
+                else{
+                    alert(response.data.mensaje)
+                }
                 this.changeTaxi()
-            }).catch( error=> alert("Se presento un error al comunicarse con el api."))
+            }).catch( error=> alert(error))
         }
     }
     handleChange(e){
@@ -118,7 +141,14 @@ class changeTaxi extends Component {
     closeModal(){
         this.setState({show: !this.state.show})
     }
+    finish(){
+        this.props.history.push({
+            pathname: '/Conductor',
+            state : {cellphone: this.state.cellphone}
+        })
+    }
     render() { 
+        let modalClose = () => this.setState({ showModal: false });
         return (
             <div style={c.backColor}>
                 <div>
@@ -173,6 +203,11 @@ class changeTaxi extends Component {
                         {typeof this.state.models !== "undefined" ? this.state.models.map((data, id) =>  <Dropdown.Item key={'model-'+id} onClick={() => this.getDataModel(data)}>{data.model}, {data.trademark}, {data.trunk}</Dropdown.Item>) : <DropdownItem>No modelos disponibles</DropdownItem>}
                         </Dropdown.Menu>
                         </Dropdown> 
+                        <Form.Group controlId="IngresoDireccion">
+                            <Form.Label style={{margin: 5}}>Posicion Actual</Form.Label>
+                            <Button style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>
+                            { this.state.point.lat === this.props.location.state.point.lat ? <img style={{margin:5}} alt='' src={error} height={'30'} width={'30'}/> : <img style={{margin:5}} alt='' src={check} height={'30'} width={'30'}/>}
+                        </Form.Group>
                         <Form.Group controlId="formSoat">
                             <Form.Label>Soat</Form.Label>
                             <Form.Control disabled={this.state.info} type="text" placeholder="Soat" name="soat" onChange={this.handleChange}/>
@@ -187,12 +222,13 @@ class changeTaxi extends Component {
                         <Button variant='primary' style= {c.pad} type="submit">
                             Cambiar
                         </Button>
-                        <Button variant='danger' style= {c.pad} href='/'>
+                        <Button variant='danger' onClick={this.finish} style= {c.pad} className="float-right">
                             Cancelar
                         </Button>
                         </Form>
                     </Modal.Body>
                 </Modal.Dialog>
+                <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoobtener={'true'} linea={'false'}/>
             </div>
         );
     }

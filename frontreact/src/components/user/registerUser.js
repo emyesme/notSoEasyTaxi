@@ -78,7 +78,7 @@ class RegisterUser extends Component {
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <center><img alt='' src={user}/>  Registra tu información </center>
+                    <center><img alt='' src={user}/>  Modifica tu información </center>
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
