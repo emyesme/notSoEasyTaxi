@@ -230,6 +230,15 @@ app.post('/AdicionarTaxi',
         ],
         db.adicionarTaxi)
 
+app.post('/ModificarTaxi',
+        [
+            check('plaque').isAlphanumeric().isLength({min:6}).trim().escape(),
+            check('soat').isAlphanumeric().trim().escape(),
+            check('year').isNumeric().escape(),
+            check('model').isAlphanumeric().trim().escape()            
+        ],
+        db.modificarTaxi)
+
 app.get('/Modelos', db.modelos)
 
 app.get('/SolicitudConductor',

@@ -154,14 +154,33 @@ class changeTaxi extends Component {
             state : {cellphone: this.state.cellphone}
         })
     }
-    modifyTaxi(){
+    modifyTaxi(e){
+        e.preventDefault()
         //si algo es vacio no luego envia a /ModificarTaxi
+        if (this.state.soat === '' || this.state.year === ''){
+            alert("Alguno de los campos esta vacio")
+            return
+        }
+        axios.post(c.api+'/ModificarTaxi',
+        {
+            plaque: this.state.plaque,
+            soat: this.state.soat,
+            year: this.state.year,
+            model: this.state.model
+        }).then( response => {
+            if(typeof response.data.error !== 'undefined'){
+                alert(response.data.error)
+            }
+            else{
+                alert(response.data.mensaje)
+            }
+        })
     }
-    goTaxi(){
+    goTaxi(e){
         if ( this.state.mensaje === 'Cambiar Taxi'){
-            this.addTaxi()
+            this.addTaxi(e)
         }else{
-            this.modifyTaxi()
+            this.modifyTaxi(e)
         }
     }
     render() { 
@@ -222,7 +241,7 @@ class changeTaxi extends Component {
                         </Dropdown> 
                         <Form.Group controlId="IngresoDireccion">
                             <Form.Label style={{margin: 5}}>Posicion Actual</Form.Label>
-                            <Button style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>
+                            <Button disabled={!this.state.info} style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>
                             { this.state.point.lat === this.props.location.state.point.lat ? <img style={{margin:5}} alt='' src={error} height={'30'} width={'30'}/> : <img style={{margin:5}} alt='' src={check} height={'30'} width={'30'}/>}
                         </Form.Group>
                         <Form.Group controlId="formSoat">

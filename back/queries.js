@@ -524,6 +524,30 @@ const cambiarTaxi = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const modificarTaxi = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response)
+            console.log(request.body)
+            var plaque = request.body.plaque;
+            var soat = request.body.soat;
+            var year = parseInt(request.body.year);
+            var model = request.body.model;
+            var result = await client.query("UPDATE Taxi SET soat=$1, year=$2, model=$3 WHERE plaque=$4 RETURNING plaque;",[soat, year, model, plaque])
+            if (result.rows[0].plaque !== plaque){
+                response.status(200).json({mensaje: "Error al modificar taxi"})
+            }
+            else{
+                response.status(200).json({mensaje: "Taxi modificado correctamente."})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
 const adicionarTaxi = (request, response) => {
     (async () => {
         var client = await poolDriver.connect()
@@ -1001,6 +1025,7 @@ module.exports = {
     placa,
     cambiarTaxi,
     adicionarTaxi,
+    modificarTaxi,
     modelos,
     askConductor,
     aceptaConductor,

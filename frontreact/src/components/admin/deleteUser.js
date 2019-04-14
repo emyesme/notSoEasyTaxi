@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {Modal,Button, Dropdown, Form} from 'react-bootstrap';
+import {Modal,Button, Form} from 'react-bootstrap';
 import Axios from 'axios';
 
 const c = require('../constants')
