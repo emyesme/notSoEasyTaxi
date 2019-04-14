@@ -343,14 +343,16 @@ CREATE OR REPLACE VIEW historyDrivers AS (
 
 
 
-CREATE OR REPLACE FUNCTION cambiarTaxi (cellphoneDriverIn VARCHAR(10), plaqueIn VARCHAR(6), dateIn TIMESTAMP, pointIn GEOMETRY) 
+CREATE OR REPLACE FUNCTION cambiarTaxi (cellphoneDriverIn VARCHAR(10), plaqueIn VARCHAR(6), pointIn GEOMETRY) 
 RETURNS VARCHAR(10) as $$
+DECLARE
+	currentDate TIMESTAMP := now();
 BEGIN
 	INSERT INTO Drive (cellphoneDriver, plaque, date) VALUES
-		(cellphoneDriverIn, plaqueIn, dateIn);
+		(cellphoneDriverIn, plaqueIn, currentDate);
 
 	INSERT INTO Gps (plaque, timestamp, coordinate) VALUES
-		(plaqueIn, dateIn, pointIn);
+		(plaqueIn, currentDate, pointIn);
 	RETURN cellphoneDriverIn;
 END;
 $$

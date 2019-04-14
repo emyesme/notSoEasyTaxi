@@ -205,7 +205,6 @@ app.post('/CambiarTaxi',
         [
             check('plaque').isAlphanumeric().isLength({min:6}).trim().escape(),
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
-            check('date').trim(),
             check('point').escape()
         ],
         db.cambiarTaxi)

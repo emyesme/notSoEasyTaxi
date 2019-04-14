@@ -465,10 +465,9 @@ const cambiarTaxi = (request, response) => {
             validateCheck(request, response)
             var plaque = request.body.plaque;
             var cellphone = request.body.cellphone;
-            var date = request.body.date;
             var pointx = request.body.point.x
             var pointy = request.body.point.y;
-            var result = await client.query("SELECT cambiartaxi($1, $2, $3, GEOMETRY(POINT($4,$5)));", [cellphone, plaque, date, pointx,pointy])
+            var result = await client.query("SELECT cambiartaxi($1, $2,GEOMETRY(POINT($3,$4)));", [cellphone, plaque, pointx, pointy])
             if (result.rows[0].cambiartaxi !== cellphone){
                 response.status(200).json({mensaje: "Error al cambiar taxi"})
             }

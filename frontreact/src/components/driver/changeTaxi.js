@@ -72,12 +72,11 @@ class changeTaxi extends Component {
         axios.post(c.api + '/CambiarTaxi',{
             plaque: this.state.plaque,
             cellphone: this.state.cellphone,
-            date: new Date(),
             point: { x: this.state.point.lat, y: this.state.point.lng}
         }).then( response => {
             console.log(response.data)
-            if(response.data.error !== null){
-                alert("Se presento un error al cambiar el taxi.")
+            if(typeof response.data.error !== 'undefined'){
+                alert(response.data.error)
             }
             else{
                 alert(response.data.mensaje)
