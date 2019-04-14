@@ -68,6 +68,7 @@ class Menudriver extends Component {
             }
         })
         if ( this.state.showTraveling === true){
+            console.log("movio el taxi")
             await axios.post(c.api + '/MoverConductor',
             {
                 cellphonedriver: this.state.cellphone,
@@ -120,7 +121,9 @@ class Menudriver extends Component {
                 alert(response.data.error);
             }
             else{
+                console.log(response.data.point)
                 this.setState({gps: { lat: response.data.point.x, lng: response.data.point.y}})
+                
             }            
         })
     }

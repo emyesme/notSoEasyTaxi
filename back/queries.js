@@ -356,6 +356,57 @@ const infoConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const eliminarConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            validateCheck(request,response);
+            var cellphone = request.body.cellphone;
+            var result = await client.query("DELETE FROM driver WHERE cellphonedriver = $1 RETURNING cellphonedriver", [cellphone])
+            if (result.rows[0].cellphonedriver !== cellphone){
+                response.status(200).json({mensaje: "No fue posible la eliminación del conductor, verifique la existencia del modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Conductor eliminado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
+
+const modificarConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            //validacion de errores de sanitize 
+            console.log("aqui")
+            validateCheck(request,response)
+            console.log("aqui")
+            var cellphone = request.body.cellphone;
+            var pass = request.body.pass;
+            var name = request.body.name;
+            var cc = request.body.cc;
+            var numaccount = request.body.numaccount;
+            var result = await client.query("UPDATE Driver SET "+
+                                            "passworddriver = md5($1), namedriver=$2, cc=$3, numaccount=$4"+
+                                            "WHERE cellphonedriver = $5 RETURNING cellphonedriver;",[pass,name,cc,numaccount,cellphone])
+            if (result.rows[0].cellphonedriver !== cellphone){
+                response.status(200).json({mensaje: "Error en registrar conductor."})
+            }
+            else{
+                response.status(200).json({mensaje: "Usuario modificado correctamente."})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
 const ingresarConductor = (request, response) => {  
     ( async () => {
@@ -408,6 +459,27 @@ const conductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
+const eliminarUsuario = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response);
+            var cellphone = request.body.cellphone;
+            var result = await client.query("DELETE FROM client WHERE cellphoneclient = $1 RETURNING cellphoneclient", [cellphone])
+            if (result.rows[0].cellphoneclient !== cellphone){
+                response.status(200).json({mensaje: "No fue posible la eliminación del usuario, verifique la existencia del modelo"})
+            }
+            else{
+                response.status(200).json({mensaje: "Usuario eliminado correctamente"})
+            }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+
 const placa = (request, response) => {
     (async () => {
         var client = await poolDriver.connect()
@@ -436,16 +508,39 @@ const cambiarTaxi = (request, response) => {
             validateCheck(request, response)
             var plaque = request.body.plaque;
             var cellphone = request.body.cellphone;
-            var date = request.body.date;
             var pointx = request.body.point.x
             var pointy = request.body.point.y;
-            var result = await client.query("SELECT cambiartaxi($1, $2, $3, GEOMETRY(POINT($4,$5)));", [cellphone, plaque, date, pointx,pointy])
+            var result = await client.query("SELECT cambiartaxi($1, $2,GEOMETRY(POINT($3,$4)));", [cellphone, plaque, pointx, pointy])
             if (result.rows[0].cambiartaxi !== cellphone){
                 response.status(200).json({mensaje: "Error al cambiar taxi"})
             }
             else{
                 response.status(200).json({mensaje: "Taxi cambiado correctamente."})
             }            
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
+const modificarTaxi = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect()
+        try{
+            validateCheck(request,response)
+            console.log(request.body)
+            var plaque = request.body.plaque;
+            var soat = request.body.soat;
+            var year = parseInt(request.body.year);
+            var model = request.body.model;
+            var result = await client.query("UPDATE Taxi SET soat=$1, year=$2, model=$3 WHERE plaque=$4 RETURNING plaque;",[soat, year, model, plaque])
+            if (result.rows[0].plaque !== plaque){
+                response.status(200).json({mensaje: "Error al modificar taxi"})
+            }
+            else{
+                response.status(200).json({mensaje: "Taxi modificado correctamente."})
+            }
         }finally{
             //cierra la conexion con el cliente
             client.release()
@@ -462,10 +557,10 @@ const adicionarTaxi = (request, response) => {
             var soat = request.body.soat;
             var year = parseInt(request.body.year);
             var model = request.body.model;
-            var initialPoint = request.body.coordinate;
+            var initialPointx = request.body.point.x;
+            var initialPointy = request.body.point.y;
             var result = await client.query("INSERT INTO Taxi (plaque, soat, year, model) VALUES ($1, $2, $3, $4) RETURNING plaque;",[plaque, soat, year, model])
-
-            await client.query("INSERT INTO Gps (plaque, now(), initialPoint) VALUES ($1, $2, $3);",[plaque, initialPoint])
+            await client.query("INSERT INTO Gps (plaque, timestamp, coordinate) VALUES ($1,now(), GEOMETRY(POINT($2,$3)));",[plaque, initialPointx, initialPointy])
 
             if (result.rows[0].plaque !== plaque){
                 response.status(200).json({mensaje: "Error al adicionar taxi"})
@@ -550,7 +645,7 @@ const obtenerGps = (request, response) => {
         var client = await poolAdmin.connect()
         try{
             validateCheck(request,response);
-            var plaque = request.query.plaque
+            var plaque = request.query.plaque;
             var result = await client.query("select POINT(coordinate) AS point from gps where plaque=$1 ORDER BY timestamp DESC LIMIT 1;", [plaque])
             if (result.rowCount === 0){
                 response.status(200).json({error: "Error al mover conductor"})
@@ -814,19 +909,14 @@ const deleteFav = (request, response) => {
 
         try{
             validateCheck(request,response)
-            var cellphoneIn = request.query.cellphone;
-            var coordinateXIn = request.query.coordinateX;
-            var coordinateYIn = request.query.coordinateY;
-            console.log(request.query)
-            var result = await client.query("DELETE FROM favcoordinates WHERE cellphoneclient = $1 AND coordinate = GEOMETRY(POINT($2, $3)) RETURNING cellphoneclient;", [cellphoneIn, coordinateXIn, coordinateYIn]);
-            console.log(result.rows)
+            var cellphoneIn = request.body.cellphone;
+            var name = request.body.name;
+            var result = await client.query("DELETE FROM favcoordinates WHERE cellphoneclient = $1 AND namecoordinate = $2 RETURNING cellphoneclient;", [cellphoneIn, name]);
             if(result.rows[0].cellphoneclient === cellphoneIn){
                 response.status(200).json({cellphoneclient: cellphoneIn});
             }else{
                 response.status(200).json({error: "Error al eliminar favorito"});
             }
-            
-
         }finally{
             //cierra la conexion con el cliente
             client.release()
@@ -914,6 +1004,7 @@ module.exports = {
     todo,
     ingresarUsuario,
     usuario,
+    eliminarUsuario,
     infoUsuario,
     modificarUsuario,
     registrarUsuario,
@@ -928,10 +1019,13 @@ module.exports = {
     ingresarConductor,
     registrarConductor,
     infoConductor,
+    modificarConductor,
+    eliminarConductor,
     conductor,
     placa,
     cambiarTaxi,
     adicionarTaxi,
+    modificarTaxi,
     modelos,
     askConductor,
     aceptaConductor,

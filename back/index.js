@@ -63,6 +63,11 @@ app.get('/InfoUsuario',
         ],
         db.infoUsuario)
 
+app.post('/EliminarUsuario',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.eliminarUsuario)
 
 app.post('/RegistrarUsuario',
         [
@@ -103,8 +108,7 @@ app.post('/crearFavorito',
 app.post('/eliminarFavorito',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
-            check('coordinateX').isNumeric().escape(),
-            check('coordinateY').isNumeric().escape()
+            check('name').isAlphanumeric().trim().escape()
         ],
         db.deleteFav)       
 
@@ -173,11 +177,29 @@ app.get('/IngresarConductor',
         ],
         db.ingresarConductor)
 
+
+app.post('/EliminarConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.eliminarConductor)
+
+
 app.get('/InfoConductor',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape()
         ],
         db.infoConductor)
+
+app.post('/ModificarConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('pass').trim(),
+            check('name').trim().escape(),
+            check('cc').isNumeric().escape(),
+            check('numaccount').isNumeric().isLength({min:16}).trim().escape()
+        ],
+        db.modificarConductor)
 
 app.get('/Conductor',
         [
@@ -195,7 +217,6 @@ app.post('/CambiarTaxi',
         [
             check('plaque').isAlphanumeric().isLength({min:6}).trim().escape(),
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
-            check('date').trim(),
             check('point').escape()
         ],
         db.cambiarTaxi)
@@ -208,6 +229,15 @@ app.post('/AdicionarTaxi',
             check('model').isAlphanumeric().trim().escape()
         ],
         db.adicionarTaxi)
+
+app.post('/ModificarTaxi',
+        [
+            check('plaque').isAlphanumeric().isLength({min:6}).trim().escape(),
+            check('soat').isAlphanumeric().trim().escape(),
+            check('year').isNumeric().escape(),
+            check('model').isAlphanumeric().trim().escape()            
+        ],
+        db.modificarTaxi)
 
 app.get('/Modelos', db.modelos)
 

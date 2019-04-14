@@ -19,6 +19,7 @@ class modifyUser extends Component {
         }
         this.modifyUser = this.modifyUser.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.finish = this.finish.bind(this);
     }
     componentWillMount(){
         Axios.get(c.api+'/InfoConductor?cellphone='+this.state.cellphone)
@@ -34,19 +35,26 @@ class modifyUser extends Component {
         }
         ).catch(error => console.log(error))
     }
+    finish(){
+        this.props.history.push({
+            pathname: '/Conductor',
+            state: { cellphone: this.state.cellphone}
+        })
+    }
     modifyUser(e){
         e.preventDefault()
         //una muy linda verificacion que no estoy haciendo sobre tipos de datos y demas
-        if ( this.state.name === "" || this.state.cellphone === ""|| this.state.pass === ""|| this.state.cc === "" || this.state.creditCard === ""){
+        if ( this.state.name === "" || this.state.cellphone === ""|| this.state.pass === ""|| this.state.cc === "" || this.state.numaccount === ""){
             alert("Alguno de los campos esta vacio")
         }
         else{
-            Axios.post(c.api + '/RegistrarConductor',{
+            console.log(this.state)
+            Axios.post(c.api + '/ModificarConductor',{
                 cellphone: this.state.cellphone,
                 pass: this.state.pass,
                 name: this.state.name,
                 cc: this.state.cc,
-                creditCard: this.state.creditCard
+                numaccount: this.state.numaccount
             }).then( response => {
                 console.log("info enviada")
                 if(response.data.error != null){
@@ -54,9 +62,6 @@ class modifyUser extends Component {
                 }
                 else{
                     alert(response.data.mensaje)
-                    this.props.history.push(
-                        {pathname: "/login",
-                        state: { type: this.state.type}})
                 }
             }).catch( error => console.log(error))
         }   
@@ -73,7 +78,7 @@ class modifyUser extends Component {
             <Modal.Dialog size="md" aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <center><img alt='' src={user}/>  Registra tu información </center>
+                    <center><img alt='' src={user}/>  Modifica tu información </center>
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -100,7 +105,7 @@ class modifyUser extends Component {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button href='/' variant='danger'> Cancelar </Button>
+                <Button onClick={this.finish} variant='danger'> Salir </Button>
                 </Modal.Footer>
             </Modal.Dialog>
         </div>

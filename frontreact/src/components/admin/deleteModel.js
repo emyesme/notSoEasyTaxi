@@ -47,7 +47,7 @@ class DeleteModel extends Component {
             <Modal.Dialog>
                 <Modal.Header>
                 <Modal.Title>
-                    <center>Crear modelo</center>
+                    <center>Eliminar modelo</center>
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

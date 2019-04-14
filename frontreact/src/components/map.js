@@ -52,7 +52,7 @@ class LMap extends Component {
         }
     }
     componentWillMount(){
-        const modo = (this.props.modoObtener === "true")
+        const modo = (this.props.modoobtener === "true")
         const linea = (this.props.linea === "true")
         this.setState({ modoObtener: modo, linea: linea})
     }
