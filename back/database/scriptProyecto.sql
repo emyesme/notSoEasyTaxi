@@ -1,8 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
 SET ROLE postgres;
---CREATE USER userAdmin WITH PASSWORD '123' superuser;
---SET ROLE userAdmin;
 
 DROP TABLE IF EXISTS Client CASCADE;
 CREATE TABLE Client (
@@ -377,4 +375,89 @@ $$ LANGUAGE plpgsql;
 SELECT changeAvailableDriver('3102222222');
 
 select * from favCoordinates;
+
+SET ROLE postgres;
+
+DROP TABLE IF EXISTS Audit CASCADE;
+CREATE TABLE Audit (
+
+table_name  VARCHAR(30),
+operation CHAR(1),
+old_value VARCHAR(250),
+new_value VARCHAR(250),
+user_name VARCHAR(30),
+date_oper TIMESTAMP
+);
+
+CREATE OR REPLACE FUNCTION fn_audit () RETURNS trigger AS
+$$
+BEGIN 
+	IF (TG_OP = 'DELETE') THEN
+		INSERT INTO Audit (table_name, operation, query, old_value, new_value, user_name, date_oper)
+			VALUES (TG_TABLE_NAME, 'D', ROW(OLD.*), NULL, USER, now());
+		RETURN OLD;
+	ELSIF (TG_OP = 'UPDATE') THEN
+		INSERT INTO Audit (table_name, operation, query, old_value, new_value, user_name, date_oper)
+			VALUES (TG_TABLE_NAME, 'U', ROW(OLD.*), ROW(NEW.*), USER, now());
+		RETURN NEW;
+	ELSIF (TG_OP = 'INSERT') THEN
+		INSERT INTO Audit (table_name, operation, query, old_value, new_value, user_name, date_oper)
+			VALUES (TG_TABLE_NAME, 'I', NULL, ROW(NEW.*), USER, now());
+		RETURN NEW;
+	END IF;
+	RETURN NULL;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER t_aduit_client
+AFTER INSERT OR UPDATE OR DELETE
+ON Client
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+CREATE TRIGGER t_aduit_favCoordinates
+AFTER INSERT OR UPDATE OR DELETE
+ON FavCoordinates
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+CREATE TRIGGER t_aduit_ask
+AFTER INSERT OR UPDATE OR DELETE
+ON Ask
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+CREATE TRIGGER t_aduit_driver
+AFTER INSERT OR UPDATE OR DELETE
+ON Driver
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+CREATE TRIGGER t_aduit_drive
+AFTER INSERT OR UPDATE OR DELETE
+ON Drive
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+CREATE TRIGGER t_aduit_taxi
+AFTER INSERT OR UPDATE OR DELETE
+ON Taxi
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+CREATE TRIGGER t_aduit_modeltaxi
+AFTER INSERT OR UPDATE OR DELETE
+ON ModelTaxi
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+CREATE TRIGGER t_aduit_gps
+AFTER INSERT OR UPDATE OR DELETE
+ON Gps
+FOR EACH ROW
+EXECUTE PROCEDURE fn_audit();
+
+GRANT INSERT ON TABLE Audit TO clientRole;
+GRANT INSERT ON TABLE Audit TO driverRole;
 
