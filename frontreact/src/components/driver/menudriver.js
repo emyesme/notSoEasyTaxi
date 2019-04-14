@@ -42,6 +42,7 @@ class Menudriver extends Component {
         this.showMap = this.showMap.bind(this);
         this.goUpdateTaxi = this.goUpdateTaxi.bind(this);
         this.goChangeTaxi = this.goChangeTaxi.bind(this);
+        this.goChangeDriver = this.goChangeDriver.bind(this);
         this.declineService = this.declineService.bind(this);
         this.findService = this.findService.bind(this);
         this.gokmUsed = this.gokmUsed.bind(this);
@@ -141,6 +142,12 @@ class Menudriver extends Component {
             state: { cellphone: this.state.cellphone,plaque:this.state.plaque, enable: false, point: this.state.gps}
         })
     }
+    goChangeDriver(){
+        this.props.history.push({
+            pathname: '/ActualizarConductor',
+            state: {cellphone: this.state.cellphone}
+        })
+    }
     declineService(){
         this.setState({ show: !this.state.show})
     }
@@ -202,7 +209,7 @@ class Menudriver extends Component {
                         <h6> Nombre: {this.state.name}<br></br>Telefono: {this.state.cellphone} Placa: {this.state.plaque} </h6>
                         <ListGroup>
                         <center>
-                        <ListGroupItem action variant={'light'}>Modificar Información Personal</ListGroupItem>
+                        <ListGroupItem action onClick={this.goChangeDriver} variant={'light'}>Modificar Información Personal</ListGroupItem>
                         <ListGroupItem action onClick={this.goUpdateTaxi} variant={'light'}>Modificar Información del Taxi</ListGroupItem>
                         <ListGroupItem action onClick={this.goChangeTaxi} variant={'light'}>Cambiar de Taxi</ListGroupItem>
                         <ListGroupItem action onClick={this.gokmUsed} variant={'light'} >Kilometros Recorridos</ListGroupItem>

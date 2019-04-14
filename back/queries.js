@@ -95,7 +95,6 @@ const infoUsuario = (request, response) => {
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
             var result = await client.query('SELECT cellphoneclient, nameclient, point(address),creditcard FROM client WHERE cellphoneclient=$1 ', [cellphone]);
-            console.log(result.rows)
             if (result.rowCount === 0){
                 response.status(200).json({error: "Usuario no encontrado"})
             }
@@ -193,9 +192,7 @@ const origen = (request, response) => {
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
-            console.log(cellphone)
             var result = await client.query('SELECT POINT(address) AS  point FROM client WHERE cellphoneclient=$1;',[cellphone])
-            console.log(result.rows)
             if (result.rowCount === 0){
                 response.status(200).json({error: "Usuario no encontrado"})
             }
@@ -338,7 +335,26 @@ const registrarConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
-
+const infoConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            //validacion de errores de sanitize 
+            validateCheck(request,response)
+            var cellphone = request.query.cellphone;
+            var result = await client.query("SELECT * FROM Driver WHERE cellphonedriver= $1;", [cellphone])
+            if (result.rows[0].cellphonedriver !== cellphone){
+                response.status(200).json({mensaje: "Error en buscar conductor."})
+            }
+            else{
+                response.status(200).json({name: result.rows[0].namedriver, cc: result.rows[0].cc, numaccount: result.rows[0].numaccount})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
 
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
 const ingresarConductor = (request, response) => {  
@@ -601,9 +617,7 @@ const modificarModelo = (request, response) => {
             var modelo = request.body.model;
             var marca = request.body.trademark;
             var baul = request.body.trunk;
-            console.log(request.body)
             var result = await client.query("UPDATE ModelTaxi SET trademark = $1, trunk = $2 WHERE model = $3 RETURNING model;", [modelo, marca, baul]);
-            console.log(result.rows)
             if (result.rows[0].model !== modelo){
                 response.status(200).json({mensaje: "Error al modificar modelo"})
             }
@@ -913,6 +927,7 @@ module.exports = {
     kilometrosRecorridos,
     ingresarConductor,
     registrarConductor,
+    infoConductor,
     conductor,
     placa,
     cambiarTaxi,

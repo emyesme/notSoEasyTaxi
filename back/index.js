@@ -173,6 +173,12 @@ app.get('/IngresarConductor',
         ],
         db.ingresarConductor)
 
+app.get('/InfoConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.infoConductor)
+
 app.get('/Conductor',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape()

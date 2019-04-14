@@ -1,13 +1,13 @@
 import React, {Component}  from 'react';
-import user from './images/user.png'
+import user from '../images/user.png'
 import {Modal,Button,Form } from 'react-bootstrap'
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
-import ModalMap from '../components/modalmap';
-import check from './images/checked.png';
-import error from './images/error.png';
+import ModalMap from '../modalmap';
+import check from '../images/checked.png';
+import error from '../images/error.png';
 
-const c = require('./constants')
+const c = require('../constants')
 
 class RegisterUser extends Component {
     constructor(props) {

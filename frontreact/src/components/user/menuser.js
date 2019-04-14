@@ -60,7 +60,6 @@ class Menuser extends Component {
         //origen
         Axios.get(c.api+"/Origen?cellphone="+this.state.cellphone)
         .then( response => {
-            console.log(response.data)
             if( response.data.error != null){
                alert(response.data.error);
             }

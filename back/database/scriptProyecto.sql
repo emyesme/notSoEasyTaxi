@@ -123,6 +123,7 @@ CREATE ROLE clientRole WITH LOGIN PASSWORD '123';
 
 GRANT SELECT ON TABLE Client TO clientRole;
 GRANT INSERT ON TABLE Client TO clientRole;
+GRANT UPDATE ON TABLE Client TO clientRole;
 
 GRANT SELECT ON TABLE FavCoordinates TO clientRole;
 
@@ -332,11 +333,11 @@ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE VIEW historyClients AS (
-	SELECT cellphoneClient, POINT(initialCoordinates) AS initialPoint, POINT(finalCoordinates) AS finalPoint, distance(initialCoordinates, finalCoordinates) AS distance
+	SELECT cellphoneClient, POINT(initialCoordinates) AS initialPoint, POINT(finalCoordinates) AS finalPoint, distance(initialCoordinates, finalCoordinates) AS distance, stars
 	FROM Ask
 );
 CREATE OR REPLACE VIEW historyDrivers AS (
-	SELECT cellphoneDriver, POINT(initialCoordinates) AS initialPoint, POINT(finalCoordinates) AS finalPoint, distance(initialCoordinates, finalCoordinates) AS distance
+	SELECT cellphoneDriver, POINT(initialCoordinates) AS initialPoint, POINT(finalCoordinates) AS finalPoint, distance(initialCoordinates, finalCoordinates) AS distance, stars
 	FROM Ask
 );
 
