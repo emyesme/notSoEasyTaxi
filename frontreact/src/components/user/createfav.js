@@ -83,7 +83,7 @@ class createFav extends Component {
             <Modal.Body>
             <Form onSubmit={this.saveInfo}>
             <Form.Group controlId="IngresoUsuario">
-                <Form.Label>Celular del </Form.Label>
+                <Form.Label>Nombre</Form.Label>
                 <Form.Control type="text" placeholder="Nombre lugar favorito" name="nameFav" onChange={this.handleChange}/>
             </Form.Group>
             <Button style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>
@@ -97,7 +97,7 @@ class createFav extends Component {
               <Button variant="danger" onClick={this.props.onHide}>Close</Button>
             </Modal.Footer>
           </Modal>
-          <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoObtener={true}/>
+          <ModalMap show={this.state.showModal} onHide={modalClose} firstpoint={{lat:-1,lng:-1}} coordinates = { value => this.callback(value)} modoObtener={'true'} linea={'false'}/>
           </div>
         );
     }

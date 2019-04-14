@@ -86,6 +86,57 @@ const usuario = (request, response) => {
     })().catch( error => console.log({error: error.message}))
 }
 
+
+
+const infoUsuario = (request, response) => {
+    (async () => {
+        var client = await poolClient.connect()
+        try{
+            validateCheck(request,response)
+            const cellphone = request.query.cellphone;
+            var result = await client.query('SELECT cellphoneclient, nameclient, point(address),creditcard FROM client WHERE cellphoneclient=$1 ', [cellphone]);
+            if (result.rowCount === 0){
+                response.status(200).json({error: "Usuario no encontrado"})
+            }
+            else{
+                //devuelve la informacion esperada
+                response.status(200).json({cellphone: result.rows[0].cellphoneclient, name: result.rows[0].nameclient, address: {x: result.rows[0].point.x, y: result.rows[0].point.y}, creditcard: result.rows[0].creditcard})
+            }
+        }
+        finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch( error => console.log({error: error.message}))
+}
+
+const modificarUsuario = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            //validacion de errores de sanitize 
+            validateCheck(request,response)
+            var cellphone = request.body.cellphone;
+            var pass = request.body.pass;
+            var name = request.body.name;
+            var pointx = request.body.address.x;
+            var pointy = request.body.address.y;
+            var creditCard = request.body.creditcard;
+            var result = await client.query("UPDATE Client SET "+
+                                            "nameclient = $1, passwordclient = md5($2), address = GEOMETRY(POINT($3,$4)), creditcard = $5 WHERE cellphoneclient = $6 RETURNING cellphoneclient;", [name, pass, pointx, pointy, creditCard, cellphone])
+            if (result.rows[0].cellphoneclient !== cellphone){
+                response.status(200).json({mensaje: "Error en modificar usuario."})
+            }
+            else{
+                response.status(200).json({mensaje: "Usuario modificado correctamente."})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
+
 const registrarUsuario = (request, response) => {
     (async () => {
         var client = await poolClient.connect() //#######################################
@@ -141,7 +192,7 @@ const origen = (request, response) => {
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
-            var result = await client.query('SELECT POINT(address) AS  point FROM Client WHERE cellphoneClient=$1;',[cellphone])
+            var result = await client.query('SELECT POINT(address) AS  point FROM client WHERE cellphoneclient=$1;',[cellphone])
             if (result.rowCount === 0){
                 response.status(200).json({error: "Usuario no encontrado"})
             }
@@ -284,7 +335,26 @@ const registrarConductor = (request, response) => {
     })().catch(error => console.log({error: error.message}))
 }
 
-
+const infoConductor = (request, response) => {
+    (async () => {
+        var client = await poolAdmin.connect() //#######################################
+        try{
+            //validacion de errores de sanitize 
+            validateCheck(request,response)
+            var cellphone = request.query.cellphone;
+            var result = await client.query("SELECT * FROM Driver WHERE cellphonedriver= $1;", [cellphone])
+            if (result.rows[0].cellphonedriver !== cellphone){
+                response.status(200).json({mensaje: "Error en buscar conductor."})
+            }
+            else{
+                response.status(200).json({name: result.rows[0].namedriver, cc: result.rows[0].cc, numaccount: result.rows[0].numaccount})
+            }
+        }finally{
+            //cierra la conexion con el cliente
+            client.release()
+        }
+    })().catch(error => console.log({error: error.message}))
+}
 
 /* ingresarUsuario, valida que la informacion recibida del login corresponda con la almacenada*/
 const ingresarConductor = (request, response) => {  
@@ -547,9 +617,7 @@ const modificarModelo = (request, response) => {
             var modelo = request.body.model;
             var marca = request.body.trademark;
             var baul = request.body.trunk;
-            console.log(request.body)
             var result = await client.query("UPDATE ModelTaxi SET trademark = $1, trunk = $2 WHERE model = $3 RETURNING model;", [modelo, marca, baul]);
-            console.log(result.rows)
             if (result.rows[0].model !== modelo){
                 response.status(200).json({mensaje: "Error al modificar modelo"})
             }
@@ -702,7 +770,7 @@ const historial = (request, response) => {
                 for (id in result.rows){
                     package[id] = {distance: result.rows[id].distance,
                                     xi:result.rows[id].initialpoint.x, yi: result.rows[id].initialpoint.y,
-                                    xf:result.rows[id].finalpoint.x, yf: result.rows[id].finalpoint.y }
+                                    xf:result.rows[id].finalpoint.x, yf: result.rows[id].finalpoint.y, stars: result.rows[id].stars}
                    /*package[id] = result.rows[id]*/
                 }
                 response.status(200).json({historial: package})
@@ -846,6 +914,8 @@ module.exports = {
     todo,
     ingresarUsuario,
     usuario,
+    infoUsuario,
+    modificarUsuario,
     registrarUsuario,
     lugaresFavoritos,
     origen,
@@ -857,6 +927,7 @@ module.exports = {
     kilometrosRecorridos,
     ingresarConductor,
     registrarConductor,
+    infoConductor,
     conductor,
     placa,
     cambiarTaxi,

@@ -5,6 +5,7 @@ import {withRouter} from 'react-router-dom';
 import check from '../images/checked.png';
 import error from '../images/error.png';
 import ModalMap from '../modalmap';
+import Axios from 'axios';
 
 const c = require('../constants')
 
@@ -14,20 +15,32 @@ class changeUser extends Component {
         this.state = { 
             cellphone: this.props.location.state.cellphone,
             name: '',
-            creditCard: '0000000000000000',
+            creditCard: '0',
             showModal: false,
             point:{
-                lat: -1,
-                lng: -1
+                x: -1,
+                y: -1
             }
         }
         this.handleChange = this.handleChange.bind(this);
         this.getMap = this.getMap.bind(this);
         this.changeUser = this.changeUser.bind(this);
         this.finish = this.finish.bind(this);
+        this.callback = this.callback.bind(this);
     }
     componentWillMount(){
-
+        Axios.get(c.api+'/InfoUsuario?cellphone='+this.state.cellphone)
+        .then(response => {
+            if(typeof response.data.error !== 'undefined'){
+                alert(response.data.error)
+            }
+            else{
+                this.setState({ name: response.data.name,
+                                creditCard: response.data.creditcard,
+                                point:{x: response.data.address.x, y: response.data.address.y}})
+            }
+        }
+        ).catch(error => console.log(error))
     }
     handleChange(e){
         const { name, value} = e.target;
@@ -35,16 +48,31 @@ class changeUser extends Component {
             [name]: value
         })
     }
-    changeUser(){
-        this.props.history.push({pathname: "/Usuario",
-        state: { cellphone: this.state.cellphone}})
+    changeUser(e){
+        e.preventDefault();
+        Axios.post(c.api+'/ModificarUsuario',
+        {
+            cellphone: this.state.cellphone,
+            pass: this.state.pass,
+            name: this.state.name,
+            address: {x:this.state.point.x, y: this.state.point.y},
+            creditcard: this.state.creditCard
+        }).then( response => {
+            if(typeof response.data.error !== 'undefined'){
+                alert(response.data.error)
+            }else{
+                alert(response.data.mensaje)
+            }
+        })
+        /*this.props.history.push({pathname: "/Usuario",
+        state: { cellphone: this.state.cellphone}})*/
     }
     getMap(){
         this.setState( { showModal: !this.state.showModal})
     }
     callback (inputPoint){
         this.setState({
-            point:{ lat: inputPoint.lat, lng: inputPoint.lng},
+            point:{ x: inputPoint.lat, y: inputPoint.lng},
             showModal: false
         })
     }

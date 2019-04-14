@@ -4,7 +4,7 @@ import CenterLogin from './components/login/centerLogin'
 import Menuser from './components/user/menuser';
 import FirstQuestion from './components/login/firstquestion';
 import Menudriver from './components/driver/menudriver';
-import RegisterUser from './components/registerUser';
+import RegisterUser from './components/user/registerUser';
 import ChangeTaxi from './components/driver/changeTaxi';
 import Menuadmin from './components/admin/menuadmin';
 import MenuModel from './components/admin/menuModel';
@@ -13,6 +13,7 @@ import StartService from './components/user/startservice';
 import ScoreService from './components/user/scoreService';
 import RegisterDriver from './components/driver/registerDriver';
 import ChangeUser from './components/user/changeUser';
+import ChangeDriver from './components/driver/modifyDriver.js';
 class App extends Component {
   state = { modalShow: true};
   render() {
@@ -26,12 +27,14 @@ class App extends Component {
       <Route path='/RegistrarUsuario' component={() =>  <RegisterUser/>}/>
       <Route path='/RegistrarConductor' component={() =>  <RegisterDriver/>}/>
       <Route path='/ActualizarUsuario' component={() => <ChangeUser/>}/>
+      <Route path='/ActualizarConductor' component={() => <ChangeDriver/>}/>
       <Route path='/Usuario' component={() => <Menuser/>}/>
       <Route path='/Conductor' component={() => <Menudriver/>}/>
       <Route path='/Taxi' component={ () => < ChangeTaxi/>}/>
       <Route path='/Servicio' component={() => <StartService/>}/>
       <Route path='/Calificar' component={() => <ScoreService/>}/>
       <Route path='*' component={() => <FirstQuestion/>}/>
+      <Route component={() => <FirstQuestion/>}/>
       </Switch>
     </BrowserRouter>
     );

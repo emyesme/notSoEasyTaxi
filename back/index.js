@@ -57,6 +57,13 @@ app.get('/Usuario',
         ],
         db.usuario)
 
+app.get('/InfoUsuario',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.infoUsuario)
+
+
 app.post('/RegistrarUsuario',
         [
             check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
@@ -66,6 +73,16 @@ app.post('/RegistrarUsuario',
             check('creditCard').isNumeric().isLength({min:16}).trim().escape()
         ],
         db.registrarUsuario)
+
+app.post('/ModificarUsuario',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape(),
+            check('pass').trim(),
+            check('name').trim().escape(),
+            check('address').escape(),
+            check('creditcard').isNumeric().isLength({min:16}).trim().escape()
+        ],
+        db.modificarUsuario)
 
 app.get('/LugaresFavoritos',
         [
@@ -155,6 +172,12 @@ app.get('/IngresarConductor',
             check('pass').trim()
         ],
         db.ingresarConductor)
+
+app.get('/InfoConductor',
+        [
+            check('cellphone').isNumeric().isLength({min:10}).trim().escape()
+        ],
+        db.infoConductor)
 
 app.get('/Conductor',
         [

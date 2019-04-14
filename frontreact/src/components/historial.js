@@ -43,19 +43,18 @@ class history extends Component {
                 <thead>
                     <tr>
                     <th>#</th>
-                    <th>Punto Inicial</th>
-                    <th>Punto Final</th>
-                    <th>Distancia</th>
+                    <th>Punto Inicial-Punto Final</th>
+                    <th>Distancia (km)</th>
+                    <th>Estrellas (1-5)</th>
                     </tr>
                 </thead>
                 <tbody>
-                
                 {
                     this.state.data.map((item, id) => <tr key={id}>
                     <td key={"i0"+id}>{id}</td>
-                    <td key={"i2"+id}>({item.xi};{item.yi})</td>
-                    <td key={"i3"+id}>({item.xf};{item.yf})</td>
-                    <td key={"i1"+id}>{item.distance}</td>
+                    <td key={"i2"+id}>({item.xi};{item.yi})<br></br>({item.xf};{item.yf})</td>
+                    <td key={"i3"+id}><center>{item.distance/1000} km</center></td>
+                    <td key={"i1"+id}><center>{item.stars}</center></td>
                     </tr>
                 )}
                  
@@ -65,7 +64,7 @@ class history extends Component {
                 
                 </Modal.Body>
               <Modal.Footer>
-                <Button variant="danger" onClick={this.props.onHide}>Close</Button>
+                <Button variant="danger" onClick={this.props.onHide}>Cerrar</Button>
               </Modal.Footer>
             </Modal>            
         );
