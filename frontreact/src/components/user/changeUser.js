@@ -18,8 +18,8 @@ class changeUser extends Component {
             creditCard: '0',
             showModal: false,
             point:{
-                lat: -1,
-                lng: -1
+                x: -1,
+                y: -1
             }
         }
         this.handleChange = this.handleChange.bind(this);
@@ -50,7 +50,6 @@ class changeUser extends Component {
     }
     changeUser(e){
         e.preventDefault();
-        console.log(this.state)
         Axios.post(c.api+'/ModificarUsuario',
         {
             cellphone: this.state.cellphone,
@@ -73,7 +72,7 @@ class changeUser extends Component {
     }
     callback (inputPoint){
         this.setState({
-            point:{ lat: inputPoint.lat, lng: inputPoint.lng},
+            point:{ x: inputPoint.lat, y: inputPoint.lng},
             showModal: false
         })
     }

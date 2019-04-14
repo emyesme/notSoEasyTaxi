@@ -80,7 +80,7 @@ app.post('/ModificarUsuario',
             check('pass').trim(),
             check('name').trim().escape(),
             check('address').escape(),
-            check('creditCard').isNumeric().isLength({min:16}).trim().escape()
+            check('creditcard').isNumeric().isLength({min:16}).trim().escape()
         ],
         db.modificarUsuario)
 

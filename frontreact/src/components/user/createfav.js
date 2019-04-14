@@ -83,7 +83,7 @@ class createFav extends Component {
             <Modal.Body>
             <Form onSubmit={this.saveInfo}>
             <Form.Group controlId="IngresoUsuario">
-                <Form.Label>Celular del </Form.Label>
+                <Form.Label>Nombre</Form.Label>
                 <Form.Control type="text" placeholder="Nombre lugar favorito" name="nameFav" onChange={this.handleChange}/>
             </Form.Group>
             <Button style={{margin: 5}} onClick={this.getMap} variant="secondary">Seleccionar</Button>

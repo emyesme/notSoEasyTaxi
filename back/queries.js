@@ -113,7 +113,7 @@ const infoUsuario = (request, response) => {
 
 const modificarUsuario = (request, response) => {
     (async () => {
-        var client = await poolClient.connect() //#######################################
+        var client = await poolAdmin.connect() //#######################################
         try{
             //validacion de errores de sanitize 
             validateCheck(request,response)
@@ -122,10 +122,9 @@ const modificarUsuario = (request, response) => {
             var name = request.body.name;
             var pointx = request.body.address.x;
             var pointy = request.body.address.y;
-            var creditCard = request.body.creditCard;
-            var result = await client.query("UPDATE Client SET"+
+            var creditCard = request.body.creditcard;
+            var result = await client.query("UPDATE Client SET "+
                                             "nameclient = $1, passwordclient = md5($2), address = GEOMETRY(POINT($3,$4)), creditcard = $5 WHERE cellphoneclient = $6 RETURNING cellphoneclient;", [name, pass, pointx, pointy, creditCard, cellphone])
-            console.log(result.rows)
             if (result.rows[0].cellphoneclient !== cellphone){
                 response.status(200).json({mensaje: "Error en modificar usuario."})
             }
@@ -194,7 +193,9 @@ const origen = (request, response) => {
         try{
             validateCheck(request,response)
             const cellphone = request.query.cellphone;
-            var result = await client.query('SELECT POINT(address) AS  point FROM Client WHERE cellphoneClient=$1;',[cellphone])
+            console.log(cellphone)
+            var result = await client.query('SELECT POINT(address) AS  point FROM client WHERE cellphoneclient=$1;',[cellphone])
+            console.log(result.rows)
             if (result.rowCount === 0){
                 response.status(200).json({error: "Usuario no encontrado"})
             }
