@@ -1,12 +1,16 @@
 # notSoEasyTaxi
 
+Si desea usar el modo con docker o modo estandar
 
-Si desea usar el modo con docker o modo estandar primero debe modificar el siguiente archivo
+primero debe modificar el siguiente archivo
+
 dependiendo de su decision
 
 En : notSoEasyTaxi/back/queries.js
 Lineas 5 o 7 
+
 Quite el comentario de la linea 5 si desea usar el modo docker
+
 Quite el comentario de la linea 7 si desea usar el modo estandar
 
 Y luego siga las instrucciones correspondientes
@@ -22,7 +26,7 @@ sudo apt-get install -y docker-engine
 sudo systemctl status docker //tiene que decir status:active en alguna parte del output
 sudo usermod -aG docker $USER //docker sin sudo
 ```
-
+s
 para el docker-compose.yml
 ```
 sudo apt install docker-compose
